@@ -1,6 +1,6 @@
 # Part 1: Mock Data and Tools
 
-**Owner:** (Zain Allateef egdfyt)
+**Owner:** Zain Allateef - zaynallateef
 **Guide:** `docs/01-Part1-Mock-Data-and-Tools.pdf`
 
 Fictional company world (product docs, clients, regulations, logs, tickets, history, evaluation answer sets) and the read-only tools agents use to look up facts.
