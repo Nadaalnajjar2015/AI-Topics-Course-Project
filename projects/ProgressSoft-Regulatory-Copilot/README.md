@@ -9,6 +9,7 @@ person reviews every result. Case study: ProgressSoft (Amman, Jordan). **All dat
 1. Read `docs/00-Project-Guide.pdf` (whole project, rules, GitHub workflow).
 2. Read your part guide in `docs/` (01 to 05).
 3. Set up your environment (Project Guide, Section 10).
+4. Open `partN_*/PROMPTS.md` for your part: five ready prompts for your AI coding tool. Start with Prompt 1.
 
 ## Team
 
