@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+jinja2
+python-multipart
+pydantic>=2
+python-dotenv
+chromadb
+httpx
+anthropic
+openai
+lxml
+pytest

@@ -1,0 +1,21 @@
+# secrets
+.env
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# runtime state (database, vector store, evaluation output)
+runtime/
+
+# editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# temporary files of docs/source/build_pdfs.py
+docs/source/_*.html
