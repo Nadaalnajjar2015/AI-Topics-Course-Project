@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: a 16:9 "clearing house" stage scaled from a 1280x720 canvas, subtitles and controls underneath */
+/* Layout: a 16:9 product-demo stage scaled from a 1280x720 canvas, subtitles and controls underneath */
 :root {
   --bg: #e9eff1; --stage: #fbfcfc; --card: #ffffff; --ink: #12232b; --muted: #566870; --line: #c6d2d6;
   --accent: #0b7a6e; --accent-soft: #dbf0ec; --warn: #a35f00; --warn-soft: #fbedd8;
@@ -157,216 +157,265 @@ svg.lines path { fill: none; stroke: var(--line); stroke-width: 2.5; }
 <div class="player" id="player">
   <div class="top">
     <h1>Regulatory &amp; Support Copilot</h1>
-    <p>Animated explainer · about 1.5 minutes</p>
+    <p>Animated explainer · about 2 minutes</p>
   </div>
 
   <div class="stage" id="stage">
     <div class="canvas" id="canvas">
 
       <!-- 1 Title -->
-      <section class="scene" data-dur="6000" data-name="Title" data-cap="Today we present our project: the Regulatory & Support Copilot, an AI agent system for a Jordanian payments software company.">
-        <div class="p" style="left:96px;top:170px;width:700px;display:flex;flex-direction:column;gap:22px">
-          <div class="eye a" style="--d:.1s">AI Topics Course · Project proposal</div>
+      <section class="scene" data-dur="6500" data-name="Title" data-cap="Today we present the Regulatory & Support Copilot: a product any organization can customize, where AI agents watch new rules and answer requests, and people approve every result.">
+        <div class="p" style="left:96px;top:160px;width:700px;display:flex;flex-direction:column;gap:22px">
+          <div class="eye a" style="--d:.1s">AI Topics Course · Product demo</div>
           <h2 class="title-big a" style="--d:.3s">Regulatory &amp; Support Copilot</h2>
-          <div class="a" style="--d:.6s;font-size:24px;color:var(--muted);line-height:1.4;max-width:600px">A team of AI agents that helps a payments software company handle new banking rules and support tickets faster.</div>
-          <div class="a" style="--d:.9s"><span class="chip good">Case study: ProgressSoft · Amman, Jordan</span></div>
+          <div class="a" style="--d:.6s;font-size:24px;color:var(--muted);line-height:1.4;max-width:620px">AI agents that watch your rules and answer your requests. One product, customized by any organization.</div>
+          <div class="a" style="--d:.9s;display:flex;gap:10px;flex-wrap:wrap"><span class="chip good">Template: University</span><span class="chip good">Template: Hospital</span><span class="chip">Your organization next</span></div>
         </div>
         <div class="p" style="left:850px;top:170px;width:360px">
-          <div class="code-card a" style="--d:.8s">&lt;FIToFIPmtStsRpt&gt;
-  &lt;TxInfAndSts&gt;
-    &lt;TxSts&gt;<span class="hl">RJCT</span>&lt;/TxSts&gt;
-    &lt;StsRsnInf&gt;
-      &lt;Rsn&gt;
-        &lt;Cd&gt;<span class="hl">AC04</span>&lt;/Cd&gt;
-      &lt;/Rsn&gt;
-    &lt;/StsRsnInf&gt;
-  &lt;/TxInfAndSts&gt;</div>
-          <div class="tag a" style="--d:1.1s;margin-top:12px">ISO 20022 message: payment rejected, account closed</div>
+          <div class="code-card a" style="--d:.8s">organization: Northfield University
+template: university
+labels:
+  unit: Study program
+  stakeholder: Student group
+  record: Registration record
+connectors:
+  records: <span class="hl">registration_lookup</span>
+language: [en, ar]</div>
+          <div class="tag a" style="--d:1.1s;margin-top:12px">A template file: no new code per customer</div>
         </div>
       </section>
 
-      <!-- 2 Company -->
-      <section class="scene" data-dur="8000" data-name="The company" data-cap="ProgressSoft builds payment and clearing systems for central banks and commercial banks in many countries. One product runs with different rules and formats for each client.">
-        <div class="p hd"><div class="eye a">02 · The company</div><h2 class="h2 a" style="--d:.15s">One product, many countries, different rules for each</h2></div>
+      <!-- 2 Everywhere -->
+      <section class="scene" data-dur="8000" data-name="The problem" data-cap="Every organization has the same two problems: new rules keep arriving and someone must work out what they affect, and many requests arrive and someone must dig through records to answer them.">
+        <div class="p hd"><div class="eye a">02 · The problem</div><h2 class="h2 a" style="--d:.15s">Every organization has the same two problems</h2></div>
         <svg class="lines" viewBox="0 0 1280 720" aria-hidden="true">
-          <path class="draw" pathLength="1" style="--d:.9s" d="M520 370 L350 260"/>
+          <path class="draw" pathLength="1" style="--d:.9s" d="M520 370 L350 270"/>
           <path class="draw" pathLength="1" style="--d:1.1s" d="M520 400 L350 520"/>
-          <path class="draw" pathLength="1" style="--d:1.3s" d="M760 370 L930 260"/>
+          <path class="draw" pathLength="1" style="--d:1.3s" d="M760 370 L930 270"/>
           <path class="draw" pathLength="1" style="--d:1.5s" d="M760 400 L930 520"/>
         </svg>
-        <div class="p card accent hub a" style="--d:.5s;left:520px;top:340px;width:240px;height:90px"><div class="name">ProgressSoft</div><div class="tag" style="margin-top:4px">Payment platform</div></div>
-        <div class="p card node2 a" style="--d:1.2s;left:90px;top:205px;width:260px"><div class="name">Central bank</div><div><span class="chip">Middle East</span> <span class="chip warn">Rules A</span></div></div>
-        <div class="p card node2 a" style="--d:1.4s;left:90px;top:465px;width:260px"><div class="name">Commercial bank</div><div><span class="chip">Africa</span> <span class="chip warn">Rules B</span></div></div>
-        <div class="p card node2 a" style="--d:1.6s;left:930px;top:205px;width:260px"><div class="name">Central bank</div><div><span class="chip">Asia</span> <span class="chip warn">Rules C</span></div></div>
-        <div class="p card node2 a" style="--d:1.8s;left:930px;top:465px;width:260px"><div class="name">Commercial bank</div><div><span class="chip">Middle East</span> <span class="chip warn">Rules D</span></div></div>
-        <div class="p a" style="--d:2.4s;left:240px;top:630px;width:800px;text-align:center;font-size:21px;color:var(--muted)">Cheque clearing · ACH · instant payments · mobile wallets</div>
+        <div class="p card accent hub a" style="--d:.5s;left:520px;top:330px;width:240px;height:110px"><div class="name" style="font-size:19px">New rules arrive</div><div class="name" style="font-size:19px;margin-top:6px">Requests pile up</div></div>
+        <div class="p card node2 a" style="--d:1.2s;left:60px;top:200px;width:290px"><div class="name">University</div><div><span class="chip warn">accreditation rules</span></div><div><span class="chip">student requests</span></div></div>
+        <div class="p card node2 a" style="--d:1.4s;left:60px;top:455px;width:290px"><div class="name">Hospital</div><div><span class="chip warn">health ministry rules</span></div><div><span class="chip">patient requests</span></div></div>
+        <div class="p card node2 a" style="--d:1.6s;left:930px;top:200px;width:290px"><div class="name">Telecom</div><div><span class="chip warn">regulator rules</span></div><div><span class="chip">billing questions</span></div></div>
+        <div class="p card node2 a" style="--d:1.8s;left:930px;top:455px;width:290px"><div class="name">Online store</div><div><span class="chip warn">courier contracts</span></div><div><span class="chip">order questions</span></div></div>
       </section>
 
       <!-- 3 Problem 1 -->
-      <section class="scene" data-dur="9000" data-name="Problem 1" data-cap="Problem one: central banks keep publishing new rules and message formats. Staff read each document by hand, find the affected clients, and write the changes. This takes days and depends on a few experts.">
-        <div class="p hd"><div class="eye a">03 · Problem 1</div><h2 class="h2 a" style="--d:.15s">Every new regulation is handled by hand</h2></div>
+      <section class="scene" data-dur="9000" data-name="Problem 1" data-cap="Problem one: when a new rule arrives, staff read it by hand, find which programs or departments it affects, and write the action plan. It takes days and depends on a few experts.">
+        <div class="p hd"><div class="eye a">03 · Problem 1</div><h2 class="h2 a" style="--d:.15s">Every new rule is handled by hand</h2></div>
         <div class="p page a" style="--d:.4s;left:96px;top:200px;width:330px;height:390px"></div>
         <div class="p page a" style="--d:.6s;left:126px;top:220px;width:330px;height:390px"></div>
         <div class="p page a" style="--d:.8s;left:156px;top:240px;width:330px;height:390px">
-          <div class="tag">Central bank circular</div>
-          <div style="font-weight:700;font-size:20px;margin-top:8px">Updated payment message rules</div>
+          <div class="tag">Accreditation Commission · Circular</div>
+          <div style="font-weight:700;font-size:20px;margin-top:8px">Updated internship requirement</div>
           <div class="bar-line" style="width:92%"></div><div class="bar-line" style="width:80%"></div><div class="bar-line" style="width:88%"></div>
-          <div class="mono" style="margin-top:16px;padding:6px 10px;background:var(--warn-soft);color:var(--warn);border-radius:6px">New field: &lt;UltmtDbtr&gt;</div>
+          <div class="mono" style="margin-top:16px;padding:6px 10px;background:var(--warn-soft);color:var(--warn);border-radius:6px">Internship: 6 → 8 weeks</div>
           <div class="bar-line" style="width:85%"></div><div class="bar-line" style="width:60%"></div><div class="bar-line" style="width:75%"></div>
         </div>
         <div class="p" style="left:600px;top:210px;width:580px;display:flex;flex-direction:column;gap:30px">
-          <div class="task a" style="--d:1.2s"><div class="name" style="font-size:20px">1. Read and understand the document</div><div class="track"><span style="--d:1.5s"></span></div></div>
-          <div class="task a" style="--d:2.2s"><div class="name" style="font-size:20px">2. Find affected modules and clients</div><div class="track"><span style="--d:2.6s"></span></div></div>
-          <div class="task a" style="--d:3.2s"><div class="name" style="font-size:20px">3. Write change requests and tests</div><div class="track"><span style="--d:3.7s"></span></div></div>
+          <div class="task a" style="--d:1.2s"><div class="name" style="font-size:20px">1. Read and understand the circular</div><div class="track"><span style="--d:1.5s"></span></div></div>
+          <div class="task a" style="--d:2.2s"><div class="name" style="font-size:20px">2. Find affected programs and students</div><div class="track"><span style="--d:2.6s"></span></div></div>
+          <div class="task a" style="--d:3.2s"><div class="name" style="font-size:20px">3. Write the action plan and checks</div><div class="track"><span style="--d:3.7s"></span></div></div>
           <div class="a" style="--d:4.6s;display:flex;align-items:center;gap:20px;margin-top:6px">
             <div class="clock"></div>
-            <div><div class="name" style="font-size:22px">Days of manual work per regulation</div><div style="margin-top:8px"><span class="chip warn">Depends on a few senior experts</span></div></div>
+            <div><div class="name" style="font-size:22px">Days of manual work per rule</div><div style="margin-top:8px"><span class="chip warn">Depends on a few experts</span></div></div>
           </div>
         </div>
       </section>
 
       <!-- 4 Problem 2 -->
-      <section class="scene" data-dur="9000" data-name="Problem 2" data-cap="Problem two: banks send tickets like 'why was this payment rejected?'. An engineer has to dig through logs to find the reason, which slows replies and takes engineers away from development.">
-        <div class="p hd"><div class="eye a">04 · Problem 2</div><h2 class="h2 a" style="--d:.15s">Support tickets need manual log digging</h2></div>
+      <section class="scene" data-dur="9000" data-name="Problem 2" data-cap="Problem two: students and patients send questions like 'why can't I register for this course?'. Staff must dig through records to find the reason, so replies are slow.">
+        <div class="p hd"><div class="eye a">04 · Problem 2</div><h2 class="h2 a" style="--d:.15s">Requests need manual record digging</h2></div>
         <div class="p card a" style="--d:.4s;left:80px;top:200px;width:440px">
-          <div style="display:flex;justify-content:space-between;align-items:center"><span class="tag">Ticket · from Bank C</span><span class="chip warn">Waiting</span></div>
-          <div style="font-family:var(--display);font-weight:700;font-size:32px;line-height:1.15;margin-top:16px">Why was payment 7731 rejected?</div>
-          <div class="desc" style="margin-top:16px">Opened 09:20 · Priority high</div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><span class="tag">Request · from student S-2291</span><span class="chip warn">Waiting</span></div>
+          <div style="font-family:var(--display);font-weight:700;font-size:32px;line-height:1.15;margin-top:16px">Why can't I register for SE301?</div>
+          <div class="desc" style="margin-top:16px">Sent 09:20 · Registration closes Thursday</div>
         </div>
         <div class="p logwin a" style="--d:.8s;left:580px;top:180px;width:620px;height:420px">
-          <div class="bar">transaction-log.txt</div>
-          <div class="body"><span class="a" style="--d:1.2s;display:block">09:11:58 INFO  pacs.008 received   ref=7725</span><span class="a" style="--d:1.5s;display:block">09:11:59 INFO  validation ok      ref=7725</span><span class="a" style="--d:1.8s;display:block">09:12:01 INFO  pacs.008 received   ref=7731</span><span class="a" style="--d:2.1s;display:block">09:12:01 INFO  routed to clearing  ref=7731</span><span class="a" style="--d:2.4s;display:block">09:12:01 INFO  pacs.008 received   ref=7732</span><span class="a" style="--d:2.7s;display:block"><span class="lw">09:12:02 WARN  creditor check      ref=7731</span></span><span class="a" style="--d:3.0s;display:block">09:12:02 INFO  validation ok      ref=7732</span><span class="a" style="--d:3.3s;display:block">09:12:03 INFO  settled            ref=7725</span><span class="a" style="--d:4.2s;display:block"><span class="bad">09:12:03 RJCT  ref=7731 reason=AC04 </span></span></div>
+          <div class="bar">registration-records</div>
+          <div class="body"><span class="a" style="--d:1.2s;display:block">09:11 OK       S-2290 CS210  registered</span><span class="a" style="--d:1.5s;display:block">09:12 OK       S-2291 SE210  registered</span><span class="a" style="--d:1.8s;display:block">09:14 OK       S-2288 BUS101 registered</span><span class="a" style="--d:2.1s;display:block"><span class="lw">09:15 WAITLIST S-2302 CS330  section full</span></span><span class="a" style="--d:2.4s;display:block">09:16 OK       S-2291 SE220  registered</span><span class="a" style="--d:2.7s;display:block">09:17 OK       S-2310 NUR120 registered</span><span class="a" style="--d:3.0s;display:block">09:18 OK       S-2289 SE301  registered</span><span class="a" style="--d:3.9s;display:block"><span class="bad">09:19 BLOCKED  S-2291 SE301  PREREQ_MISSING </span></span></div>
         </div>
-        <div class="p a" style="--d:5s;left:80px;top:470px;width:440px;display:flex;flex-direction:column;gap:12px">
-          <span class="chip warn" style="align-self:flex-start;font-size:15px">Slow replies to banks</span>
-          <span class="chip warn" style="align-self:flex-start;font-size:15px">Engineers pulled away from development</span>
+        <div class="p a" style="--d:4.8s;left:80px;top:470px;width:440px;display:flex;flex-direction:column;gap:12px">
+          <span class="chip warn" style="align-self:flex-start;font-size:15px">Slow replies</span>
+          <span class="chip warn" style="align-self:flex-start;font-size:15px">Staff time spent on searching</span>
         </div>
       </section>
 
       <!-- 5 Solution -->
-      <section class="scene" data-dur="9000" data-name="The solution" data-cap="Our solution is a team of AI agents. An orchestrator decides who works next. Four specialist agents each do one job. Every result stops at a human, who approves, edits, or rejects it.">
-        <div class="p hd"><div class="eye a">05 · The solution</div><h2 class="h2 a" style="--d:.15s">A team of AI agents, each with one job</h2></div>
+      <section class="scene" data-dur="10000" data-name="The product" data-cap="Our product is one core engine. Each organization picks a template that sets its vocabulary, units, documents and record sources. Connectors plug in the organization's data. No new code per customer.">
+        <div class="p hd"><div class="eye a">05 · The product</div><h2 class="h2 a" style="--d:.15s">One core engine, customized by a template</h2></div>
         <svg class="lines" viewBox="0 0 1280 720" aria-hidden="true">
-          <path class="draw" pathLength="1" style="--d:.9s" d="M640 240 V285 M195 285 H1085 M195 285 V325 M488 285 V325 M786 285 V325 M1085 285 V325"/>
-          <path class="draw" pathLength="1" style="--d:3.2s" d="M195 450 V495 M488 450 V495 M786 450 V495 M1085 450 V495 M195 495 H1085 M640 495 V540"/>
+          <path class="draw" pathLength="1" style="--d:2.2s" d="M340 245 H440 M340 375 H440 M340 505 H440"/>
+          <path class="draw" pathLength="1" style="--d:2.6s" d="M840 245 H940 M840 375 H940 M840 505 H940"/>
         </svg>
-        <div class="p card hub a" style="--d:.5s;left:480px;top:160px;width:320px;height:80px"><div class="name">Orchestrator agent</div><div class="desc" style="margin-top:2px;font-size:16px">Decides which agent works next</div></div>
-        <div class="p card a" style="--d:1.4s;left:70px;top:325px;width:250px;height:125px"><div class="name" style="font-size:19px">Regulation Watcher</div><div class="desc" style="font-size:16px">Reads and summarizes new rules</div></div>
-        <div class="p card a" style="--d:1.8s;left:363px;top:325px;width:250px;height:125px"><div class="name" style="font-size:19px">Impact Analysis</div><div class="desc" style="font-size:16px">Finds affected parts and clients</div></div>
-        <div class="p card a" style="--d:2.2s;left:661px;top:325px;width:250px;height:125px"><div class="name" style="font-size:19px">Change Request</div><div class="desc" style="font-size:16px">Drafts changes and test cases</div></div>
-        <div class="p card a" style="--d:2.6s;left:960px;top:325px;width:250px;height:125px"><div class="name" style="font-size:19px">Support Triage</div><div class="desc" style="font-size:16px">Checks logs, explains ticket causes</div></div>
-        <div class="p card accent hub a" style="--d:3.8s;left:480px;top:540px;width:320px;height:86px"><div class="name">Human review</div><div class="desc" style="margin-top:2px;font-size:16px">Approve, edit, or reject</div></div>
+        <div class="tag p a" style="--d:.4s;left:70px;top:160px">Templates</div>
+        <div class="p card a" style="--d:.5s;left:70px;top:190px;width:270px;height:110px"><div class="name" style="font-size:19px">University</div><div class="desc" style="font-size:15px">programs · students · registrations</div></div>
+        <div class="p card a" style="--d:.7s;left:70px;top:320px;width:270px;height:110px"><div class="name" style="font-size:19px">Hospital</div><div class="desc" style="font-size:15px">departments · patients · appointments</div></div>
+        <div class="p card a" style="--d:.9s;left:70px;top:450px;width:270px;height:110px;border-style:dashed"><div class="name" style="font-size:19px">Your organization</div><div class="desc" style="font-size:15px">a new template file</div></div>
+        <div class="p card a" style="--d:1.2s;left:440px;top:160px;width:400px;height:430px;background:var(--code)">
+          <span class="tag">Core engine · same code for all</span>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px">
+            <div class="card a" style="--d:1.5s;padding:12px 16px"><div class="name" style="font-size:18px">Change Watch agents</div><div class="desc" style="font-size:15px;margin-top:2px">Change Watcher · Impact Analyst · Action Planner</div></div>
+            <div class="card a" style="--d:1.7s;padding:12px 16px"><div class="name" style="font-size:18px">Request Desk agent</div><div class="desc" style="font-size:15px;margin-top:2px">Request Investigator</div></div>
+            <div class="card a" style="--d:1.9s;padding:12px 16px"><div class="name" style="font-size:18px">Orchestrator + knowledge base</div><div class="desc" style="font-size:15px;margin-top:2px">runs the steps, searches documents</div></div>
+            <div class="card accent a" style="--d:2.1s;padding:12px 16px"><div class="name" style="font-size:18px">Review website + safety</div><div class="desc" style="font-size:15px;margin-top:2px">a person approves every result</div></div>
+          </div>
+        </div>
+        <div class="tag p a" style="--d:2.4s;left:940px;top:160px">Connectors</div>
+        <div class="p card a" style="--d:2.5s;left:940px;top:190px;width:270px;height:110px"><div class="name" style="font-size:19px">Document folders</div><div class="desc" style="font-size:15px">rules, policies, guides</div></div>
+        <div class="p card a" style="--d:2.7s;left:940px;top:320px;width:270px;height:110px"><div class="name" style="font-size:19px">Record lookups</div><div class="desc" style="font-size:15px">registrations, appointments</div></div>
+        <div class="p card a" style="--d:2.9s;left:940px;top:450px;width:270px;height:110px"><div class="name" style="font-size:19px">Action list</div><div class="desc" style="font-size:15px">where approved items go</div></div>
       </section>
 
       <!-- 6 Workflow A -->
-      <section class="scene" data-dur="10000" data-name="Workflow A" data-cap="Workflow A. A new circular is uploaded. The Watcher summarizes it, Impact Analysis finds the affected clients, the Change Request agent drafts the work, and an analyst approves it.">
-        <div class="p hd"><div class="eye a">06 · Workflow A</div><h2 class="h2 a" style="--d:.15s">A new regulation arrives</h2></div>
+      <section class="scene" data-dur="10000" data-name="Change Watch" data-cap="Change Watch, university example: a new accreditation circular arrives. The Change Watcher summarizes it, the Impact Analyst finds the affected programs and student groups, the Action Planner drafts the action items, and the dean's office approves.">
+        <div class="p hd"><div class="eye a">06 · Change Watch · University</div><h2 class="h2 a" style="--d:.15s">A new rule arrives</h2></div>
         <div class="p track-line a" style="left:140px;top:259px;width:1000px"></div>
         <div class="p node lit" style="--d:.3s;left:40px;top:210px;width:200px;height:100px"><span class="tag">Input</span><span class="name">New circular</span></div>
-        <div class="p node lit" style="--d:1.73s;left:290px;top:210px;width:200px;height:100px"><span class="tag">Agent</span><span class="name">Regulation Watcher</span></div>
-        <div class="p node lit" style="--d:3.29s;left:540px;top:210px;width:200px;height:100px"><span class="tag">Agent</span><span class="name">Impact Analysis</span></div>
-        <div class="p node lit" style="--d:4.85s;left:790px;top:210px;width:200px;height:100px"><span class="tag">Agent</span><span class="name">Change Request</span></div>
-        <div class="p node lit" style="--d:6.41s;left:1040px;top:210px;width:200px;height:100px"><span class="tag">Person</span><span class="name">Analyst review</span></div>
+        <div class="p node lit" style="--d:1.73s;left:290px;top:210px;width:200px;height:100px"><span class="tag">Agent</span><span class="name">Change Watcher</span></div>
+        <div class="p node lit" style="--d:3.29s;left:540px;top:210px;width:200px;height:100px"><span class="tag">Agent</span><span class="name">Impact Analyst</span></div>
+        <div class="p node lit" style="--d:4.85s;left:790px;top:210px;width:200px;height:100px"><span class="tag">Agent</span><span class="name">Action Planner</span></div>
+        <div class="p node lit" style="--d:6.41s;left:1040px;top:210px;width:200px;height:100px"><span class="tag">Person</span><span class="name">Dean's office</span></div>
         <div class="p packet" style="left:129px;top:249px"></div>
-        <div class="p out a" style="--d:2s;left:290px;top:350px;width:200px"><b>Summary</b>2 new fields in payment messages<br>Starts: 1 March</div>
-        <div class="p out a" style="--d:3.6s;left:540px;top:350px;width:200px"><b>Affected</b>ACH module<br>Bank A, Bank C</div>
-        <div class="p out a" style="--d:5.1s;left:790px;top:350px;width:200px"><b>CR-112 drafted</b>Acceptance criteria<br>6 test cases</div>
+        <div class="p out a" style="--d:2s;left:290px;top:350px;width:200px"><b>Summary</b>Internship 6 → 8 weeks<br>From Sep 2027</div>
+        <div class="p out a" style="--d:3.6s;left:540px;top:350px;width:200px"><b>Affected</b>CS-BSc, SE-BSc<br>2026 cohorts</div>
+        <div class="p out a" style="--d:5.1s;left:790px;top:350px;width:200px"><b>AI-031 drafted</b>Update study plans<br>4 checks</div>
         <div class="p out a" style="--d:6.7s;left:1040px;top:350px;width:200px"><b>Decision</b><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12l5 5L20 6"/></svg>Approved</span></div>
-        <div class="p a" style="--d:7.4s;left:40px;top:600px;width:1200px;text-align:center;font-size:19px;color:var(--muted)">Example data. Every output links to the paragraph it came from.</div>
+        <div class="p a" style="--d:7.4s;left:40px;top:600px;width:1200px;text-align:center;font-size:19px;color:var(--muted)">Mock data. Every output links to the sentence or document it came from.</div>
       </section>
 
       <!-- 7 Workflow B -->
-      <section class="scene" data-dur="10000" data-name="Workflow B" data-cap="Workflow B. A bank opens a ticket. The Triage agent searches the logs, finds the rejection reason, drafts a clear reply, and an engineer approves it before it is sent.">
-        <div class="p hd"><div class="eye a">07 · Workflow B</div><h2 class="h2 a" style="--d:.15s">A bank opens a support ticket</h2></div>
+      <section class="scene" data-dur="10000" data-name="Request Desk" data-cap="Request Desk, university example: a student asks why registration failed. The Request Investigator looks up the registration records, finds the missing prerequisite, drafts a clear reply, and the registrar approves it before it is sent.">
+        <div class="p hd"><div class="eye a">07 · Request Desk · University</div><h2 class="h2 a" style="--d:.15s">A student sends a request</h2></div>
         <div class="p track-line a" style="left:140px;top:259px;width:1000px"></div>
-        <div class="p node lit" style="--d:.3s;left:40px;top:210px;width:200px;height:100px"><span class="tag">Input</span><span class="name">Bank ticket</span></div>
-        <div class="p node lit" style="--d:1.73s;left:290px;top:210px;width:200px;height:100px"><span class="tag">Agent</span><span class="name">Support Triage</span></div>
-        <div class="p node lit" style="--d:3.29s;left:540px;top:210px;width:200px;height:100px"><span class="tag">Tool · read-only</span><span class="name">Log search</span></div>
+        <div class="p node lit" style="--d:.3s;left:40px;top:210px;width:200px;height:100px"><span class="tag">Input</span><span class="name">Student request</span></div>
+        <div class="p node lit" style="--d:1.73s;left:290px;top:210px;width:200px;height:100px"><span class="tag">Agent</span><span class="name">Request Investigator</span></div>
+        <div class="p node lit" style="--d:3.29s;left:540px;top:210px;width:200px;height:100px"><span class="tag">Connector · read-only</span><span class="name">Record lookup</span></div>
         <div class="p node lit" style="--d:4.85s;left:790px;top:210px;width:200px;height:100px"><span class="tag">Agent</span><span class="name">Draft reply</span></div>
-        <div class="p node lit" style="--d:6.41s;left:1040px;top:210px;width:200px;height:100px"><span class="tag">Person</span><span class="name">Engineer review</span></div>
+        <div class="p node lit" style="--d:6.41s;left:1040px;top:210px;width:200px;height:100px"><span class="tag">Person</span><span class="name">Registrar</span></div>
         <div class="p packet" style="left:129px;top:249px"></div>
-        <div class="p out a" style="--d:2s;left:290px;top:350px;width:200px"><b>Understood</b>Payment 7731<br>rejected, why?</div>
-        <div class="p out a" style="--d:3.6s;left:540px;top:350px;width:200px"><b>Found</b>RJCT · AC04<br>Receiving account closed</div>
-        <div class="p out a" style="--d:5.1s;left:790px;top:350px;width:200px"><b>Reply</b>"Payment 7731 was rejected because the receiving account is closed."</div>
-        <div class="p out a" style="--d:6.7s;left:1040px;top:350px;width:200px"><b>Decision</b><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12l5 5L20 6"/></svg>Sent to Bank C</span></div>
-        <div class="p a" style="--d:7.4s;left:40px;top:600px;width:1200px;text-align:center;font-size:19px;color:var(--muted)">Example data. The engineer checks the diagnosis instead of digging through logs.</div>
+        <div class="p out a" style="--d:2s;left:290px;top:350px;width:200px"><b>Understood</b>Student S-2291<br>course SE301</div>
+        <div class="p out a" style="--d:3.6s;left:540px;top:350px;width:200px"><b>Found</b>BLOCKED<br>PREREQ_MISSING (SE201)</div>
+        <div class="p out a" style="--d:5.1s;left:790px;top:350px;width:200px"><b>Reply</b>"SE301 needs SE201 first. You can register for SE201 this term."</div>
+        <div class="p out a" style="--d:6.7s;left:1040px;top:350px;width:200px"><b>Decision</b><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12l5 5L20 6"/></svg>Sent to student</span></div>
+        <div class="p a" style="--d:7.4s;left:40px;top:600px;width:1200px;text-align:center;font-size:19px;color:var(--muted)">The registrar checks the answer instead of searching the records.</div>
       </section>
 
-      <!-- 8 Under the hood -->
-      <section class="scene" data-dur="10000" data-name="Under the hood" data-cap="Under the hood: the system first searches the company's own documents by meaning, using a vector database. The language model then writes an answer based on what it found, and shows the source.">
-        <div class="p hd"><div class="eye a">08 · Under the hood</div><h2 class="h2 a" style="--d:.15s">Search company documents first, then answer</h2></div>
+      <!-- 8 Switch template -->
+      <section class="scene" data-dur="10000" data-name="Hospital" data-cap="Now we switch the template to a hospital. The same agents now speak about departments, patients and appointments, and answer a patient asking why an appointment was cancelled.">
+        <div class="p hd"><div class="eye a">08 · Same engine, new organization</div><h2 class="h2 a" style="--d:.15s">Switch the template: now it is a hospital</h2></div>
+        <div class="p card a" style="--d:.4s;left:80px;top:170px;width:500px">
+          <div style="display:grid;grid-template-columns:150px 1fr 1fr;gap:12px 16px;font-size:17px;align-items:center">
+            <span class="tag">Label</span><span class="tag">University</span><span class="tag" style="color:var(--accent)">Hospital</span>
+            <b>Unit</b><span class="before">Study program</span><span class="a" style="--d:1.2s;font-weight:700;color:var(--accent)">Department</span>
+            <b>Stakeholder</b><span class="before">Student group</span><span class="a" style="--d:1.5s;font-weight:700;color:var(--accent)">Patient group</span>
+            <b>Record</b><span class="before">Registration</span><span class="a" style="--d:1.8s;font-weight:700;color:var(--accent)">Appointment</span>
+            <b>Rule source</b><span class="before">Accreditation</span><span class="a" style="--d:2.1s;font-weight:700;color:var(--accent)">Health ministry</span>
+            <b>Reviewer</b><span class="before">Registrar</span><span class="a" style="--d:2.4s;font-weight:700;color:var(--accent)">Patient services</span>
+          </div>
+        </div>
+        <div class="p card a" style="--d:3s;left:660px;top:170px;width:540px">
+          <span class="tag">Request · from patient P-1043</span>
+          <div style="font-family:var(--display);font-weight:700;font-size:28px;line-height:1.15;margin-top:10px">Why was my cardiology appointment on 3 March cancelled?</div>
+        </div>
+        <div class="p out a" style="--d:4.2s;left:660px;top:370px;width:540px"><b>Found in appointment records</b>CANCELLED · DOCTOR_UNAVAILABLE · Cardiology</div>
+        <div class="p out a" style="--d:5.4s;left:660px;top:470px;width:540px"><b>Draft reply</b>"Your appointment was cancelled because the doctor was unavailable. Please choose a new time in the patient portal."</div>
+        <div class="p a" style="--d:6.4s;left:80px;top:520px;width:500px;font-size:20px;line-height:1.5"><span class="chip good" style="font-size:15px">Same agents</span> <span class="chip good" style="font-size:15px">Same code</span><div style="margin-top:12px;color:var(--muted)">Only the template and the mock data changed.</div></div>
+      </section>
+
+      <!-- 9 Under the hood -->
+      <section class="scene" data-dur="10000" data-name="Under the hood" data-cap="Under the hood: the system first searches the organization's own documents by meaning, using a vector database. The language model then writes an answer from what it found and shows the source.">
+        <div class="p hd"><div class="eye a">09 · Under the hood</div><h2 class="h2 a" style="--d:.15s">Search the organization's documents first, then answer</h2></div>
         <svg class="lines" viewBox="0 0 1280 720" aria-hidden="true">
           <path class="draw" pathLength="1" style="--d:1s" d="M360 235 H425"/>
           <path class="draw" pathLength="1" style="--d:3.4s" d="M855 235 H915"/>
           <path class="draw" pathLength="1" style="--d:4.4s" d="M1070 300 V320"/>
         </svg>
-        <div class="p card a" style="--d:.4s;left:60px;top:170px;width:300px;height:130px"><span class="tag">Question</span><div class="name" style="margin-top:8px">Why was payment 7731 rejected?</div></div>
+        <div class="p card a" style="--d:.4s;left:60px;top:170px;width:300px;height:130px"><span class="tag">Question</span><div class="name" style="margin-top:8px">Why can't S-2291 register for SE301?</div></div>
         <div class="p card a" style="--d:1.2s;left:425px;top:150px;width:430px;height:290px;background:var(--code)">
-          <span class="tag">Vector database · company documents</span>
+          <span class="tag">Vector database · university documents</span>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px">
-            <div class="chunk lit" style="--d:2.2s;height:88px">Reason codes guide</div>
-            <div class="chunk" style="height:88px">Bank C settings</div>
-            <div class="chunk" style="height:88px">Holiday calendar</div>
-            <div class="chunk lit" style="--d:2.6s;height:88px">AC04 handling rule</div>
+            <div class="chunk lit" style="--d:2.2s;height:88px">Registration rules</div>
+            <div class="chunk" style="height:88px">Exam calendar</div>
             <div class="chunk" style="height:88px">Fee schedule</div>
-            <div class="chunk lit" style="--d:3s;height:88px">Past ticket #3310</div>
+            <div class="chunk lit" style="--d:2.6s;height:88px">SE-BSc study plan</div>
+            <div class="chunk" style="height:88px">Library rules</div>
+            <div class="chunk lit" style="--d:3s;height:88px">Past request #1180</div>
           </div>
         </div>
         <div class="p card a" style="--d:3.6s;left:915px;top:170px;width:305px;height:130px"><span class="tag">Language model</span><div class="name" style="margin-top:8px;font-size:19px">Writes the answer from what was found</div></div>
-        <div class="p card accent a" style="--d:4.6s;left:915px;top:320px;width:305px;height:120px"><span class="tag">Answer</span><div style="font-weight:600;font-size:17px;margin-top:6px">Account closed (AC04).</div><div class="desc" style="font-size:15px;margin-top:2px">Source: Reason codes guide</div></div>
+        <div class="p card accent a" style="--d:4.6s;left:915px;top:320px;width:305px;height:120px"><span class="tag">Answer</span><div style="font-weight:600;font-size:17px;margin-top:6px">Prerequisite SE201 missing.</div><div class="desc" style="font-size:15px;margin-top:2px">Source: Registration rules, section 4.2</div></div>
         <div class="p card tile a" style="--d:5.4s;left:60px;top:480px;width:270px;height:170px"><div class="name">LLM</div><div class="desc">The "brain" that reads, understands, and writes text</div></div>
-        <div class="p card tile a" style="--d:5.7s;left:356px;top:480px;width:270px;height:170px"><div class="name">RAG</div><div class="desc">Search company documents first, then answer from them</div></div>
+        <div class="p card tile a" style="--d:5.7s;left:356px;top:480px;width:270px;height:170px"><div class="name">RAG</div><div class="desc">Search the organization's documents first, then answer from them</div></div>
         <div class="p card tile a" style="--d:6s;left:652px;top:480px;width:270px;height:170px"><div class="name">Vector database</div><div class="desc">Finds text by meaning, not only by keywords</div></div>
-        <div class="p card tile a" style="--d:6.3s;left:948px;top:480px;width:272px;height:170px"><div class="name">Tools</div><div class="desc">Log search, message format checker, ticketing system</div></div>
+        <div class="p card tile a" style="--d:6.3s;left:948px;top:480px;width:272px;height:170px"><div class="name">Connectors</div><div class="desc">Plug-ins that read records, one per template</div></div>
       </section>
 
-      <!-- 9 Safety -->
-      <section class="scene" data-dur="9000" data-name="Safety" data-cap="Safety comes first. A person approves everything. Agents have read-only access. Account numbers are hidden before the AI sees them, and every action is recorded in an audit log.">
-        <div class="p hd"><div class="eye a">09 · Safety</div><h2 class="h2 a" style="--d:.15s">Banking data needs safety from day one</h2></div>
+      <!-- 10 Safety -->
+      <section class="scene" data-dur="9000" data-name="Safety" data-cap="Safety comes first. A person approves everything. Agents can only read records. Personal data like national IDs and phone numbers is hidden before the AI sees it, and every action is recorded in an audit log.">
+        <div class="p hd"><div class="eye a">10 · Safety</div><h2 class="h2 a" style="--d:.15s">Personal data needs safety from day one</h2></div>
         <div class="p card a" style="--d:.4s;left:60px;top:160px;width:565px;height:220px">
-          <div class="name">A human approves everything</div><div class="desc">Nothing reaches a bank or the product without a person's OK.</div>
+          <div class="name">A human approves everything</div><div class="desc">Nothing is sent or changed without a person's OK.</div>
           <div style="display:flex;gap:10px;margin-top:22px"><span class="btn-fake ok">Approve</span><span class="btn-fake">Edit</span><span class="btn-fake">Reject</span></div>
         </div>
         <div class="p card a" style="--d:.8s;left:655px;top:160px;width:565px;height:220px">
-          <div class="name">Read-only access</div><div class="desc">Agents can look at logs and settings. They can never change them.</div>
+          <div class="name">Read-only connectors</div><div class="desc">Agents can look at records. They can never change them.</div>
           <div style="display:flex;align-items:center;gap:12px;margin-top:22px;color:var(--accent);font-weight:700">
-            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Logs · Client settings · Configs
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Registrations · Appointments
           </div>
         </div>
         <div class="p card a" style="--d:1.2s;left:60px;top:410px;width:565px;height:220px">
-          <div class="name">Personal data is hidden</div><div class="desc">Account numbers are masked before the AI sees them.</div>
-          <div class="mask" style="margin-top:22px"><span class="orig">JO71 CBJO 0010 0000 0000 0131 0003 02</span><span class="masked">JO71 •••• •••• •••• •••• •••• •••• 02</span></div>
+          <div class="name">Personal data is hidden</div><div class="desc">IDs and phone numbers are masked before the AI sees them.</div>
+          <div class="mask" style="margin-top:22px"><span class="orig">National ID 9881023456 · +962 79 123 4567</span><span class="masked">National ID ******3456 · +962 ** *** 4567</span></div>
         </div>
         <div class="p card a" style="--d:1.6s;left:655px;top:410px;width:565px;height:220px">
           <div class="name">Every action is recorded</div>
           <div class="mono" style="margin-top:12px;color:var(--muted)">
-            <div class="a" style="--d:2.4s">10:02 Watcher summarized circular</div>
-            <div class="a" style="--d:3.2s">10:04 Impact listed 2 clients</div>
-            <div class="a" style="--d:4s">10:09 <span style="color:var(--accent)">Analyst approved CR-112</span></div>
+            <div class="a" style="--d:2.4s">10:02 Change Watcher summarized circular</div>
+            <div class="a" style="--d:3.2s">10:04 Impact Analyst listed 2 programs</div>
+            <div class="a" style="--d:4s">10:09 <span style="color:var(--accent)">Dean's office approved AI-031</span></div>
           </div>
         </div>
       </section>
 
-      <!-- 10 Outcomes -->
-      <section class="scene" data-dur="8000" data-name="Outcomes" data-cap="Our goal: turn days of manual work into hours, give banks faster answers, and share expert knowledge. We will deliver a working prototype of both workflows using mock data.">
-        <div class="p hd"><div class="eye a">10 · Expected outcomes</div><h2 class="h2 a" style="--d:.15s">What changes with the Copilot</h2></div>
-        <div class="p" style="left:80px;top:180px;width:1120px;display:grid;grid-template-columns:260px 1fr 70px 1fr;gap:18px 20px;align-items:center">
-          <div class="tag a" style="--d:.3s">Topic</div><div class="tag a" style="--d:.3s">Today</div><div></div><div class="tag a" style="--d:.3s">With the Copilot (goal)</div>
-          <div class="name a" style="--d:.6s">New regulations</div><div class="card before a" style="--d:.6s">Days of manual reading</div><div class="arrow a" style="--d:1.1s">→</div><div class="card accent a" style="--d:1.3s;font-weight:600">Hours, with a draft ready to review</div>
-          <div class="name a" style="--d:1.9s">Support tickets</div><div class="card before a" style="--d:1.9s">Engineers dig through logs</div><div class="arrow a" style="--d:2.4s">→</div><div class="card accent a" style="--d:2.6s;font-weight:600">Cause found, reply drafted</div>
-          <div class="name a" style="--d:3.2s">Know-how</div><div class="card before a" style="--d:3.2s">Held by a few experts</div><div class="arrow a" style="--d:3.7s">→</div><div class="card accent a" style="--d:3.9s;font-weight:600">Shared in a searchable knowledge base</div>
+      <!-- 11 Product -->
+      <section class="scene" data-dur="9000" data-name="For any organization" data-cap="To use the product, an organization picks a template, adds its documents, connects its records, and starts reviewing what the agents prepare. It works in Arabic and English, with a local or cloud AI model.">
+        <div class="p hd"><div class="eye a">11 · For any organization</div><h2 class="h2 a" style="--d:.15s">From template to working agents in four steps</h2></div>
+        <div class="p" style="left:72px;top:190px;width:1136px;display:grid;grid-template-columns:repeat(4,1fr);gap:24px">
+          <div class="card a" style="--d:.5s;height:210px"><div class="eye">Step 1</div><div class="name" style="margin-top:10px">Choose a template</div><div class="desc">University, hospital, or start from a blank one</div></div>
+          <div class="card a" style="--d:1s;height:210px"><div class="eye">Step 2</div><div class="name" style="margin-top:10px">Add documents</div><div class="desc">Rules, policies and guides go into the knowledge base</div></div>
+          <div class="card a" style="--d:1.5s;height:210px"><div class="eye">Step 3</div><div class="name" style="margin-top:10px">Connect records</div><div class="desc">A connector reads registrations, appointments or orders</div></div>
+          <div class="card accent a" style="--d:2s;height:210px"><div class="eye">Step 4</div><div class="name" style="margin-top:10px">Review and approve</div><div class="desc">Agents prepare, people decide</div></div>
         </div>
-        <div class="p card a" style="--d:4.8s;left:80px;top:560px;width:1120px;display:flex;align-items:center;gap:16px">
-          <span class="chip good" style="font-size:15px">Deliverable</span><span style="font-size:20px;font-weight:600">A working prototype of both workflows, built on mock data</span>
+        <div class="p a" style="--d:2.8s;left:72px;top:460px;width:1136px;display:flex;gap:12px;flex-wrap:wrap">
+          <span class="chip good" style="font-size:16px;padding:6px 14px">Arabic and English</span>
+          <span class="chip good" style="font-size:16px;padding:6px 14px">Local or cloud AI model</span>
+          <span class="chip good" style="font-size:16px;padding:6px 14px">Evidence for every answer</span>
+          <span class="chip good" style="font-size:16px;padding:6px 14px">Human approval and audit log</span>
         </div>
       </section>
 
-      <!-- 11 End -->
-      <section class="scene" data-dur="6000" data-name="Summary" data-cap="Agents prepare the work, people make the decisions. Thank you. We are happy to take your questions.">
-        <div class="p" style="left:120px;top:200px;width:1040px;text-align:center;display:flex;flex-direction:column;gap:26px;align-items:center">
+      <!-- 12 Outcomes -->
+      <section class="scene" data-dur="8000" data-name="Outcomes" data-cap="Our goal: turn days of reading into hours, give faster answers to requests, and share expert knowledge. We will show a working prototype website with two templates, a university and a hospital.">
+        <div class="p hd"><div class="eye a">12 · Expected outcomes</div><h2 class="h2 a" style="--d:.15s">What changes with the Copilot</h2></div>
+        <div class="p" style="left:80px;top:180px;width:1120px;display:grid;grid-template-columns:260px 1fr 70px 1fr;gap:18px 20px;align-items:center">
+          <div class="tag a" style="--d:.3s">Topic</div><div class="tag a" style="--d:.3s">Today</div><div></div><div class="tag a" style="--d:.3s">With the Copilot (goal)</div>
+          <div class="name a" style="--d:.6s">New rules</div><div class="card before a" style="--d:.6s">Days of manual reading</div><div class="arrow a" style="--d:1.1s">→</div><div class="card accent a" style="--d:1.3s;font-weight:600">Hours, with action items ready to review</div>
+          <div class="name a" style="--d:1.9s">Requests</div><div class="card before a" style="--d:1.9s">Staff dig through records</div><div class="arrow a" style="--d:2.4s">→</div><div class="card accent a" style="--d:2.6s;font-weight:600">Cause found, reply drafted</div>
+          <div class="name a" style="--d:3.2s">Know-how</div><div class="card before a" style="--d:3.2s">Held by a few experts</div><div class="arrow a" style="--d:3.7s">→</div><div class="card accent a" style="--d:3.9s;font-weight:600">Shared in a searchable knowledge base</div>
+        </div>
+        <div class="p card a" style="--d:4.8s;left:80px;top:560px;width:1120px;display:flex;align-items:center;gap:16px">
+          <span class="chip good" style="font-size:15px">Demo</span><span style="font-size:20px;font-weight:600">A working website with two templates: University and Hospital (mock data)</span>
+        </div>
+      </section>
+
+      <!-- 13 End -->
+      <section class="scene" data-dur="6000" data-name="Summary" data-cap="Agents prepare the work, people make the decisions, for any organization. Thank you. We are happy to take your questions.">
+        <div class="p" style="left:120px;top:190px;width:1040px;text-align:center;display:flex;flex-direction:column;gap:26px;align-items:center">
           <div class="eye a" style="--d:.1s">Regulatory &amp; Support Copilot</div>
           <h2 class="title-big a" style="--d:.3s;font-size:68px;text-wrap:balance">Agents prepare the work.<br><span style="color:var(--accent)">People make the decisions.</span></h2>
-          <div class="a" style="--d:1s;font-size:26px;color:var(--muted)">Thank you · Questions?</div>
+          <div class="a" style="--d:1s;font-size:26px;color:var(--muted)">For any organization · Thank you · Questions?</div>
         </div>
       </section>
 
