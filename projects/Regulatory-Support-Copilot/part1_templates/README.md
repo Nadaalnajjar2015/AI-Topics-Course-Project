@@ -4,13 +4,13 @@
 **Guide:** `docs/01-Part1-Templates-Data-and-Connectors.pdf`
 **AI tool prompts:** `PROMPTS.md` in this folder
 
-The two organization templates (university and hospital) with all their mock data, the record connectors, and the read-only tools every agent uses.
+The two organization templates (payments company like ProgressSoft, and university) with all their mock data, the record connectors, and the read-only tools every agent uses.
 
 ```
 part1_templates/
-templates/university/  – template.yaml, units, stakeholders, documents, changes, records, requests, history, eval
-templates/hospital/    – the same layout, smaller data set
-connectors/            – base.py, registration_lookup.py, appointment_lookup.py
+templates/payments/    – main template: payments software company (like ProgressSoft)
+templates/university/  – second template, same layout, smaller data set
+connectors/            – base.py, transaction_lookup.py, registration_lookup.py
 tools/                 – templates.py, changes.py, directory.py, requests.py, records.py, action_list.py
 tests/
 ```

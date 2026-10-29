@@ -4,7 +4,7 @@
 **Guide:** `docs/04-Part4-Request-Desk-and-Orchestrator.pdf`
 **AI tool prompts:** `PROMPTS.md` in this folder
 
-The Request Investigator that answers student or patient requests from records and documents, and the orchestrator that runs every task.
+The Request Investigator that answers bank support tickets or student requests from records and documents, and the orchestrator that runs every task.
 
 ```
 part4_request_desk/
