@@ -60,5 +60,6 @@ pytest                                                              # all tests
 - `docs/project-overview.md` – short overview of the product
 - `docs/project-proposal.pdf` – the proposal sent to the doctor
 - `presentation/copilot-explainer.html` – animated explainer for class
+- `presentation/copilot-explainer-ar.html` – the same explainer in Arabic (right-to-left)
 
 Part 5 keeps this README up to date with the final demo steps.
