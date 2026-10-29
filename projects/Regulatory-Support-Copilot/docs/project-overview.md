@@ -4,18 +4,20 @@ A general product that any organization can customize: AI agents watch new rules
 and a person approves every result. This overview is the short version; the full details are in
 `docs/00-Project-Guide.pdf` and the five part guides.
 
-> All data in this project is fictional mock data. The idea started as a copilot for a payments software
-> company; on our doctor's advice we turned it into a product any organization can adopt.
+> All data in this project is fictional mock data. The idea started as a copilot for payments software
+> companies like ProgressSoft (Amman); on our doctor's advice we turned it into a product any organization
+> can adopt. A payments software company stays the main example.
 
 ## 1. The problem
 
 Every organization faces the same two problems:
 
-1. **New rules keep arriving.** A university gets a new accreditation rule, a hospital a new health
-   ministry rule, a company a new law or contract. Someone must read it, find what it affects and plan the
-   work. This takes days and depends on a few experts.
-2. **Requests keep arriving.** Students, patients or customers ask "why did this fail?" Someone must dig
-   through records to find the reason and reply. Replies are slow and staff time is wasted.
+1. **New rules keep arriving.** A payments software company gets a new central bank circular, a university
+   a new accreditation rule, a company a new law or contract. Someone must read it, find what it affects and
+   plan the work. This takes days and depends on a few experts.
+2. **Requests keep arriving.** Client banks, students or customers ask "why did this fail?" ("Why was
+   payment 7731 rejected?"). Someone must dig through records to find the reason and reply. Replies are slow
+   and staff time is wasted.
 
 ## 2. The product
 
@@ -26,17 +28,18 @@ One core engine with AI agents, customized for each organization by a **template
   its documents, its records connector, and hints for the AI's tone.
 - A **person approves** everything the agents prepare.
 
-| | University template | Hospital template |
+| | Payments template (main) | University template (second) |
 | --- | --- | --- |
-| Organization | Northfield University | Riverside General Hospital |
-| Unit | Study program / office | Department |
-| Stakeholder | Student group | Patient or staff group |
-| Record | Registration record | Appointment record |
-| Item | Course (SE301) | Appointment (APT-5521) |
-| Rule source | Higher Education Accreditation Commission | Ministry of Health of Country X |
-| Reviewer | Registrar / Dean's office | Patient Services / Quality office |
+| Organization | Cedar Payment Systems (like ProgressSoft) | Northfield University |
+| Unit | Product module (CHQ, ACH, IPS, WAL, RPT) | Study program / office |
+| Stakeholder | Client bank (BANK-A … BANK-E) | Student group |
+| Record | Transaction record | Registration record |
+| Item | Payment reference (7731) | Course (SE301) |
+| Reason codes | ISO 20022 (AC04, BE04 …) | PREREQ_MISSING, SECTION_FULL … |
+| Rule source | Central Bank of Country X / Y | Higher Education Accreditation Commission |
+| Reviewer | Business analyst / Support engineer | Registrar / Dean's office |
 
-Other organizations (a bank, a telecom, an online store) would only need a new template.
+Other organizations (a hospital, a telecom, an online store) would only need a new template.
 
 ## 3. The two workflows and their agents
 
@@ -68,21 +71,22 @@ Other organizations (a bank, a telecom, an online store) would only need a new t
 
 - Nothing is sent or saved without a human decision.
 - Connectors and tools are read-only.
-- National IDs, phone numbers, emails and medical record numbers are masked before any AI call.
+- IBANs, account and card numbers, national IDs, phone numbers and emails are masked before any AI call.
 - Every agent step and human decision is written to an audit log.
 - Text from documents and requests is treated as data, never as instructions (tested with a
-  prompt-injection request in each template).
+  prompt-injection request in each template: P-REQ-015 and U-REQ-010).
 
 ## 6. The demo
 
 The final presentation is a live demo of the website:
 
-- **Demo A – University, Change Watch:** circular CHG-U-001 (internship 6 → 8 weeks) → summary, impact on
-  CS-BSc and SE-BSc, draft action items → approval.
-- **Demo B – University, Request Desk:** U-REQ-007 from student S-2291 ("Why can't I register for SE301?")
-  → PREREQ_MISSING (SE201) → reply signed by the Registrar's Office.
-- **Demo C – Hospital:** switch the template → H-REQ-004 from patient P-1043 ("Why was my cardiology
-  appointment on 3 March cancelled?") → DOCTOR_UNAVAILABLE → reply signed by Patient Services → Setup page.
+- **Demo A – Payments, Change Watch:** central bank circular CHG-P-002 (structured creditor address
+  mandatory, missing → BE04) → summary, impact on ACH and IPS for BANK-A, BANK-B, BANK-E → draft action
+  items → approval.
+- **Demo B – Payments, Request Desk:** P-REQ-007 from BANK-C ("Why was payment 7731 rejected?") → AC04
+  closed account → reply signed "Support Team, Cedar Payment Systems".
+- **Demo C – University:** switch the template → U-REQ-007 from student S-2291 ("Why can't I register for
+  SE301?") → PREREQ_MISSING (SE201) → reply signed by the Registrar's Office → Setup page.
 
 ## 7. Team parts
 

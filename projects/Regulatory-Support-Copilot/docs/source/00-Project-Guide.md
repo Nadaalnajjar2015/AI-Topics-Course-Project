@@ -31,12 +31,12 @@ There are six guides. This one describes the whole product and the rules everyon
 
 ## 2. The product in one page
 
-**Where the idea came from.** The project started as a copilot for a Jordanian payments software company. Our doctor advised us to turn it into a product any organization can customize and buy, so that is what we build.
+**Where the idea came from.** The project started as a copilot for payments software companies like ProgressSoft (Amman, Jordan), which build payment and clearing systems for central and commercial banks. Our doctor advised us to turn it into a product any organization can customize and buy. So we build a general product, and a payments software company stays our **main example**.
 
 **The two problems every organization has.**
 
-1. **New rules keep arriving.** A university gets a new accreditation rule; a hospital gets a new health ministry rule. Someone must read it, find which programs or departments it affects, and plan the work. This takes days and depends on a few experts.
-2. **Requests keep arriving.** Students ask "Why can't I register for SE301?"; patients ask "Why was my appointment cancelled?". Someone must dig through records to find the reason and reply. Replies are slow.
+1. **New rules keep arriving.** A payments software company receives a new central bank circular (for example a new ISO 20022 field rule); a university gets a new accreditation rule. Someone must read it, find which product modules or study programs and which client banks or student groups it affects, and plan the work. This takes days and depends on a few experts.
+2. **Requests keep arriving.** Client banks ask "Why was payment 7731 rejected?"; students ask "Why can't I register for SE301?". Someone must dig through records to find the reason and reply. Replies are slow.
 
 **Our product.** One core engine with AI agents, customized by a **template** per organization:
 
@@ -45,37 +45,37 @@ There are six guides. This one describes the whole product and the rules everyon
 
 A template is a set of files: the organization's name, its words (labels), its units and stakeholder groups, its documents, which record connector to use, and prompt hints. **The code never changes per organization.**
 
-**What we build.** A working **prototype website** with two templates: **University** (Northfield University, the main demo) and **Hospital** (Riverside General Hospital, the second demo). Every agent step shows live, every answer shows its sources, and everything is audited. Plus an evaluation report per template. Other organizations (for example a bank or an online store) are only mentioned as possible future templates.
+**What we build.** A working **prototype website** with two templates: **Payments** (Cedar Payment Systems, a fictional payments software company like ProgressSoft, the **main demo**) and **University** (Northfield University, the second demo, which proves the product is general). Every agent step shows live, every answer shows its sources, and everything is audited. Plus an evaluation report per template. Other organizations (for example a hospital, a telecom or an online store) are only mentioned as possible future customers.
 
-**What we do not build.** No real organization data, no real student or patient records, no real connections to outside systems, no production login (the reviewer picks a name).
+**What we do not build.** No real company, bank or university data, no real payments, no real student records, no real connections to outside systems, no production login (the reviewer picks a name).
 
 ## 3. What the finished prototype does
 
 The final presentation is a **live demo of this website** to the doctor and the students. Build toward these three demos from week 1. If a feature does not serve them, it is optional.
 
-### Demo A: University, a new rule arrives (Change Watch)
+### Demo A: Payments, a new central bank circular arrives (Change Watch)
 
-1. The active template is **University**. Open **New Change**, choose `CHG-U-001` ("Internship extended from 6 to 8 weeks") and click **Analyze**.
+1. The active template is **Payments** (Cedar Payment Systems). Open **New Change**, choose `CHG-P-002` ("Structured creditor address mandatory in credit transfers") and click **Analyze**.
 2. The **Task page** shows the three agent steps running one after another: waiting, running, done or failed, with times.
 3. When done, it shows:
-    - the **summary**: each requirement, its effective date, and the exact sentence it came from;
-    - the **impact report**: affected units (CS-BSc, SE-BSc), affected student groups, severity, and the documents used as evidence;
-    - the **draft action items** with owner role, due date and checks.
-4. The reviewer picks their name and clicks **Approve**, **Edit** or **Reject** on each action item.
+    - the **summary**: each requirement (for example "payments without a structured creditor address must be rejected with reason code BE04"), its effective date, and the exact sentence it came from;
+    - the **impact report**: affected product modules (ACH, IPS), affected client banks (BANK-A, BANK-B, BANK-E in Country X), severity, and the product documents used as evidence;
+    - the **draft action items** (change requests) with owner role, due date and checks.
+4. The reviewer (a business analyst) picks their name and clicks **Approve**, **Edit** or **Reject** on each action item.
 5. Approved items appear on the **Action Items** page. The **Audit Log** shows every step and decision.
 
-### Demo B: University, a student request (Request Desk)
+### Demo B: Payments, a bank support ticket (Request Desk)
 
-1. Open **Requests**, choose `U-REQ-007` from student S-2291 ("Why can't I register for SE301?") and click **Investigate**.
-2. The Task page shows the steps: find the course, search the registration records, search the documents, draft the reply.
-3. The result shows the reason code (`PREREQ_MISSING`, SE201 not passed), the records used as evidence, the sources, a confidence level, and a draft reply signed by the Registrar's Office.
-4. The reviewer approves the reply. The request status changes to "Answered".
+1. Open **Requests**, choose `P-REQ-007` from client bank BANK-C ("Why was payment 7731 rejected?") and click **Investigate**.
+2. The Task page shows the steps: find the payment reference, search the transaction records, search the documents, draft the reply.
+3. The result shows the reason code (`AC04`, closed account), the transaction records used as evidence, the sources (`reason_codes.md`), a confidence level, and a draft reply signed "Support Team, Cedar Payment Systems".
+4. The reviewer (a support engineer) approves the reply. The request status changes to "Answered".
 
-### Demo C: switch to Hospital (proof that the product is general)
+### Demo C: switch to University (proof that the product is general)
 
-1. Use the **template switcher** in the navigation bar to choose **Hospital**. Every label and the organization name change.
-2. Open `H-REQ-004` from patient P-1043 ("Why was my cardiology appointment on 3 March cancelled?") and click **Investigate**. The same agent finds `CANCELLED · DOCTOR_UNAVAILABLE` and drafts a reply signed by Patient Services.
-3. Open the **Setup** page: it shows the hospital template's organization, labels, units, stakeholder groups, connector and document count. Say: "Same code, different template."
+1. Use the **template switcher** in the navigation bar to choose **University**. Every label and the organization name change (product module → study program, client bank → student group, transaction record → registration record).
+2. Open `U-REQ-007` from student S-2291 ("Why can't I register for SE301?") and click **Investigate**. The same agent finds `BLOCKED · PREREQ_MISSING` (SE201 not passed) and drafts a reply signed by the Registrar's Office.
+3. Open the **Setup** page: it shows the university template's organization, labels, units, stakeholder groups, connector and document count. Say: "Same code, different template."
 
 ### Extra pages
 
@@ -108,14 +108,14 @@ The final presentation is a **live demo of this website** to the doctor and the 
                                       | reads
              +--------------------------------------------------+
              |             TEMPLATE DATA  (Part 1)              |
-             |           university/  and  hospital/            |
+             |           payments/  and  university/            |
              |      docs, changes, records, requests, eval      |
              +--------------------------------------------------+
 ```
 
 **How a request flows (Workflow A):** the website calls `start_change_task()` → the orchestrator creates a task for the active template and calls the three Change Watch agents in order → each agent loads the template, fills its prompt with the template's labels (`prompting.render`), uses `search()` for evidence, `llm.complete_json()` to think, and Part 1 tools for facts → the orchestrator saves each output and writes audit events → the website polls the task every 2 seconds → the human decision is saved and audited.
 
-**How templates make it general:** every Part 1 and Part 2 function takes an optional `template_id` (none = the active template). The record lookup goes through a **connector** chosen in `template.yaml`: `registration_lookup` for the university, `appointment_lookup` for the hospital. Agents never contain the words "student" or "patient"; those come from the template's labels.
+**How templates make it general:** every Part 1 and Part 2 function takes an optional `template_id` (none = the active template). The record lookup goes through a **connector** chosen in `template.yaml`: `transaction_lookup` for the payments company, `registration_lookup` for the university. Agents never contain words like "bank", "payment" or "student"; those come from the template's labels.
 
 ## 5. The five parts at a glance
 
@@ -140,7 +140,7 @@ These choices are fixed so the parts fit together. Don't swap a library without 
 | Templates | YAML (`template.yaml`, read with `pyyaml`) + JSON / Markdown data files | Easy for people to read and edit; no code per organization |
 | Web | FastAPI + Jinja2 HTML templates + plain JavaScript | Simple, no front-end build step |
 | Database | SQLite (one file, `runtime/app.db`) | No server to install |
-| Vector database | Chroma (local, `runtime/chroma/`), one collection per template (`kb_university`, `kb_hospital`) | Free, offline, keeps organizations separate |
+| Vector database | Chroma (local, `runtime/chroma/`), one collection per template (`kb_payments`, `kb_university`) | Free, offline, keeps organizations separate |
 | Embeddings | Chroma's default model (all-MiniLM-L6-v2) | Free and local; about 80 MB download on first use |
 | LLM | One wrapper `part2_knowledge/common/llm.py` with providers `fake`, `ollama`, `anthropic`, `openai` | Develop free with `fake` or `ollama`; demo can use a stronger model |
 | Agents | Plain Python functions (no agent framework) | Easy to read, test and explain |
@@ -149,7 +149,7 @@ These choices are fixed so the parts fit together. Don't swap a library without 
 
 **About the LLM providers.** `fake` returns the example object from the contract, so code runs with no model (tests, early integration). `ollama` runs a free local model such as `qwen2.5:7b` or `llama3.1:8b` (about 8 GB RAM). `anthropic` or `openai` need a paid API key; a small model is enough. The team picks one provider for the demo and puts it in `.env`.
 
-> **Note on the word "template":** in this project a *template* means an organization's configuration (`part1_templates/templates/university/`). The website's HTML files in `part5_web/templates/` are Jinja2 HTML templates, a different thing. Say "HTML template" when you mean those.
+> **Note on the word "template":** in this project a *template* means an organization's configuration (`part1_templates/templates/payments/`). The website's HTML files in `part5_web/templates/` are Jinja2 HTML templates, a different thing. Say "HTML template" when you mean those.
 
 ## 7. Repository structure
 
@@ -169,10 +169,10 @@ AI-Topics-Course-Project/
     │
     ├── part1_templates/          PART 1 – Templates, Mock Data and Connectors
     │   ├── templates/
-    │   │   ├── university/       template.yaml, units.json, stakeholders.json, documents/,
+    │   │   ├── payments/         MAIN: template.yaml, units.json, stakeholders.json, documents/,
     │   │   │                     changes/, records/, requests/, history/, eval/, generators/
-    │   │   └── hospital/         the same layout, smaller data set
-    │   ├── connectors/           base.py, registration_lookup.py, appointment_lookup.py
+    │   │   └── university/       SECOND: the same layout, smaller data set
+    │   ├── connectors/           base.py, transaction_lookup.py, registration_lookup.py
     │   ├── tools/                templates.py, changes.py, directory.py, requests.py, records.py, action_list.py
     │   └── tests/
     ├── part2_knowledge/          PART 2 – Knowledge Base and AI Foundation
@@ -205,9 +205,9 @@ AI-Topics-Course-Project/
 ```
 python -m part2_knowledge.knowledge_base.ingest                 # build the search index (all templates)
 uvicorn part5_web.app:app --reload                              # website at http://127.0.0.1:8000
-python -m part3_change_watch.cli CHG-U-001                      # run Change Watch without the website
-python -m part4_request_desk.orchestrator.run --request U-REQ-007   # also --change CHG-U-001, --list
-python -m part5_web.evaluation.run_eval --template university   # or hospital, or all
+python -m part3_change_watch.cli CHG-P-002                      # run Change Watch without the website
+python -m part4_request_desk.orchestrator.run --request P-REQ-007   # also --change CHG-P-002, --list
+python -m part5_web.evaluation.run_eval --template payments     # or university, or all
 pytest                                                          # all tests
 ```
 
@@ -215,11 +215,11 @@ Each part folder has its own `README.md`, `AI_LOG.md` and `PROMPTS.md`.
 
 ## 8. Shared contracts
 
-Contracts are the data shapes and function signatures that connect the parts. They live in `contracts/schemas.py` as Pydantic models. Each model must include a `Field(description=...)` on every field and one realistic example (in `model_config = {"json_schema_extra": {"example": {...}}}`), because the `fake` LLM provider returns that example and the website uses it for previews. **Examples use university data**, so everyone shares one mental picture.
+Contracts are the data shapes and function signatures that connect the parts. They live in `contracts/schemas.py` as Pydantic models. Each model must include a `Field(description=...)` on every field and one realistic example (in `model_config = {"json_schema_extra": {"example": {...}}}`), because the `fake` LLM provider returns that example and the website uses it for previews. **Examples use payments data** (the main template), so everyone shares one mental picture.
 
 **Contract Day (end of week 1):** each owner writes the models for their part in one pull request, and everyone reviews all of them together in a 1-hour meeting. After that, changes need everyone's approval.
 
-> **Rule for a general product:** no contract field may contain an organization-specific word (no `student_id`, no `course_code`, no `patient`). Use the general words below; the template gives them labels.
+> **Rule for a general product:** no contract field may contain an organization-specific word (no `bank_id`, no `payment_ref`, no `student_id`). Use the general words below; the template gives them labels.
 
 ### 8.1 Data models
 
@@ -248,17 +248,17 @@ Example of one model in JSON form, to show the level of detail expected:
 
 ```json
 {
-  "request_id": "U-REQ-007",
-  "item": "SE301",
-  "reason_code": "PREREQ_MISSING",
-  "root_cause": "Student S-2291 has not passed the prerequisite SE201.",
-  "evidence": [{"record_id": "UR-00412", "template_id": "university", "timestamp": "2026-09-14T09:19:00",
-                "person_id": "S-2291", "unit_id": "SE-BSc", "item": "SE301", "status": "BLOCKED",
-                "reason_code": "PREREQ_MISSING", "detail": "Prerequisite SE201 not completed"}],
-  "sources": [{"text": "PREREQ_MISSING – the student has not passed a required course ...",
-               "source": "part1_templates/templates/university/documents/registration_rules.md",
-               "doc_type": "reason_codes", "location": "4.2 PREREQ_MISSING", "score": 0.84, "metadata": {}}],
-  "draft_reply": "Dear student, you cannot register for SE301 yet because it requires SE201 ...",
+  "request_id": "P-REQ-007",
+  "item": "7731",
+  "reason_code": "AC04",
+  "root_cause": "Payment 7731 was rejected because the receiving account at BANK-C is closed.",
+  "evidence": [{"record_id": "PR-00388", "template_id": "payments", "timestamp": "2026-03-02T09:12:03",
+                "person_id": "BANK-C", "unit_id": "ACH", "item": "7731", "status": "rejected",
+                "reason_code": "AC04", "detail": "pacs.008 rejected: creditor account closed"}],
+  "sources": [{"text": "AC04 – Closed account number. The creditor account is closed ...",
+               "source": "part1_templates/templates/payments/documents/reason_codes.md",
+               "doc_type": "reason_codes", "location": "AC04", "score": 0.84, "metadata": {"reason_code": "AC04"}}],
+  "draft_reply": "Dear BANK-C team, payment 7731 was rejected because the receiving account is closed ...",
   "confidence": "high",
   "escalate": false
 }
@@ -294,25 +294,27 @@ Each part exposes these functions. Other parts call **only** these, never intern
 
 ## 9. Data policy: templates and mock data
 
-We have no real university or hospital data, and we must never use any. Part 1 creates two complete fictional organizations:
+We have no real data from ProgressSoft, any bank or any university, and we must never use any. Part 1 creates two complete fictional organizations:
 
-| | University template | Hospital template |
+| | Payments template (main) | University template (second) |
 | --- | --- | --- |
-| Organization | Northfield University | Riverside General Hospital |
-| Units | 6: CS-BSc, SE-BSc, BUS-BBA, NUR-BSc, REG-OFF, INTL-OFF | 6: CARD, RAD, ER, OPC, PHARM, MED-REC |
-| Stakeholder groups | 6 student and staff groups | 5 patient and staff groups |
-| Change documents | 5 (CHG-U-001 … 005) | 3 (CHG-H-001 … 003) |
-| Records | about 400 registration records | about 250 appointment records |
-| Requests | 15 (U-REQ-001 … 015) | 10 (H-REQ-001 … 010) |
+| Organization | Cedar Payment Systems (a payments software company like ProgressSoft) | Northfield University |
+| Units | 5 product modules: CHQ, ACH, IPS, WAL, RPT | 6: CS-BSc, SE-BSc, BUS-BBA, NUR-BSc, REG-OFF, INTL-OFF |
+| Stakeholder groups | 5 client banks: BANK-A … BANK-E | 6 student and staff groups |
+| Change documents | 5 central bank circulars (CHG-P-001 … 005) | 3 (CHG-U-001 … 003) |
+| Records | about 500 transaction records | about 250 registration records |
+| Reason codes | 12 real ISO 20022 codes (AC01, AC04, AM04, BE04 …) | PREREQ_MISSING, SECTION_FULL, FEES_UNPAID … |
+| Requests | 15 bank support tickets (P-REQ-001 … 015) | 10 student requests (U-REQ-001 … 010) |
 | Evaluation | full answer sets | small answer sets |
 
 Rules:
 
-- **Fictional names only.** No real university, hospital, ministry, student, patient or staff member. Regulators are invented ("Higher Education Accreditation Commission", "Ministry of Health of Country X").
+- **Fictional names only.** No real company, bank, central bank, university, student or staff member. ProgressSoft is named only as the real company that inspired the main template; its data is never used. Organizations and regulators are invented ("Cedar Payment Systems", "Central Bank of Country X", "Higher Education Accreditation Commission").
+- **Real public standards are allowed:** ISO 20022 message names (pacs.008, pacs.002) and reason codes (AC01, AC04, BE04 …) are public and make the payments template realistic.
 - **AI-generated text is allowed and expected** for documents, change documents and requests. A human must check every generated file for consistency (Part 1 guide).
 - **Records are generated by a script with a fixed random seed** (`seed 42`), so every member gets identical data.
 - **Mark it.** Every data file starts with `MOCK DATA – fictional, for a student prototype` (in JSON files, a `"_note"` field).
-- **Fake personal data for safety tests** must be clearly invented: 10-digit national IDs, phone numbers like `+962 7X XXX XXXX`, emails, medical record numbers like `MRN-123456`.
+- **Fake personal data for safety tests** must be clearly invented: IBAN-shaped numbers (`JO71 CBJO 0010 0000 0000 0131 0003 02`), long account numbers, card numbers, 10-digit national IDs, phone numbers like `+962 7X XXX XXXX`, and emails.
 
 ## 10. Environment setup (every member)
 
@@ -346,7 +348,7 @@ pip install -r requirements.txt
 6. **Create your settings file:** copy `.env.example` to `.env`. Start with `LLM_PROVIDER=fake`. Never commit `.env`.
 
 ```
-ACTIVE_TEMPLATE=university   # university | hospital
+ACTIVE_TEMPLATE=payments     # payments | university
 TEMPLATES_DIR=part1_templates/templates
 LLM_PROVIDER=fake            # fake | ollama | anthropic | openai
 LLM_MODEL=qwen2.5:7b
@@ -401,11 +403,11 @@ Then on GitHub: **open a pull request** into `main`, fill the template, link the
 
 ### 11.3 Rules
 
-- **Branch names:** `partN/short-description`, for example `part1/university-template`, `part5/setup-page`.
+- **Branch names:** `partN/short-description`, for example `part1/payments-template`, `part5/setup-page`.
 - **Commit messages:** `type(partN): what changed`, where type is `feat`, `fix`, `test`, `docs` or `refactor`.
 - **Small pull requests**, under about 400 changed lines, at least every 3–4 days.
 - **Only edit your own part folder.** Need a change elsewhere? Open an Issue and assign the owner.
-- **Test with both templates.** A pull request that works for the university but breaks the hospital is not done.
+- **Test with both templates.** A pull request that works for the payments template but breaks the university is not done.
 - **Reviewing is part of your grade.** At least one real comment or question per review.
 - **Never commit:** `.env`, API keys, `.venv/`, `runtime/`, files over 5 MB.
 - **Pull `main` into your branch** (`git pull origin main`) before opening a PR.
@@ -429,14 +431,14 @@ Each member may use any AI coding tool (Claude Code, Cursor, Copilot, ChatGPT �
 4. **You must understand every line you merge.** Anyone may be asked about any line in the demo.
 5. **The tool must not change other parts' folders or the contracts.** If it suggests that, stop and open an Issue.
 6. **Never paste secrets** into an AI tool or into code.
-7. **No organization-specific code.** If the tool writes "student" or "patient" in agent code, move the word into the template.
+7. **No organization-specific code.** If the tool writes "bank", "payment" or "student" in agent code, move the word into the template.
 8. **Keep `AI_LOG.md` in your folder:** the main prompts and what you changed by hand.
 
 ### 12.2 Starter prompt shape
 
 ```
 You are helping me build Part N of a 5-person student project, the "Regulatory & Support
-Copilot", a general product customized per organization by templates (university, hospital).
+Copilot", a general product customized per organization by templates (payments, university).
 Work in projects/Regulatory-Support-Copilot of the AI-Topics-Course-Project repository.
 Read the guides in docs/source/, contracts/schemas.py and <my folder>/PROMPTS.md first.
 Rules: Python 3.11, Pydantic v2, follow the contracts exactly, edit only <my folder>, no
@@ -451,10 +453,10 @@ The plan assumes 8 weeks. If your deadline differs, keep the order and stretch o
 | Week | Everyone | Milestone |
 | --- | --- | --- |
 | 1 | Setup (Section 10), Contract Day, Part 1 writes both `template.yaml` files | **M1:** contracts and template format merged |
-| 2 | Stubs for every interface; Part 1 delivers a university data sample | Everyone can import everyone's functions |
-| 3 | Core building with the `fake` LLM on the university template | Each part has working code + tests |
+| 2 | Stubs for every interface; Part 1 delivers a payments data sample | Everyone can import everyone's functions |
+| 3 | Core building with the `fake` LLM on the payments template | Each part has working code + tests |
 | 4 | **First integration:** Demos A and B run on the website with `fake` LLM | **M2:** clickable end-to-end prototype |
-| 5 | Real LLM; Part 1 delivers the hospital template; everyone tests with both templates | Demo C works |
+| 5 | Real LLM; Part 1 delivers the university template; everyone tests with both templates | Demo C works |
 | 6 | Quality week: bugs, errors, website polish, safety; feature freeze at the end | All three demos stable |
 | 7 | Evaluation for both templates, final data fixes, report | **M3:** evaluation report ready |
 | 8 | Rehearse the live demo twice, record a backup video, final report | **M4:** final demo |
@@ -465,11 +467,11 @@ The plan assumes 8 weeks. If your deadline differs, keep the order and stretch o
 
 ### 14.1 Integration order
 
-1. Part 1 first: both `template.yaml` files and the university data; Part 2 ingests and searches them.
+1. Part 1 first: both `template.yaml` files and the payments data; Part 2 ingests and searches them.
 2. Parts 3 and 4 agents use `search()`, `prompting.render()` and the tools, tested alone from the command line.
 3. Part 4's orchestrator connects the agents (`python -m part4_request_desk.orchestrator.run`).
 4. Part 5's website calls the orchestrator; Demos A and B in the browser.
-5. Hospital template added; Demo C; safety and evaluation last.
+5. University template added; Demo C; safety and evaluation last.
 
 **Integration tests** live in `tests/integration/` (Parts 4 and 5 together): one test per workflow **per template**, using the `fake` provider.
 
@@ -478,7 +480,7 @@ The plan assumes 8 weeks. If your deadline differs, keep the order and stretch o
 - [ ] Demos A, B and C (Section 3) work on a fresh clone by following README.md.
 - [ ] Switching the template changes every label, the organization name and the data, with no code change.
 - [ ] Every agent output shows its sources; nothing is "sent" or saved as an action item without approval.
-- [ ] Personal data (IDs, phones, emails, medical record numbers) is masked before any LLM call (tested).
+- [ ] Personal data (IBANs, account and card numbers, national IDs, phones, emails) is masked before any LLM call (tested), and the prompt-injection tests P-REQ-015 and U-REQ-010 pass.
 - [ ] The audit log records every agent step and human decision.
 - [ ] `pytest` passes; each part has tests for its public functions; integration tests run for both templates.
 - [ ] The evaluation report exists for both templates and is shown on the website.
@@ -509,20 +511,22 @@ The plan assumes 8 weeks. If your deadline differs, keep the order and stretch o
 
 | Term | Meaning |
 | --- | --- |
-| Template | One organization's configuration: `template.yaml` plus its data files (for example `templates/university/`) |
+| Template | One organization's configuration: `template.yaml` plus its data files (for example `templates/payments/`) |
 | Active template | The template the system is using now (`ACTIVE_TEMPLATE` in `.env`, or the website switcher) |
-| Label | The organization's word for a general concept (unit → "Study program" or "Department") |
-| Unit | A part of the organization a rule can affect: a study program, an office, a department |
-| Stakeholder | A group of people affected by a rule: a student group, a patient group, a staff group |
-| Person | One individual who sends requests and has records (student S-2291, patient P-1043) |
-| Record | One entry in the organization's records (a registration attempt, an appointment) |
-| Item | What a record is about (a course code like SE301, an appointment ID like APT-5521) |
-| Connector | A small plug-in that reads one kind of record (`registration_lookup`, `appointment_lookup`) |
-| Change document | A new rule, circular or policy that the Change Watch workflow analyzes |
+| Label | The organization's word for a general concept (unit → "Product module" or "Study program") |
+| Unit | A part of the organization a rule can affect: a product module (ACH), a study program, an office |
+| Stakeholder | A group affected by a rule: a client bank, a student group, a staff group |
+| Person | Whoever sends requests and has records (client bank BANK-C, student S-2291) |
+| Record | One entry in the organization's records (a payment transaction, a registration attempt) |
+| Item | What a record is about (a payment reference like 7731, a course code like SE301) |
+| Payment reference | The number that identifies one payment in the transaction records (for example 7731) |
+| Connector | A small plug-in that reads one kind of record (`transaction_lookup`, `registration_lookup`) |
+| Change document | A new rule, central bank circular or policy that the Change Watch workflow analyzes |
+| ISO 20022 | The international standard for payment messages (pacs.008 = customer credit transfer, pacs.002 = payment status) |
 | Requirement | One concrete rule extracted from a change document, with its exact quote |
 | Action item | A planned piece of work caused by a rule change, with owner, due date and checks |
 | Request | A question or complaint from a person, handled by the Request Desk workflow |
-| Reason code | A short code explaining why a record failed (PREREQ_MISSING, DOCTOR_UNAVAILABLE) |
+| Reason code | A short code explaining why a record failed (ISO 20022 AC04 = closed account; PREREQ_MISSING for the university) |
 | Agent | A Python function that uses an LLM plus tools to do one job and return a structured result |
 | Orchestrator | The code that runs the agents in order and keeps each task's state |
 | LLM | Large Language Model, the "brain" that reads and writes text |

@@ -3,7 +3,7 @@
 
 # Part 4: Request Desk Agent and Orchestrator
 
-<div class="sub">You build the Request Investigator that answers student or patient requests from records and documents, and the orchestrator that runs every task, step by step, for every template.</div>
+<div class="sub">You build the Request Investigator that answers bank support tickets and student requests from records and documents, and the orchestrator that runs every task, step by step, for every template.</div>
 
 | | |
 | --- | --- |
@@ -20,10 +20,10 @@
 
 Two jobs that make you the team's **integrator**:
 
-1. **Request Investigator (Workflow B, "Request Desk"):** read an incoming request (a student asking why registration failed, a patient asking why an appointment was cancelled), find the record it is about, identify the reason, gather evidence from the organization's documents, and draft a clear reply for a human to approve. The same code works for every template; only the template's settings change.
+1. **Request Investigator (Workflow B, "Request Desk"):** read an incoming request (a client bank asking why a payment was rejected, a student asking why registration failed), find the record it is about, identify the reason, gather evidence from the organization's documents, and draft a clear reply for a human to approve. The same code works for every template; only the template's settings change.
 2. **Orchestrator:** the "manager" that receives a task from the website, runs the right agents in order in the background, records each step's status and output, writes audit events, and stores everything in SQLite so the website can show progress live.
 
-> **Guide's note:** You are where the parts meet, so you will see integration problems first. Don't fix other people's code yourself; open an Issue for them with the exact error and input. Your first-integration demo in week 4 is the most important milestone of the project. Never write the words "student", "course" or "patient" into your code: they come from the template.
+> **Guide's note:** You are where the parts meet, so you will see integration problems first. Don't fix other people's code yourself; open an Issue for them with the exact error and input. Your first-integration demo in week 4 is the most important milestone of the project. Never write the words "bank", "payment", "student" or "course" into your code: they come from the template.
 
 ## 2. What you deliver
 
@@ -66,12 +66,12 @@ Two jobs that make you the team's **integrator**:
 ### Week 3
 
 5. Implement the real orchestrator with background threads, using the other parts' stubs. Test with `python -m part4_request_desk.orchestrator.run`.
-6. Implement the Request Investigator with the `fake` provider on the university template.
+6. Implement the Request Investigator with the `fake` provider on the payments template (the main one).
 
 ### Week 4: first integration (milestone M2)
 
 7. Connect the real parts of Parts 1–3 as they become ready. Sit with Part 5 and make both workflows run from the website with the `fake` provider.
-8. Write the integration tests for the university template, then copy them for the hospital template.
+8. Write the integration tests for the payments template, then copy them for the university template.
 
 ### Weeks 5–6
 
@@ -92,20 +92,20 @@ Everything specific to an organization comes from the template: `template = load
 
 | Template | Item (what a record is about) | `item_pattern` | Example request |
 | --- | --- | --- | --- |
+| payments (main) | Payment reference | `(?:payment\|ref\|transfer)\s*[#=]?\s*(\d{4,6})` (case-insensitive; group 1 is the item) | P-REQ-007 from BANK-C: "Why was payment 7731 rejected?" |
 | university | Course code | `[A-Z]{2,4}\d{3}` | U-REQ-007 from S-2291: "Why can't I register for SE301?" |
-| hospital | Appointment ID | `APT-\d{4}` | H-REQ-004 from P-1043: "Why was my cardiology appointment on 3 March cancelled?" |
 
 **Steps (code first, LLM where needed):**
 
-1. **Find the item.** First with code: `re.search(template.item_pattern, request.body)`. Use `request.item` if it is already set. Only if code finds nothing, ask the LLM to extract it (or say there is none), and check the LLM's answer against the same pattern.
-2. **Classify the request.** If there is no item and the text is a general question (for example "What is the absence limit?" or "Do I need a referral for an MRI?"), take the **question path**: answer from `search(request.body, filters={"doc_type": "document"}, template_id=request.template_id)`, with `reason_code = null` and no records.
-3. **Search the records (code).** `search_records(person_id=request.person_id, item=item, template_id=request.template_id)`.
-    - **No item but a person:** search all of that person's records, keep those whose `unit_id` matches a unit named in the text (match the unit names and IDs from `list_units()`, for example "cardiology" → `CARD`), and take the **latest record that is not OK**. This is how H-REQ-004 works: it has a date and a department but no appointment ID.
-    - **No records found** → `escalate = true`, `confidence = "low"`, and a reply that politely says the team is checking.
-    - **The latest status is a success** (registered, completed) → explain that the action succeeded, with the time.
-    - **A blocked or cancelled record** → take its `reason_code` (for example `PREREQ_MISSING` or `DOCTOR_UNAVAILABLE`). Keep the matching records as `evidence`.
+1. **Find the item.** First with code: `re.search(template.item_pattern, request.body, re.IGNORECASE)`; if the pattern has a capture group, the item is group 1 ("payment 7731" → `7731`), otherwise the whole match (`SE301`). Use `request.item` if it is already set. Only if code finds nothing, ask the LLM to extract it (or say there is none), and check the LLM's answer against the same pattern.
+2. **Classify the request.** If there is no item and the text is a general question (for example "What is the cheque cut-off time?" or "What is the absence limit?"), take the **question path**: answer from `search(request.body, filters={"doc_type": "document"}, template_id=request.template_id)`, with `reason_code = null` and no records.
+3. **Search the records (code).** `search_records(person_id=request.person_id, item=item, template_id=request.template_id)`, for example `search_records(person_id="BANK-C", item="7731", template_id="payments")`.
+    - **No item but a person:** search all of that person's records, keep those whose `unit_id` matches a unit named in the text (match the unit names and IDs from `list_units()`, for example "instant payment" → `IPS`, "internship" → `CS-BSc`), and take the **latest failed record** (a record with a reason code). This covers tickets such as "our instant transfers this morning keep failing", which name a module but no reference.
+    - **No records found** (for example a payment reference that does not exist) → `escalate = true`, `confidence = "low"`, and a reply that politely says the team is checking the reference.
+    - **The latest record is a success** (no reason code: a settled payment, a completed registration) → explain that it succeeded, with the time ("Payment 8820 was settled at 10:42 on 2 March").
+    - **A failed record** (rejected payment, blocked registration) → take its `reason_code` (for example `AC04` closed account, or `PREREQ_MISSING`). Keep the matching records as `evidence`.
 4. **Gather knowledge (RAG).** Search the template's reason-code document for the code: `search(reason_code, filters={"doc_type": "reason_codes", "reason_code": reason_code}, k=2, template_id=request.template_id)` (Part 2 indexes `reason_codes_doc` one chunk per code), which returns the section explaining the code and what to do next. Also `search(request.body, filters={"doc_type": "past_request"}, k=2, template_id=request.template_id)` for similar past cases. Put both in `sources`.
-5. **Ask the LLM** for `root_cause` (one or two sentences) and `draft_reply`, giving it the request, the record evidence and the sources inside tags. Build the system prompt from `prompts/investigator.md` with `prompting.render()`, so `{organization}`, `{person_label}`, `{record_label}` and `{prompt_hints}` are filled from the template. Reply rules (write them in the prompt file): polite and short; explain the reason in plain words; tell the person what to do next; never include other people's data or internal system names; sign exactly as the template's `prompt_hints` says ("Registrar's Office" or "Patient Services").
+5. **Ask the LLM** for `root_cause` (one or two sentences) and `draft_reply`, giving it the request, the record evidence and the sources inside tags. Build the system prompt from `prompts/investigator.md` with `prompting.render()`, so `{organization}`, `{person_label}`, `{record_label}` and `{prompt_hints}` are filled from the template. Reply rules (write them in the prompt file): polite and short; explain the reason in plain words; tell the person what to do next; never include full account numbers, other clients' or people's data, or internal system names; sign exactly as the template's `prompt_hints` says ("Support Team, Cedar Payment Systems" or "Registrar's Office").
 6. **Confidence (code, not LLM):** `high` = record found and its reason code explained in the documents · `medium` = record found but the code is not in the documents, or there are no sources · `low` = no record found. Set `escalate = true` for `low`.
 
 ## 6. The orchestrator
@@ -150,9 +150,9 @@ Store outputs as `model_dump(mode="json")` so they are plain JSON. To show finer
 ### 6.5 Command-line runner
 
 ```
-python -m part4_request_desk.orchestrator.run --change CHG-U-001
-python -m part4_request_desk.orchestrator.run --request U-REQ-007
-python -m part4_request_desk.orchestrator.run --request H-REQ-004 --template hospital
+python -m part4_request_desk.orchestrator.run --change CHG-P-002
+python -m part4_request_desk.orchestrator.run --request P-REQ-007
+python -m part4_request_desk.orchestrator.run --request U-REQ-007 --template university
 python -m part4_request_desk.orchestrator.run --list
 ```
 
@@ -160,7 +160,7 @@ It runs the task synchronously and prints each step and the final outputs. `--te
 
 ## 7. Quality: how you will be measured
 
-Part 5's evaluation compares investigations with each template's `request_eval.json` (university: 15 requests, hospital: 10):
+Part 5's evaluation compares investigations with each template's `request_eval.json` (payments: 15 requests, university: 10):
 
 | Metric | Target |
 | --- | --- |
@@ -168,8 +168,8 @@ Part 5's evaluation compares investigations with each template's `request_eval.j
 | Reason code correct | ≥ 90% (it comes from records, so code should make it near perfect) |
 | Escalation correct (requests with no record escalate, others don't) | 100% |
 | Root cause contains the expected keywords | ≥ 80% |
-| Reply contains no unmasked national ID, phone or record number | 100% |
-| Demo requests: U-REQ-007 → `PREREQ_MISSING` (SE201 missing); H-REQ-004 → `DOCTOR_UNAVAILABLE` | Always correct |
+| Reply contains no full account number, IBAN, national ID or phone number | 100% |
+| Demo requests: P-REQ-007 → `AC04` (closed account); U-REQ-007 → `PREREQ_MISSING` (SE201 missing) | Always correct |
 | Average time per request | Report it (no target) |
 
 ## 8. How your work shows on the website
@@ -181,7 +181,7 @@ Part 5's evaluation compares investigations with each template's `request_eval.j
 
 ## 9. Testing and definition of done
 
-- [ ] Investigator unit tests (fake provider, mocked records and search) for **both templates**: blocked/cancelled record, successful record, no record, general question, and the person + unit fallback (H-REQ-004).
+- [ ] Investigator unit tests (fake provider, mocked records and search) for **both templates**: failed record (rejected payment, blocked registration), successful record (settled payment), no record (unknown reference), general question, and the person + unit fallback.
 - [ ] Item-extraction tests for at least 6 writing styles per template, using each template's `item_pattern`.
 - [ ] Confidence and escalation rules tested in code.
 - [ ] Store tests: save/load round trip, filters (including `template_id`), newest first.
@@ -212,11 +212,11 @@ The five ready prompts are in `part4_request_desk/PROMPTS.md`. The general shape
 ```
 You are helping me build Part 4 (Request Desk Agent and Orchestrator) of a 5-person student
 project, the "Regulatory & Support Copilot", a general product customized by templates
-(university and hospital). I attached the project guide, my part guide and contracts/schemas.py.
+(a payments software company like ProgressSoft, and a university). I attached the project guide, my part guide and contracts/schemas.py.
 Rules: Python 3.11, Pydantic v2, sqlite3 and threading from the standard library; call the LLM
 only through part2_knowledge.common.llm; use other parts only through their public functions
-listed in Section 8.2 of the project guide; never hard-code template words (student, patient,
-course); edit only part4_request_desk/ and tests/integration/; pytest tests for every function.
+listed in Section 8.2 of the project guide; never hard-code template words (bank, payment,
+student, course); edit only part4_request_desk/ and tests/integration/; pytest tests for every function.
 First, give me a short plan. Wait for my approval. Then do this task:
 <for example: implement orchestrator/store.py as described in Section 6.4>.
 ```
@@ -227,5 +227,5 @@ First, give me a short plan. Wait for my approval. Then do this task:
 - **Sharing one SQLite connection between threads.** It crashes randomly. One connection per call.
 - **Swallowing errors.** A failed step must show its message on the website, or nobody can debug it.
 - **Letting the LLM find the reason code.** The records already contain it; code reads it exactly.
-- **Hard-coding the university.** If your code only works for `S-2291` and `SE301`, the hospital demo will fail. Test both templates every week.
+- **Hard-coding the payments template.** If your code only works for `BANK-C` and `7731`, the university demo will fail. Test both templates every week.
 - **Waiting for everyone before integrating.** Integrate with stubs from week 3, then swap in real parts one by one.

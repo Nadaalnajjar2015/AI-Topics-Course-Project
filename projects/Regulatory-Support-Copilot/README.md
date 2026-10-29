@@ -2,7 +2,8 @@
 
 A general product any organization can customize: AI agents watch new rules and answer requests,
 and a person approves every result. Each organization is set up with a **template** (no new code);
-this prototype ships two: **University** and **Hospital**. **All data is mock data.**
+this prototype ships two: **Payments** (main: Cedar Payment Systems, a payments software company like
+ProgressSoft) and **University** (second: Northfield University). **All data is mock data.**
 
 ## Start here
 
@@ -35,24 +36,24 @@ pip install -r requirements.txt
 copy .env.example .env               # macOS/Linux: cp .env.example .env
 ```
 
-`ACTIVE_TEMPLATE` in `.env` chooses the organization (`university` or `hospital`); the website can also switch it.
+`ACTIVE_TEMPLATE` in `.env` chooses the organization (`payments`, the default, or `university`); the website can also switch it.
 
 ## Run (once the parts are built)
 
 ```
 python -m part2_knowledge.knowledge_base.ingest                     # build the search index (all templates)
 uvicorn part5_web.app:app --reload                                  # website at http://127.0.0.1:8000
-python -m part3_change_watch.cli CHG-U-001                          # Change Watch without the website
-python -m part4_request_desk.orchestrator.run --request U-REQ-007   # also --change CHG-U-001, --list
-python -m part5_web.evaluation.run_eval --template all              # accuracy report (university, hospital, all)
+python -m part3_change_watch.cli CHG-P-002                          # Change Watch without the website
+python -m part4_request_desk.orchestrator.run --request P-REQ-007   # also --change CHG-P-002, --list
+python -m part5_web.evaluation.run_eval --template all              # accuracy report (payments, university, all)
 pytest                                                              # all tests
 ```
 
 ## Demo
 
-- **Demo A – University, Change Watch:** New Change → `CHG-U-001` (internship 6 → 8 weeks) → Analyze → review the action items.
-- **Demo B – University, Request Desk:** Requests → `U-REQ-007` ("Why can't I register for SE301?") → Investigate → approve the reply.
-- **Demo C – Hospital:** switch the template → `H-REQ-004` ("Why was my cardiology appointment on 3 March cancelled?") → Investigate → open the Setup page. Same code, different template.
+- **Demo A – Payments, Change Watch:** New Change → `CHG-P-002` (structured creditor address mandatory, missing → BE04) → Analyze → review the action items for ACH and IPS.
+- **Demo B – Payments, Request Desk:** Requests → `P-REQ-007` from BANK-C ("Why was payment 7731 rejected?") → Investigate → AC04 closed account → approve the reply.
+- **Demo C – University:** switch the template → `U-REQ-007` ("Why can't I register for SE301?") → Investigate → open the Setup page. Same code, different template.
 
 ## Other material
 

@@ -3,9 +3,9 @@
 Plain-language description of every model in `schemas.py` and every public function each part exposes.
 Full tables: `docs/00-Project-Guide.pdf`, Section 8. Keep this file in sync with `schemas.py`.
 
-**Golden rule:** no organization-specific words in contracts (no `student_id`, `course`, `patient`).
+**Golden rule:** no organization-specific words in contracts (no `bank_id`, `payment_ref`, `student_id`).
 The code uses general words; each template's `labels` turn them into the organization's words.
-Examples in `schemas.py` use university data.
+Examples in `schemas.py` use payments data (the main template).
 
 ## Data models
 
@@ -14,13 +14,13 @@ Examples in `schemas.py` use university data.
 - **TemplateConfig** – one organization's settings from `template.yaml`: id, organization name, languages,
   labels (the organization's words), which connector reads its records, the regex that finds an item in a
   request, the reason-codes document, prompt hints, action-item fields and reviewer roles.
-- **Unit** – a part of the organization a rule can affect (study program, office, department).
-- **Stakeholder** – a group of people a rule can affect (student group, patient group, staff group), with the
-  units it belongs to and extra attributes (for example `international: true`).
+- **Unit** – a part of the organization a rule can affect (product module such as ACH, study program, office).
+- **Stakeholder** – a group a rule can affect (client bank, student group, staff group), with the units it
+  belongs to and extra attributes (for example `country: Country X` or `international: true`).
 - **ChangeDocument** – a new rule or policy to analyze: id, template, title, issuer, scope, published and
   effective dates, full text.
-- **Record** – one entry in the organization's records (a registration attempt, an appointment): who
-  (`person_id`), which unit, which item, status and reason code.
+- **Record** – one entry in the organization's records (a payment transaction, a registration attempt): who
+  (`person_id`), which unit, which item, status and reason code (none = success).
 - **Request** – a question or complaint from a person: who sent it, subject, body, priority, status and the
   item it is about (if known).
 

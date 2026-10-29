@@ -33,8 +33,8 @@ summarise it in 5 lines, and wait for the task.
 4. **Read before writing.** The guides are Markdown files you can read:
    `docs/source/00-Project-Guide.md` and `docs/source/05-Part5-Website-Safety-and-Evaluation.md`. Follow them exactly.
 5. **General product.** Every organization name and label on every page comes from the active template
-   (`load_template(template_id)`), chosen with the template switcher. Never hard-code "Student", "Patient",
-   "Northfield" or "Riverside" in HTML or Python. Test every page with both templates (university and hospital).
+   (`load_template(template_id)`), chosen with the template switcher. Never hard-code "Client bank", "Student",
+   "Cedar" or "Northfield" in HTML or Python. Test every page with both templates (payments and university).
 6. **Stack.** Python 3.11+, FastAPI, Jinja2 templates (in `part5_web/templates/`, these are HTML templates),
    plain JavaScript, one CSS file, pytest. No front-end framework. No new library without asking me; if I agree,
    add it to `requirements.txt`.
@@ -55,7 +55,7 @@ summarise it in 5 lines, and wait for the task.
 ```
 You are my coding assistant for Part 5 (Website, Safety and Evaluation) of a 5-person student project, the
 "Regulatory & Support Copilot". It is a general product: any organization customizes it with a template, and we
-build two templates, a university and a hospital. The final presentation is a live demo of my website to the
+build two templates: a payments software company like ProgressSoft (main) and a university (second). The final presentation is a live demo of my website to the
 doctor and the students. All five students work in the same GitHub repository, each in their own part folder,
 each with their own AI tool.
 
@@ -114,9 +114,9 @@ New task for Part 5. Follow the rules in part5_web/PROMPTS.md.
 Create the branch `part5/safety-and-task-page` from an up-to-date main.
 Read the guide Sections 5.3, 5.4, 6.1 and 6.2 again.
 Task:
-1. Real `mask()` for national IDs, phone numbers, emails, medical record numbers (MRN-xxxxxx) and card numbers,
-   as in the table of Section 6.1; never mask person IDs (S-2291, P-1043), items (SE301, APT-5521), request IDs
-   or reason codes; at least 15 tests with examples from both templates.
+1. Real `mask()` for IBANs (JO71 CBJO 0010 0000 0000 0131 0003 02), long account numbers, card numbers,
+   national IDs, phone numbers and emails, as in the table of Section 6.1; never mask person IDs (BANK-C, S-2291),
+   items (payment 7731, SE301), request IDs or reason codes (AC04); at least 15 tests with examples from both templates.
 2. Real `audit.py`: tables `audit_events` (with template_id) and `review_decisions` in the same SQLite file,
    `log_event` never raises, `list_events(task_id, template_id)`, `save_decision`, `list_decisions`.
 3. The Task page `/tasks/{task_id}` with the live timeline (poll `GET /api/tasks/{id}` every 2 s, stop when not
@@ -145,7 +145,7 @@ Task:
    change, request or task; 400 empty text; 400 request from another template; decision must be
    approve/edit/reject). TestClient tests for each rule.
 3. `part5_web/safety/guidelines.md` with the five rules of Section 6.3.
-4. `tests/integration/test_prompt_injection.py`: investigation of U-REQ-015 and H-REQ-010 must not obey the
+4. `tests/integration/test_prompt_injection.py`: investigation of P-REQ-015 and U-REQ-010 must not obey the
    injected instruction and must keep the reason code from the records. (This folder is shared with Part 4;
    tell me what they should review.)
 Plan first and wait for my go. When done: run the tests, commit, push the branch,
@@ -159,14 +159,15 @@ New task for Part 5. Follow the rules in part5_web/PROMPTS.md.
 Create the branch `part5/evaluation-and-demo` from an up-to-date main.
 Read the guide Sections 7, 8 and 9 again.
 Task:
-1. `python -m part5_web.evaluation.run_eval --template university|hospital|all` with `--only` and `--limit`:
+1. `python -m part5_web.evaluation.run_eval --template payments|university|all` with `--only` and `--limit`:
    loads each template's eval files from `part1_templates/templates/<id>/eval/`, runs items through
    `run_change_sync` / `run_request_sync` and `search`, computes every metric in Section 7.2 per template,
    writes `runtime/eval/report.json` and `docs/evaluation-report.md`. (Writing `docs/evaluation-report.md` and
    `docs/demo-script.md` is allowed for this task.)
 2. The Evaluation page shows the latest report with date, model and one table per template.
 3. Run it once with the fake provider for both templates and show me the summary.
-4. Write `docs/demo-script.md` with Demos A, B and C from Section 8.2 (timed, about 10 minutes), update the
+4. Write `docs/demo-script.md` with Demos A, B and C from Section 8.2 (Demo A payments CHG-P-002, Demo B
+   payments P-REQ-007, Demo C switch to university U-REQ-007 + Setup; timed, about 10 minutes), update the
    project `README.md` so a stranger can run all three demos in 10 minutes, and replace `part5_web/README.md`
    with a one-page README.
 Plan first and wait for my go. When done: run the tests, commit, push the branch,

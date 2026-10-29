@@ -13,7 +13,7 @@ Five prompts for the owner of `part2_knowledge/` to give, one at a time, to thei
 
 ```
 You are my coding assistant for Part 2 (Knowledge Base and AI Foundation) of a 5-person student project,
-a general product customized by organization templates (university and hospital).
+a general product customized by organization templates (payments company like ProgressSoft as the main one, and university).
 Before doing anything: go to projects/Regulatory-Support-Copilot/, run `git checkout main` and
 `git pull`, list the folder tree, then read README.md, docs/source/00-Project-Guide.md, docs/source/02-Part2-Knowledge-Base-and-AI-Foundation.md,
 contracts/schemas.py and part2_knowledge/PROMPTS.md. Follow the "Rules for the AI tool" in that file.
@@ -32,8 +32,8 @@ summarise it in 5 lines, and wait for the task.
    Section 8.2. If a function does not exist yet, use its stub, or a small fake inside this part's tests.
 4. **Read before writing.** The guides are Markdown files you can read:
    `docs/source/00-Project-Guide.md` and `docs/source/02-Part2-Knowledge-Base-and-AI-Foundation.md`. Follow them exactly.
-5. **General product.** The same code must work for every organization template (`university` and
-   `hospital` in `part1_templates/templates/`). Never hard-code an organization name, label or unit;
+5. **General product.** The same code must work for every organization template (`payments` and
+   `university` in `part1_templates/templates/`). Never hard-code an organization name, label or unit;
    read them from the template (`load_template()`) and fill prompts with `render()`.
 6. **Stack.** Python 3.11+, Pydantic v2, pytest. Follow the contracts in `contracts/schemas.py`.
    No new library without asking me; if I agree, add it to `requirements.txt`.
@@ -57,7 +57,7 @@ summarise it in 5 lines, and wait for the task.
 ```
 You are my coding assistant for Part 2 (Knowledge Base and AI Foundation) of a 5-person student project, the
 "Regulatory & Support Copilot": a general product that any organization customizes with a template.
-We build two templates, a university and a hospital. All five students work in the same GitHub
+We build two templates: a payments software company like ProgressSoft (main) and a university (second). All five students work in the same GitHub
 repository, each in their own part folder, each with their own AI tool.
 
 Step 1 – Understand the whole project before doing anything:
@@ -81,7 +81,7 @@ Step 2 – Report back to me (no code yet):
 
 Step 3 – Then do this first task on branch `part2/contract-searchresult`:
 - Write my contract model `SearchResult` in the Part 2 section of `contracts/schemas.py`, every field with
-  `Field(description=...)` and a realistic example (a chunk from the university's `registration_rules.md`,
+  `Field(description=...)` and a realistic example (a chunk from the payments template's `reason_codes.md` about AC04,
   with `template_id` in its metadata). Add a test in `part2_knowledge/tests/` that the example validates.
 - Suggest in your report which contract fields of other parts need better descriptions for LLM JSON output
   (I will raise them on Contract Day; do not edit their sections).
@@ -96,7 +96,7 @@ Create the branch `part2/config-llm-prompting` from an up-to-date main.
 Read the guide Sections 5, 6 and 7 again. Teammates are blocked until this exists.
 Task:
 1. `part2_knowledge/common/config.py`: load `.env` with python-dotenv and expose one `settings` object with
-   the fields and defaults in Section 5, including `active_template` (default `university`) and
+   the fields and defaults in Section 5, including `active_template` (default `payments`) and
    `templates_dir` (default `part1_templates/templates`); create `runtime/` if missing.
 2. `part2_knowledge/common/llm.py` with `complete_text(system, user)` and `complete_json(system, user, schema)`,
    only the `fake` provider for now: it returns the schema's `json_schema_extra` example (or a fixed string).
@@ -107,7 +107,7 @@ Task:
 4. `part2_knowledge/knowledge_base/search.py` with a `search(query, k=5, filters=None, template_id=None)` stub
    returning the SearchResult example, and an `ingest.py` stub with `ingest_all(template_id=None)`.
 5. Tests: `complete_json` returns a valid instance for every model currently in `contracts/schemas.py`;
-   `render()` gives university labels for the university template and hospital labels for the hospital one.
+   `render()` gives payments labels (Product module, Client bank) for the payments template and university labels for the university one.
 Plan first and wait for my go. When done: run the tests, commit, push the branch,
 give me the pull request text, update AI_LOG.md, and report what is left.
 ```
@@ -117,8 +117,8 @@ give me the pull request text, update AI_LOG.md, and report what is left.
 ```
 New task for Part 2. Follow the rules in part2_knowledge/PROMPTS.md.
 Create the branch `part2/ingestion-and-search` from an up-to-date main.
-Read the guide Section 8 again and look at the real files in `part1_templates/templates/university/`
-and `part1_templates/templates/hospital/`.
+Read the guide Section 8 again and look at the real files in `part1_templates/templates/payments/`
+and `part1_templates/templates/university/`.
 Task:
 1. `ingest.py`: for each template folder, load every source in the table of Section 8.1, chunk by headings
    (800 chars, 100 overlap for long sections, context prefix), add the metadata keys (including
