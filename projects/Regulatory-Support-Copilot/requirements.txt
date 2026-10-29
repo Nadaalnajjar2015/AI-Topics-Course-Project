@@ -3,6 +3,7 @@ uvicorn[standard]
 jinja2
 python-multipart
 pydantic>=2
+pyyaml
 python-dotenv
 chromadb
 httpx

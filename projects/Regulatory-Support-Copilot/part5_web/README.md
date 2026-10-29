@@ -2,15 +2,16 @@
 
 **Owner:** (write your name and GitHub username)
 **Guide:** `docs/05-Part5-Website-Safety-and-Evaluation.pdf`
+**AI tool prompts:** `PROMPTS.md` in this folder
 
-The FastAPI website (run, watch and review workflows), masking and audit log, and the evaluation script.
+The demo website with the template switcher and Setup page, masking and audit log, and the evaluation for both templates.
 
 ```
 part5_web/
-app.py, templates/, static/ – the website
+app.py, templates/ (HTML), static/ – the website
 safety/     – masking.py, audit.py, guidelines.md
 evaluation/ – run_eval.py
-tests/      – tests for this part
+tests/
 ```
 
 Only the owner edits this folder. Other parts use it only through the public functions listed in
