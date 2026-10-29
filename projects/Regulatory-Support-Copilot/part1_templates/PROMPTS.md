@@ -1,6 +1,6 @@
 # Part 1: AI tool prompts
 
-Five prompts for the owner of `part1_data/` to give, one at a time, to their own AI coding tool (Claude Code, Cursor, Copilot, ChatGPT, …). Open the tool **inside the repository folder** `AI-Topics-Course-Project` so it can read every file.
+Five prompts for the owner of `part1_templates/` to give, one at a time, to their own AI coding tool (Claude Code, Cursor, Copilot, ChatGPT, …). Open the tool **inside the repository folder** `AI-Topics-Course-Project` so it can read every file.
 
 **How to use them**
 
@@ -12,10 +12,11 @@ Five prompts for the owner of `part1_data/` to give, one at a time, to their own
 ## Start of every session (paste before Prompts 2–5)
 
 ```
-You are my coding assistant for Part 1 (Mock Data and Tools) of a 5-person student project.
-Before doing anything: go to projects/ProgressSoft-Regulatory-Copilot/, run `git checkout main` and
-`git pull`, list the folder tree, then read README.md, docs/source/00-Project-Guide.md, docs/source/01-Part1-Mock-Data-and-Tools.md,
-contracts/schemas.py and part1_data/PROMPTS.md. Follow the "Rules for the AI tool" in that file.
+You are my coding assistant for Part 1 (Templates, Mock Data and Connectors) of a 5-person student project.
+Before doing anything: go to projects/Regulatory-Support-Copilot/, run `git checkout main` and
+`git pull`, list the folder tree, then read README.md, docs/source/00-Project-Guide.md,
+docs/source/01-Part1-Templates-Data-and-Connectors.md, contracts/schemas.py and part1_templates/PROMPTS.md.
+Follow the "Rules for the AI tool" in that file.
 Then check what already exists in my folder and in the other part folders that I depend on,
 summarise it in 5 lines, and wait for the task.
 ```
@@ -23,19 +24,21 @@ summarise it in 5 lines, and wait for the task.
 ## Rules for the AI tool (it reads these every time)
 
 1. **Where to work.** The Git repository is `AI-Topics-Course-Project`. The project lives in
-   `projects/ProgressSoft-Regulatory-Copilot/`. Run every command from that folder.
-2. **Your folder.** Edit only `part1_data/`. Never edit another part's folder, `docs/`, or
+   `projects/Regulatory-Support-Copilot/`. Run every command from that folder.
+2. **Your folder.** Edit only `part1_templates/`. Never edit another part's folder, `docs/`, or
    `contracts/schemas.py` (except the Contract Day prompt, and then only this part's own section).
    If something outside this folder needs to change, stop and write me a short GitHub Issue text instead.
 3. **Other parts.** Use other parts only through their public functions in the Project Guide,
    Section 8.2. If a function does not exist yet, use its stub, or a small fake inside this part's tests.
 4. **Read before writing.** The guides are Markdown files you can read:
-   `docs/source/00-Project-Guide.md` and `docs/source/01-Part1-Mock-Data-and-Tools.md`. Follow them exactly.
-5. **Stack.** Python 3.11+, Pydantic v2, pytest. Follow the contracts in `contracts/schemas.py`.
+   `docs/source/00-Project-Guide.md` and `docs/source/01-Part1-Templates-Data-and-Connectors.md`. Follow them exactly.
+5. **Stack.** Python 3.11+, Pydantic v2, pyyaml, pytest. Follow the contracts in `contracts/schemas.py`.
    No new library without asking me; if I agree, add it to `requirements.txt`.
+   The product is general: never write organization-specific logic in tools; put differences in
+   `template.yaml` or in a connector.
 6. **Plan first.** Before writing code, show me a short plan (files, functions, tests) and wait for my "go".
 7. **Small and tested.** Small functions with short comments. Every public function gets pytest tests in
-   `part1_data/tests/`. Run `pytest part1_data/tests` and show me the result before committing.
+   `part1_templates/tests/`. Run `pytest part1_templates/tests` and show me the result before committing.
 8. **Git.** Never commit to `main` and never force-push. Start each task from an up-to-date `main`:
    `git checkout main`, `git pull`, then `git checkout -b <branch name from the prompt>`.
    Commit messages look like `feat(part1): ...`, `test(part1): ...` or `fix(part1): ...`.
@@ -43,116 +46,129 @@ summarise it in 5 lines, and wait for the task.
    fills `.github/pull_request_template.md` (or open it with `gh pr create` if `gh` is installed).
 9. **Safety.** Never put API keys or secrets in code or commits. `.env` is never committed.
    All data is fictional (Project Guide, Section 9).
-10. **Log.** Add one line to `part1_data/AI_LOG.md` for this task (date, tool, short prompt, what we kept or changed).
+10. **Log.** Add one line to `part1_templates/AI_LOG.md` for this task (date, tool, short prompt, what we kept or changed).
 11. **Finish with a report:** files changed, how to test, what is left, and any questions or Issues for teammates.
 
 ## Prompt 1 – Study the whole project, then the Contract Day work
 
 ```
-You are my coding assistant for Part 1 (Mock Data and Tools) of a 5-person student project, the
-"Regulatory & Support Copilot". All five students work in the same GitHub repository, each in their
-own part folder, each with their own AI tool.
+You are my coding assistant for Part 1 (Templates, Mock Data and Connectors) of a 5-person student
+project, the "Regulatory & Support Copilot". It is a general product: one core engine that any
+organization customizes with a template. We build two templates, a university and a hospital.
+All five students work in the same GitHub repository, each in their own part folder, each with
+their own AI tool.
 
 Step 1 – Understand the whole project before doing anything:
-- Make sure you are in `projects/ProgressSoft-Regulatory-Copilot/` and run `git checkout main` and `git pull`.
+- Make sure you are in `projects/Regulatory-Support-Copilot/` and run `git checkout main` and `git pull`.
 - List the whole folder tree (all folders and files, except .git and .venv) and tell me what each
   top-level folder is for and who owns it.
-- Read `README.md`, `docs/source/00-Project-Guide.md` (all of it), `docs/source/01-Part1-Mock-Data-and-Tools.md` (all of it),
-  `contracts/schemas.py`, `contracts/CONTRACTS.md`, the repository's `../../.github/CODEOWNERS`,
-  and the README of every part folder.
+- Read `README.md`, `docs/source/00-Project-Guide.md` (all of it),
+  `docs/source/01-Part1-Templates-Data-and-Connectors.md` (all of it), `contracts/schemas.py`,
+  `contracts/CONTRACTS.md`, the repository's `../../.github/CODEOWNERS`, and the README of every part folder.
 - Skim the other four part guides in `docs/source/` so you know what my teammates build and what they
   expect from me.
-- Read `part1_data/PROMPTS.md` and follow its "Rules for the AI tool" in everything you do.
+- Read `part1_templates/PROMPTS.md` and follow its "Rules for the AI tool" in everything you do.
 
 Step 2 – Report back to me (no code yet):
 - A 10-line summary of the project and of my part.
 - What my part must deliver, who depends on it, and what it depends on (with function names).
-- The files you plan to create in `part1_data/`, in the order the guide's week plan suggests.
+- The files you plan to create in `part1_templates/`, in the order the guide's week plan suggests.
 - Anything unclear or contradictory in the guides.
 
-Step 3 – Then do this first task on branch `part1/world-and-contracts`:
-- Write `part1_data/data/WORLD.md` exactly as the guide's Section 5 describes (modules, clients, reason codes),
-  with the MOCK DATA marker at the top.
-- Write my four contract models `RegulationDoc`, `Client`, `LogEntry`, `Ticket` in the Part 1 section of
-  `contracts/schemas.py`, each field with `Field(description=...)` and one realistic example in
-  `model_config["json_schema_extra"]`. Add a test that each example validates.
+Step 3 – Then do this first task on branch `part1/templates-and-contracts`:
+- Write my six contract models `TemplateConfig`, `Unit`, `Stakeholder`, `ChangeDocument`, `Record`,
+  `Request` in the Part 1 section of `contracts/schemas.py`, each field with `Field(description=...)`
+  and one realistic example from the university template in `model_config["json_schema_extra"]`.
+- Write `part1_templates/templates/university/template.yaml` and
+  `part1_templates/templates/hospital/template.yaml` exactly as the guide's Section 5 describes.
+- Add tests that every contract example validates and that both template.yaml files validate
+  against `TemplateConfig`.
 - Follow the rules: plan first, tests, commit, push, PR text. This PR is reviewed by the whole team (Contract Day).
 ```
 
-## Prompt 2 – Tool stubs and first data sample
+## Prompt 2 – Tool and connector stubs, first university sample
 
 ```
-New task for Part 1. Follow the rules in part1_data/PROMPTS.md.
+New task for Part 1. Follow the rules in part1_templates/PROMPTS.md.
 Create the branch `part1/stubs-and-sample` from an up-to-date main.
-Read the guide again (Sections 4, 6 and 7) and the current `contracts/schemas.py`.
+Read the guide again (Sections 4, 5, 6, 8 and 9) and the current `contracts/schemas.py`.
 Task:
-1. Create every tool module in `part1_data/tools/` (`regulations.py`, `log_search.py`, `client_config.py`,
-   `iso_validator.py`, `ticketing.py`) with the exact function signatures from the guide. For now each
-   function returns contract example data (stubs), so teammates can import them today.
-2. Create a first data sample: 2 product docs (ACH.md, IPS.md), `reason_codes.md`, 2 clients with configs,
-   1 circular (REG-003), 5 tickets, and a small hand-written `transactions.jsonl` (about 100 lines) in the
-   folders the guide names. Every file starts with the MOCK DATA marker.
-3. Tests that every stub returns valid contract objects.
+1. Create every tool module in `part1_templates/tools/` (`templates.py`, `changes.py`, `directory.py`,
+   `requests.py`, `records.py`, `action_list.py`) with the exact function signatures from Section 9,
+   each with an optional `template_id=None`. `load_template` and `list_templates` read the real
+   template.yaml files; every other function returns contract example data for now (stubs), so
+   teammates can import them today.
+2. Create `part1_templates/connectors/base.py` with the `RecordConnector` interface, stub
+   `registration_lookup.py` and `appointment_lookup.py`, and the registry in `connectors/__init__.py`.
+3. Create the first university sample: `units.json`, `stakeholders.json`, `documents/registration_rules.md`,
+   `documents/study_plan_SE-BSc.md`, `changes/CHG-U-001.md`, 5 requests (including U-REQ-007) and about
+   60 hand-written records in `records/registrations.jsonl`. Every file starts with the MOCK DATA marker.
+4. Tests that every stub returns valid contract objects and that `load_template("hospital")` works.
 Plan first and wait for my go. When done: run the tests, commit, push the branch,
 give me the pull request text, update AI_LOG.md, and report what is left.
 ```
 
-## Prompt 3 – Complete the fictional world
+## Prompt 3 – Complete the university template
 
 ```
-New task for Part 1. Follow the rules in part1_data/PROMPTS.md.
-Create the branch `part1/full-data` from an up-to-date main.
-Read the guide Section 6 again, then `part1_data/data/WORLD.md` and the existing sample files.
-Task: complete all mock data:
-1. All 5 product documents with the required `##` headings, and a complete `reason_codes.md` (all 12 codes).
-2. All 5 clients in `clients.json` and `configs/BANK-A.json` ... `BANK-E.json`, deliberately different.
-3. All 6 circulars REG-001 ... REG-006 with header blocks, 2–4 numbered requirements and one background
-   sentence each, matching the table in Section 6.4.
-4. History: `past_tickets.json` (10) and `past_change_requests.json` (5, in the ChangeRequest format).
-Use only the IDs in WORLD.md and only fictional names. When done, go through the consistency checklist
-(Section 6.8) item by item and show me the result.
+New task for Part 1. Follow the rules in part1_templates/PROMPTS.md.
+Create the branch `part1/university-data` from an up-to-date main.
+Read the guide Section 6 again, then the existing university sample files.
+Task: complete all university data:
+1. All 6 units and 6 stakeholder groups exactly as Sections 6.2 and 6.3 describe.
+2. All documents in Section 6.4 with the required `##` headings, including one section per reason code
+   in `registration_rules.md` and SE301 with prerequisite SE201 in the SE-BSc study plan.
+3. All 5 change documents CHG-U-001 ... CHG-U-005 with header blocks (including `scope`), 2–4 numbered
+   requirements and one background sentence each, matching the table in Section 6.5.
+4. `generators/generate_records.py` with `random.seed(42)` (Section 6.6): about 400 records, the planted
+   records listed at the top of the script, fake IDs or phone numbers in some details. Run it and commit
+   the generated `registrations.jsonl`.
+5. All 15 requests U-REQ-001 ... U-REQ-015 exactly as Section 6.7 describes, and the history files (6.8).
+Use only the IDs in the guide and only fictional names. When done, go through the consistency checklist
+(Section 11) item by item and show me the result.
 Plan first and wait for my go. When done: run the tests, commit, push the branch,
 give me the pull request text, update AI_LOG.md, and report what is left.
 ```
 
-## Prompt 4 – Logs, tickets and the consistency test
+## Prompt 4 – Hospital template and the consistency test
 
 ```
-New task for Part 1. Follow the rules in part1_data/PROMPTS.md.
-Create the branch `part1/logs-and-tickets` from an up-to-date main.
-Read the guide Sections 6.5, 6.6 and 6.8 again.
+New task for Part 1. Follow the rules in part1_templates/PROMPTS.md.
+Create the branch `part1/hospital-data` from an up-to-date main.
+Read the guide Sections 7 and 11 again, and look at the finished university template as the model.
 Task:
-1. Write `part1_data/data/generators/generate_logs.py` with `random.seed(42)`: about 600 LogEntry lines over
-   3 days for all 5 clients, about 15% rejected across the reason codes, plus a clearly listed set of
-   planted payments (fixed refs, clients and reason codes) used by the tickets. Some details contain
-   fake IBANs for masking tests. Run it and commit the generated `transactions.jsonl`.
-2. Write `tickets.json` with TCK-0001 ... TCK-0021 exactly as Section 6.6 describes (including the 2
-   missing-reference tickets, 2 general questions and the prompt-injection ticket TCK-0021).
-3. Write `part1_data/tests/test_data_consistency.py` that checks: every ticket reference exists in the logs
-   (except the planned missing ones), every reason code in the logs is in reason_codes.md, and every
-   expected client in the circulars has the right module and country.
-4. Run the generator twice and prove the output is identical.
+1. Build the hospital template exactly as Section 7 describes: units, stakeholder groups, documents
+   (with one section per reason code in `appointment_rules.md`), CHG-H-001 ... CHG-H-003, the record
+   generator `generators/generate_records.py` (seed 42, about 250 appointment records, planted record
+   APT-5521 for P-1043 in CARD on 2026-03-03 with DOCTOR_UNAVAILABLE), requests H-REQ-001 ... H-REQ-010
+   and history.
+2. Do not change any tool code for this: if you feel you must, tell me why first (the product must be general).
+3. Write `part1_templates/tests/test_template_consistency.py`, parametrized over both templates, that checks
+   the first five points of the checklist in Section 11.
+4. Run both generators twice and prove the output is identical.
 Plan first and wait for my go. When done: run the tests, commit, push the branch,
 give me the pull request text, update AI_LOG.md, and report what is left.
 ```
 
-## Prompt 5 – Real tools, evaluation sets and README
+## Prompt 5 – Real tools and connectors, evaluation sets and README
 
 ```
-New task for Part 1. Follow the rules in part1_data/PROMPTS.md.
+New task for Part 1. Follow the rules in part1_templates/PROMPTS.md.
 Create the branch `part1/tools-and-eval` from an up-to-date main.
-Read the guide Sections 7, 8 and 10 again.
+Read the guide Sections 8, 9, 10, 12 and 14 again.
 Task:
-1. Replace the stubs with real implementations that read from DATA_DIR (default `part1_data/data`):
-   `list_regulations`, `get_regulation`, `parse_regulation`, `search_logs` (all filters combinable, sorted,
-   max 200), `list_clients`, `get_client`, `clients_with_module`, `validate_message`, and the ticketing
-   functions. Ticket status changes and created change requests are saved only in
-   `runtime/ticketing/state.json`; data files are never modified. Unknown IDs raise a clear KeyError.
-2. Tests for every function, including unknown IDs and combined filters.
-3. Write `part1_data/data/eval/regulation_eval.json`, `ticket_eval.json` and `search_eval.json` in the
-   formats of Section 8, consistent with the data.
-4. Replace `part1_data/README.md` with a one-page README (what the part does, file list, one usage
-   example per tool, how to regenerate logs, how to run tests).
+1. Implement both connectors for real (all filters combinable, newest first, max 200, read-only) and
+   replace the tool stubs with real implementations: `list_changes`, `get_change`, `parse_change`,
+   `list_units`, `get_unit`, `list_stakeholders`, `stakeholders_for_unit` (with the scope rule from
+   Section 5), `list_requests`, `get_request`, `set_request_status`, `search_records` (calls the
+   template's connector), `create_action_item`, `list_action_items`. Writes go only to
+   `runtime/<template_id>/state.json`. Unknown IDs and unknown templates raise clear errors.
+2. Tests for every function on both templates, including unknown IDs, combined filters and the scope rule.
+3. Write `eval/change_eval.json`, `request_eval.json` and `search_eval.json` for both templates in the
+   formats of Section 10, consistent with the data.
+4. Replace `part1_templates/README.md` with a one-page README (what the part does, folder list, one usage
+   example per tool, how to regenerate records, how to run tests) and write `templates/README.md`
+   (the template format and "how to add a third template" from Section 12).
 Plan first and wait for my go. When done: run the tests, commit, push the branch,
 give me the pull request text, update AI_LOG.md, and report what is left.
 ```
