@@ -7,7 +7,7 @@ model_config = {"json_schema_extra": {"example": {...}}}.
 Written on Contract Day (end of week 1); after that, changes need approval from all members.
 See docs/00-Project-Guide.pdf, Section 8.
 """
-from pydantic import BaseModel, Field  # noqa: F401
+from pydantic import BaseModel, Field  # noqa: F401  # type: ignore[import-not-found]
 
 # --- Part 1: TemplateConfig, Unit, Stakeholder, ChangeDocument, Record, Request ---
 

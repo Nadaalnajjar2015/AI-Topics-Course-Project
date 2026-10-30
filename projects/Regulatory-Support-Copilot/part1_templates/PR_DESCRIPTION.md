@@ -34,4 +34,4 @@ Not applicable; this PR changes Part 1 data and Python tools.
 - [ ] No
 - [x] Yes – all five members must approve
 
-Only the Part 1 section of `contracts/schemas.py` changes. Review required before merge; no issue number is linked because draft issues have not been posted.
+Schema changes are limited to the six Part 1 models and the user's editor-warning annotation on the existing Pydantic import. The user authorized the merge. No issue number is linked because draft issues have not been posted.

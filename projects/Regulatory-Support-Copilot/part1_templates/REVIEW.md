@@ -1,6 +1,6 @@
 # Part 1 review notes
 
-Work is isolated on `zainbranch`. The only shared-file change is the six Part 1 models in `contracts/schemas.py`, authorized by the Contract Day prompt. No other part folder, guide, dependency list or contract section was edited. No merge has been performed.
+The implementation was prepared on `zainbranch`. Shared-file changes are the six Part 1 models in `contracts/schemas.py`, authorized by the Contract Day prompt, and the user's later editor-warning annotation on the existing Pydantic import. No other part folder, guide, dependency list or contract section was edited. The user separately authorized committing the remaining change and merging into `main`.
 
 ## Delivered files
 
