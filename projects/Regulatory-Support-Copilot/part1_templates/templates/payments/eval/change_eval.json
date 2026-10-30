@@ -1,0 +1,86 @@
+{
+  "_note": "MOCK DATA – fictional, for a student prototype",
+  "cases": [
+    {
+      "change_id": "CHG-P-001",
+      "expected_requirements_min": 3,
+      "expected_units": [
+        "ACH",
+        "IPS"
+      ],
+      "expected_stakeholders": [
+        "BANK-A",
+        "BANK-B",
+        "BANK-E"
+      ],
+      "key_facts": [
+        "pacs.008.001.10",
+        "2026-07-01"
+      ]
+    },
+    {
+      "change_id": "CHG-P-002",
+      "expected_requirements_min": 3,
+      "expected_units": [
+        "ACH",
+        "IPS"
+      ],
+      "expected_stakeholders": [
+        "BANK-A",
+        "BANK-B",
+        "BANK-E"
+      ],
+      "key_facts": [
+        "structured creditor address",
+        "BE04",
+        "2026-06-01"
+      ]
+    },
+    {
+      "change_id": "CHG-P-003",
+      "expected_requirements_min": 3,
+      "expected_units": [
+        "RPT"
+      ],
+      "expected_stakeholders": [
+        "BANK-D"
+      ],
+      "key_facts": [
+        "daily fraud report",
+        "18:00",
+        "2026-05-01"
+      ]
+    },
+    {
+      "change_id": "CHG-P-004",
+      "expected_requirements_min": 3,
+      "expected_units": [
+        "WAL"
+      ],
+      "expected_stakeholders": [
+        "BANK-B",
+        "BANK-E"
+      ],
+      "key_facts": [
+        "basic-KYC",
+        "500",
+        "AG01"
+      ]
+    },
+    {
+      "change_id": "CHG-P-005",
+      "expected_requirements_min": 3,
+      "expected_units": [
+        "CHQ"
+      ],
+      "expected_stakeholders": [
+        "BANK-C"
+      ],
+      "key_facts": [
+        "13:00",
+        "TM01",
+        "2026-05-15"
+      ]
+    }
+  ]
+}

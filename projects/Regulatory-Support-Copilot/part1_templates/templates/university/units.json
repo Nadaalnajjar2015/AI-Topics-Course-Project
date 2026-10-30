@@ -1,0 +1,41 @@
+{
+  "_note": "MOCK DATA – fictional, for a student prototype",
+  "units": [
+    {
+      "unit_id": "CS-BSc",
+      "name": "Computer Science (BSc)",
+      "type": "program",
+      "description": "Northfield University Computer Science (BSc); registration and academic policy responsibilities."
+    },
+    {
+      "unit_id": "SE-BSc",
+      "name": "Software Engineering (BSc)",
+      "type": "program",
+      "description": "Northfield University Software Engineering (BSc); registration and academic policy responsibilities."
+    },
+    {
+      "unit_id": "BUS-BBA",
+      "name": "Business Administration (BBA)",
+      "type": "program",
+      "description": "Northfield University Business Administration (BBA); registration and academic policy responsibilities."
+    },
+    {
+      "unit_id": "NUR-BSc",
+      "name": "Nursing (BSc)",
+      "type": "program",
+      "description": "Northfield University Nursing (BSc); registration and academic policy responsibilities."
+    },
+    {
+      "unit_id": "REG-OFF",
+      "name": "Registrar's Office",
+      "type": "office",
+      "description": "Northfield University Registrar's Office; registration and academic policy responsibilities."
+    },
+    {
+      "unit_id": "INTL-OFF",
+      "name": "International Office",
+      "type": "office",
+      "description": "Northfield University International Office; registration and academic policy responsibilities."
+    }
+  ]
+}

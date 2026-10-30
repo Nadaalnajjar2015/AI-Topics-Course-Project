@@ -1,0 +1,53 @@
+{
+  "_note": "MOCK DATA – fictional, for a student prototype",
+  "cases": [
+    {
+      "query": "What does AC04 mean?",
+      "expected_source": "part1_templates/templates/payments/documents/reason_codes.md"
+    },
+    {
+      "query": "Why was an account blocked with AC06?",
+      "expected_source": "part1_templates/templates/payments/documents/reason_codes.md"
+    },
+    {
+      "query": "What should we do for AM04 insufficient funds?",
+      "expected_source": "part1_templates/templates/payments/documents/reason_codes.md"
+    },
+    {
+      "query": "What causes BE04 missing creditor address?",
+      "expected_source": "part1_templates/templates/payments/documents/reason_codes.md"
+    },
+    {
+      "query": "What causes RR01 missing debtor identification?",
+      "expected_source": "part1_templates/templates/payments/documents/reason_codes.md"
+    },
+    {
+      "query": "What is the BANK-C cheque cut-off time?",
+      "expected_source": "part1_templates/templates/payments/documents/CHQ.md"
+    },
+    {
+      "query": "What is ACH-R07 creditor address validation?",
+      "expected_source": "part1_templates/templates/payments/documents/ACH.md"
+    },
+    {
+      "query": "Which message versions does ACH validate?",
+      "expected_source": "part1_templates/templates/payments/documents/ACH.md"
+    },
+    {
+      "query": "Are instant payments available 24/7?",
+      "expected_source": "part1_templates/templates/payments/documents/IPS.md"
+    },
+    {
+      "query": "What is BANK-E basic KYC wallet limit?",
+      "expected_source": "part1_templates/templates/payments/documents/WAL.md"
+    },
+    {
+      "query": "Which regulatory reports use camt.053?",
+      "expected_source": "part1_templates/templates/payments/documents/RPT.md"
+    },
+    {
+      "query": "How should MS03 unspecified reason be investigated?",
+      "expected_source": "part1_templates/templates/payments/documents/reason_codes.md"
+    }
+  ]
+}

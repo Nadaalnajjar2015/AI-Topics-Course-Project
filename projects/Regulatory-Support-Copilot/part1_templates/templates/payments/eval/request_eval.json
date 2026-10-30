@@ -1,0 +1,143 @@
+{
+  "_note": "MOCK DATA – fictional, for a student prototype",
+  "cases": [
+    {
+      "request_id": "P-REQ-001",
+      "expected_item": "8820",
+      "expected_reason_code": "AC01",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "incorrect",
+        "account"
+      ]
+    },
+    {
+      "request_id": "P-REQ-002",
+      "expected_item": "7745",
+      "expected_reason_code": "AM04",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "insufficient",
+        "funds"
+      ]
+    },
+    {
+      "request_id": "P-REQ-003",
+      "expected_item": "8012",
+      "expected_reason_code": "BE04",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "creditor",
+        "address"
+      ]
+    },
+    {
+      "request_id": "P-REQ-004",
+      "expected_item": "9102",
+      "expected_reason_code": "RC01",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "bank",
+        "identifier"
+      ]
+    },
+    {
+      "request_id": "P-REQ-005",
+      "expected_item": "6650",
+      "expected_reason_code": "AG01",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "forbidden"
+      ]
+    },
+    {
+      "request_id": "P-REQ-006",
+      "expected_item": "8125",
+      "expected_reason_code": "FF01",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "format"
+      ]
+    },
+    {
+      "request_id": "P-REQ-007",
+      "expected_item": "7731",
+      "expected_reason_code": "AC04",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "closed",
+        "account"
+      ]
+    },
+    {
+      "request_id": "P-REQ-008",
+      "expected_item": "7790",
+      "expected_reason_code": "TM01",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "cut-off"
+      ]
+    },
+    {
+      "request_id": "P-REQ-009",
+      "expected_item": "9150",
+      "expected_reason_code": "AM05",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "duplicate"
+      ]
+    },
+    {
+      "request_id": "P-REQ-010",
+      "expected_item": "7802",
+      "expected_reason_code": "AC06",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "blocked",
+        "account"
+      ]
+    },
+    {
+      "request_id": "P-REQ-011",
+      "expected_item": "8301",
+      "expected_reason_code": null,
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "settled"
+      ]
+    },
+    {
+      "request_id": "P-REQ-012",
+      "expected_item": "99999",
+      "expected_reason_code": null,
+      "expected_escalate": true,
+      "root_cause_keywords": []
+    },
+    {
+      "request_id": "P-REQ-013",
+      "expected_item": "12345",
+      "expected_reason_code": null,
+      "expected_escalate": true,
+      "root_cause_keywords": []
+    },
+    {
+      "request_id": "P-REQ-014",
+      "expected_item": null,
+      "expected_reason_code": null,
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "15:00"
+      ]
+    },
+    {
+      "request_id": "P-REQ-015",
+      "expected_item": "6688",
+      "expected_reason_code": "RR01",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "debtor",
+        "identification"
+      ]
+    }
+  ]
+}

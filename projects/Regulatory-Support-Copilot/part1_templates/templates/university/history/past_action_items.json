@@ -1,0 +1,76 @@
+{
+  "_note": "MOCK DATA – fictional, for a student prototype",
+  "action_items": [
+    {
+      "action_id": "AI-HIST-U-001",
+      "change_id": "CHG-U-001",
+      "title": "Update computing internship duration",
+      "description": "Update the CS-BSc study plan to require an eight-week internship from September 2027.",
+      "unit_id": "CS-BSc",
+      "stakeholders": [
+        "STU-CS-2026",
+        "STU-INTL"
+      ],
+      "owner_role": "CS-BSc owner",
+      "due_before": "2027-09-01",
+      "checks": [
+        {
+          "check_id": "CHECK-001",
+          "steps": [
+            "Load the approved future configuration",
+            "Inspect the computing study plan for the effective intake"
+          ],
+          "expected": "The internship duration is 8 weeks"
+        }
+      ],
+      "sources": [
+        {
+          "text": "The current internship duration is 6 weeks. CHG-U-001 proposes 8 weeks for CS-BSc and SE-BSc from September 2027; the current baseline remains in effect until then.",
+          "source": "part1_templates/templates/university/documents/study_plan_CS-BSc.md",
+          "doc_type": "document",
+          "location": "Internship",
+          "score": 1.0,
+          "metadata": {
+            "unit_id": "CS-BSc"
+          }
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "action_id": "AI-HIST-U-002",
+      "change_id": "CHG-U-002",
+      "title": "Verify English proficiency certificates",
+      "description": "Add an English certificate verification step before international admission clearance.",
+      "unit_id": "INTL-OFF",
+      "stakeholders": [
+        "STU-INTL"
+      ],
+      "owner_role": "INTL-OFF owner",
+      "due_before": "2026-09-01",
+      "checks": [
+        {
+          "check_id": "CHECK-002",
+          "steps": [
+            "Load the approved future configuration",
+            "Review an international applicant with no verified certificate"
+          ],
+          "expected": "Clearance remains pending and the missing certificate is identified"
+        }
+      ],
+      "sources": [
+        {
+          "text": "1. From 1 September 2026, INTL-OFF must verify an English proficiency certificate for international students.\n2. INTL-OFF must record whether the certificate has been verified before admission clearance.\n3. INTL-OFF must notify international applicants about missing certificates and the review route.",
+          "source": "part1_templates/templates/university/changes/CHG-U-002.md",
+          "doc_type": "change",
+          "location": "Requirements",
+          "score": 1.0,
+          "metadata": {
+            "unit_id": "INTL-OFF"
+          }
+        }
+      ],
+      "status": "approved"
+    }
+  ]
+}

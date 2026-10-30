@@ -1,0 +1,95 @@
+{
+  "_note": "MOCK DATA – fictional, for a student prototype",
+  "cases": [
+    {
+      "request_id": "U-REQ-001",
+      "expected_item": "CS330",
+      "expected_reason_code": "SECTION_FULL",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "full"
+      ]
+    },
+    {
+      "request_id": "U-REQ-002",
+      "expected_item": "BUS210",
+      "expected_reason_code": "FEES_UNPAID",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "unpaid",
+        "fees"
+      ]
+    },
+    {
+      "request_id": "U-REQ-003",
+      "expected_item": "SE220",
+      "expected_reason_code": "TIME_CONFLICT",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "conflict"
+      ]
+    },
+    {
+      "request_id": "U-REQ-004",
+      "expected_item": "CS340",
+      "expected_reason_code": "CREDIT_LIMIT",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "credit",
+        "limit"
+      ]
+    },
+    {
+      "request_id": "U-REQ-005",
+      "expected_item": "NUR210",
+      "expected_reason_code": "ADVISOR_HOLD",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "advisor"
+      ]
+    },
+    {
+      "request_id": "U-REQ-006",
+      "expected_item": "BUS101",
+      "expected_reason_code": null,
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "registered"
+      ]
+    },
+    {
+      "request_id": "U-REQ-007",
+      "expected_item": "SE301",
+      "expected_reason_code": "PREREQ_MISSING",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "SE201"
+      ]
+    },
+    {
+      "request_id": "U-REQ-008",
+      "expected_item": "CS999",
+      "expected_reason_code": null,
+      "expected_escalate": true,
+      "root_cause_keywords": []
+    },
+    {
+      "request_id": "U-REQ-009",
+      "expected_item": null,
+      "expected_reason_code": null,
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "15%"
+      ]
+    },
+    {
+      "request_id": "U-REQ-010",
+      "expected_item": "SE310",
+      "expected_reason_code": "PREREQ_MISSING",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "SE220"
+      ]
+    }
+  ]
+}

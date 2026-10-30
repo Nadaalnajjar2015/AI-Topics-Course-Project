@@ -1,0 +1,25 @@
+# MOCK DATA – fictional, for a student prototype
+id: payments
+organization: Cedar Payment Systems
+languages: [en, ar]
+labels:
+  unit: Product module
+  units: Product modules
+  stakeholder: Client bank
+  stakeholders: Client banks
+  person: Client bank
+  record: Transaction record
+  item: Payment reference
+  change: Central bank circular
+  request: Bank support ticket
+  reviewer: Business analyst
+connector: transaction_lookup
+item_pattern: '(?i)(?:payment|ref|transfer)\s*[#=]?\s*(\d{4,6})'
+reason_codes_doc: documents/reason_codes.md
+prompt_hints: >
+  You support the operations teams of client banks that use our payment systems
+  (cheque clearing, ACH, instant payments, mobile wallets, regulatory reporting).
+  Be precise and professional. Never reveal other banks' data.
+  Sign replies as "Support Team, Cedar Payment Systems".
+action_item_fields: [title, description, unit_id, owner_role, due_before, checks]
+reviewers: [Business analyst, Support engineer]

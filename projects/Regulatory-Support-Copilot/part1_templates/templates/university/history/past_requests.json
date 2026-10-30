@@ -1,0 +1,35 @@
+{
+  "_note": "MOCK DATA – fictional, for a student prototype",
+  "requests": [
+    {
+      "question": "Why am I waitlisted for CS330?",
+      "root_cause": "The section has reached its capacity.",
+      "resolution": "Join the waiting list or choose an available section.",
+      "reason_code": "SECTION_FULL"
+    },
+    {
+      "question": "I cannot register for BUS210. Could you check the fees hold?",
+      "root_cause": "An unpaid balance has placed a registration hold.",
+      "resolution": "Resolve the balance and ask for the hold to be cleared.",
+      "reason_code": "FEES_UNPAID"
+    },
+    {
+      "question": "SE220 refused. Does it overlap another section?",
+      "root_cause": "The chosen section overlaps an existing registration.",
+      "resolution": "Choose a section with a different timetable.",
+      "reason_code": "TIME_CONFLICT"
+    },
+    {
+      "question": "My sixth course CS340 was refused. Why?",
+      "root_cause": "The new course would exceed 18 credits.",
+      "resolution": "Review the course load with an advisor.",
+      "reason_code": "CREDIT_LIMIT"
+    },
+    {
+      "question": "NUR210 blocked. What approval am I missing?",
+      "root_cause": "Academic approval has not been recorded.",
+      "resolution": "Meet the advisor and request approval.",
+      "reason_code": "ADVISOR_HOLD"
+    }
+  ]
+}
