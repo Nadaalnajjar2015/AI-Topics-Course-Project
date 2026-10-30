@@ -1,6 +1,6 @@
 # Part 5: Website, Safety and Evaluation
 
-**Owner:** (write your name and GitHub username)
+**Owner:** (Nada Alnajjar - Nadaalnajjar2015)
 **Guide:** `docs/05-Part5-Website-Safety-and-Evaluation.pdf`
 **AI tool prompts:** `PROMPTS.md` in this folder
 
