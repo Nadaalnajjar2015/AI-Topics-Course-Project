@@ -1,8 +1,8 @@
-# Part 1 owner set. Replace @member2..@member5 with the GitHub usernames of the part owners.
+# Replace @member2..@Nadaalnajjar2015 with the GitHub usernames of the part owners.
 /projects/Regulatory-Support-Copilot/part1_templates/     @zaynallateef
 /projects/Regulatory-Support-Copilot/part2_knowledge/     @member2
 /projects/Regulatory-Support-Copilot/part3_change_watch/  @member3
 /projects/Regulatory-Support-Copilot/part4_request_desk/  @member4
-/projects/Regulatory-Support-Copilot/part5_web/           @member5
-/projects/Regulatory-Support-Copilot/tests/integration/   @member4 @member5
-/projects/Regulatory-Support-Copilot/contracts/           @zaynallateef @member2 @member3 @member4 @member5
+/projects/Regulatory-Support-Copilot/part5_web/           @Nadaalnajjar2015
+/projects/Regulatory-Support-Copilot/tests/integration/   @member4 @Nadaalnajjar2015
+/projects/Regulatory-Support-Copilot/contracts/           @zaynallateef @member2 @member3 @member4 @Nadaalnajjar2015
