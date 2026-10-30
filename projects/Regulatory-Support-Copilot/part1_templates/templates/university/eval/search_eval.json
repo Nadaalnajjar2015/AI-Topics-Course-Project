@@ -1,0 +1,37 @@
+{
+  "_note": "MOCK DATA – fictional, for a student prototype",
+  "cases": [
+    {
+      "query": "What does PREREQ_MISSING mean?",
+      "expected_source": "part1_templates/templates/university/documents/registration_rules.md"
+    },
+    {
+      "query": "What prerequisite does SE301 need?",
+      "expected_source": "part1_templates/templates/university/documents/study_plan_SE-BSc.md"
+    },
+    {
+      "query": "What is the maximum absence allowed?",
+      "expected_source": "part1_templates/templates/university/documents/attendance_policy.md"
+    },
+    {
+      "query": "How long is the current internship?",
+      "expected_source": "part1_templates/templates/university/documents/internship_guide.md"
+    },
+    {
+      "query": "How do I clear unpaid fees holds?",
+      "expected_source": "part1_templates/templates/university/documents/fees_and_payments.md"
+    },
+    {
+      "query": "What is the registration credit limit?",
+      "expected_source": "part1_templates/templates/university/documents/registration_rules.md"
+    },
+    {
+      "query": "What prerequisite does CS330 need?",
+      "expected_source": "part1_templates/templates/university/documents/study_plan_CS-BSc.md"
+    },
+    {
+      "query": "What prerequisite does BUS210 need?",
+      "expected_source": "part1_templates/templates/university/documents/study_plan_BUS-BBA.md"
+    }
+  ]
+}

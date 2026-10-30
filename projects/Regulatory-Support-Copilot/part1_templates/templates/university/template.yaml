@@ -1,0 +1,24 @@
+# MOCK DATA – fictional, for a student prototype
+id: university
+organization: Northfield University
+languages: [en, ar]
+labels:
+  unit: Study program
+  units: Study programs
+  stakeholder: Student group
+  stakeholders: Student groups
+  person: Student
+  record: Registration record
+  item: Course
+  change: Circular
+  request: Student request
+  reviewer: Registrar
+connector: registration_lookup
+item_pattern: '[A-Z]{2,4}\d{3}'
+reason_codes_doc: documents/registration_rules.md
+prompt_hints: >
+  Help students understand registration rules with a friendly, clear explanation.
+  Refer to the study plan, prerequisites, fees and advisor holds when relevant.
+  Never reveal another student's information. Sign replies as "Registrar's Office".
+action_item_fields: [title, description, unit_id, owner_role, due_before, checks]
+reviewers: [Registrar, "Dean's office"]

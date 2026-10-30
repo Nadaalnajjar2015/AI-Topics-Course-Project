@@ -1,0 +1,35 @@
+{
+  "_note": "MOCK DATA – fictional, for a student prototype",
+  "units": [
+    {
+      "unit_id": "CHQ",
+      "name": "Cheque Clearing",
+      "type": "module",
+      "description": "Cheque images and MICR data; image quality, returns and cut-off times."
+    },
+    {
+      "unit_id": "ACH",
+      "name": "Automated Clearing House",
+      "type": "module",
+      "description": "pacs.008, pacs.002 and pacs.004; batch windows, limits and field validation."
+    },
+    {
+      "unit_id": "IPS",
+      "name": "Instant Payment System",
+      "type": "module",
+      "description": "pacs.008 and pacs.002; 24/7 processing, timeouts and real-time account checks."
+    },
+    {
+      "unit_id": "WAL",
+      "name": "Mobile Wallet",
+      "type": "module",
+      "description": "Internal API and pacs.008; wallet limits and KYC levels."
+    },
+    {
+      "unit_id": "RPT",
+      "name": "Regulatory Reporting",
+      "type": "module",
+      "description": "camt.053 and custom daily and monthly central-bank reports."
+    }
+  ]
+}

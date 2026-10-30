@@ -1,0 +1,149 @@
+{
+  "_note": "MOCK DATA – fictional, for a student prototype",
+  "action_items": [
+    {
+      "action_id": "AI-HIST-P-001",
+      "change_id": "CHG-P-002",
+      "title": "Require structured creditor address",
+      "description": "Require Cdtr/PstlAdr/TwnNm and Ctry on ACH transfers in Country X; reject absent values with BE04.",
+      "unit_id": "ACH",
+      "stakeholders": [
+        "BANK-A",
+        "BANK-B"
+      ],
+      "owner_role": "ACH owner",
+      "due_before": "2026-06-01",
+      "checks": [
+        {
+          "check_id": "CHECK-001",
+          "steps": [
+            "Load the approved future configuration",
+            "Submit a transfer without Cdtr/PstlAdr"
+          ],
+          "expected": "The transfer is rejected with BE04"
+        }
+      ],
+      "sources": [
+        {
+          "text": "1. ACH-R01: Validate pacs.008 against the client message_standard; use pacs.002 for status and pacs.004 for returns.\n2. ACH-R02: Enforce BANK-B amount_limit 50,000 and each client's configured batch window.\n3. ACH-R07: Creditor address is mandatory above 10,000 for BANK-A and BANK-B; absence yields BE04.\n4. ACH-R08: A closed creditor account yields AC04; insufficient funds yield AM04.",
+          "source": "part1_templates/templates/payments/documents/ACH.md",
+          "doc_type": "document",
+          "location": "Validation rules",
+          "score": 1.0,
+          "metadata": {
+            "unit_id": "ACH"
+          }
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "action_id": "AI-HIST-P-002",
+      "change_id": "CHG-P-001",
+      "title": "Migrate instant transfer message version",
+      "description": "Activate pacs.008.001.10 validation for IPS participants in Country X.",
+      "unit_id": "IPS",
+      "stakeholders": [
+        "BANK-A",
+        "BANK-B",
+        "BANK-E"
+      ],
+      "owner_role": "IPS owner",
+      "due_before": "2026-07-01",
+      "checks": [
+        {
+          "check_id": "CHECK-002",
+          "steps": [
+            "Load the approved future configuration",
+            "Submit the same valid IPS transfer with old and new message versions"
+          ],
+          "expected": "The new version passes and the old version is rejected after activation"
+        }
+      ],
+      "sources": [
+        {
+          "text": "pacs.008 customer credit transfers and pacs.002 statuses. Key elements include `<IntrBkSttlmAmt>`, `<Dbtr>`, `<DbtrAcct>`, `<Cdtr>`, `<CdtrAcct>`, `<PstlAdr>`, `<TwnNm>`, `<Ctry>` and `<EndToEndId>`.",
+          "source": "part1_templates/templates/payments/documents/IPS.md",
+          "doc_type": "document",
+          "location": "Message types and key fields",
+          "score": 1.0,
+          "metadata": {
+            "unit_id": "IPS"
+          }
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "action_id": "AI-HIST-P-003",
+      "change_id": "CHG-P-004",
+      "title": "Lower basic-KYC wallet limit",
+      "description": "Configure the WAL basic-KYC balance limit to 500 for both client profiles.",
+      "unit_id": "WAL",
+      "stakeholders": [
+        "BANK-B",
+        "BANK-E"
+      ],
+      "owner_role": "WAL owner",
+      "due_before": "2026-04-01",
+      "checks": [
+        {
+          "check_id": "CHECK-003",
+          "steps": [
+            "Load the approved future configuration",
+            "Attempt a basic-KYC balance of 501"
+          ],
+          "expected": "The transaction is forbidden with AG01"
+        }
+      ],
+      "sources": [
+        {
+          "text": "1. WAL-R01: Basic-KYC balance limit is 1,000 for BANK-E and 1,500 for BANK-B before CHG-P-004 takes effect.\n2. WAL-R02: A transaction forbidden for the KYC tier yields AG01.\n3. WAL-R03: Validate internal API fields before mapping an external transfer to pacs.008.",
+          "source": "part1_templates/templates/payments/documents/WAL.md",
+          "doc_type": "document",
+          "location": "Validation rules",
+          "score": 1.0,
+          "metadata": {
+            "unit_id": "WAL"
+          }
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "action_id": "AI-HIST-P-004",
+      "change_id": "CHG-P-005",
+      "title": "Move cheque cut-off to 13:00",
+      "description": "Configure the Country Y CHQ cut-off as 13:00.",
+      "unit_id": "CHQ",
+      "stakeholders": [
+        "BANK-C"
+      ],
+      "owner_role": "CHQ owner",
+      "due_before": "2026-05-15",
+      "checks": [
+        {
+          "check_id": "CHECK-004",
+          "steps": [
+            "Load the approved future configuration",
+            "Submit a Country Y cheque at 13:01"
+          ],
+          "expected": "The cheque is returned with TM01"
+        }
+      ],
+      "sources": [
+        {
+          "text": "- BANK-A: country=Country X; message_standard=pacs.008.001.08; cutoff_time=14:00; amount_limit=100000; local_rules=['Creditor address mandatory for amounts above 10,000.', 'Daily reconciliation report at 18:00.']\n- BANK-C: country=Country Y; message_standard=pacs.008.001.08; cutoff_time=15:00; amount_limit=75000; local_rules=['Reject closed creditor accounts with AC04.', 'Cheques after 15:00 return TM01.']\n\nOnly clients listed above enable this module. Message standard, amount limits, enabled fields and cut-off settings are client configuration, not universal ISO rules.",
+          "source": "part1_templates/templates/payments/documents/CHQ.md",
+          "doc_type": "document",
+          "location": "Configuration per client",
+          "score": 1.0,
+          "metadata": {
+            "unit_id": "CHQ"
+          }
+        }
+      ],
+      "status": "approved"
+    }
+  ]
+}

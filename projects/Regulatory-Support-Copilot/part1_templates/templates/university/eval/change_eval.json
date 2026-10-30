@@ -1,0 +1,60 @@
+{
+  "_note": "MOCK DATA – fictional, for a student prototype",
+  "cases": [
+    {
+      "change_id": "CHG-U-001",
+      "expected_requirements_min": 3,
+      "expected_units": [
+        "CS-BSc",
+        "SE-BSc"
+      ],
+      "expected_stakeholders": [
+        "STU-CS-2026",
+        "STU-SE-2026",
+        "STU-INTL"
+      ],
+      "key_facts": [
+        "8 weeks",
+        "2027-09-01"
+      ]
+    },
+    {
+      "change_id": "CHG-U-002",
+      "expected_requirements_min": 3,
+      "expected_units": [
+        "INTL-OFF"
+      ],
+      "expected_stakeholders": [
+        "STU-INTL"
+      ],
+      "key_facts": [
+        "English proficiency certificate",
+        "international",
+        "2026-09-01"
+      ]
+    },
+    {
+      "change_id": "CHG-U-003",
+      "expected_requirements_min": 3,
+      "expected_units": [
+        "CS-BSc",
+        "SE-BSc",
+        "BUS-BBA",
+        "NUR-BSc"
+      ],
+      "expected_stakeholders": [
+        "STU-CS-2026",
+        "STU-SE-2026",
+        "STU-BUS-2026",
+        "STU-NUR-2026",
+        "STU-INTL",
+        "STAFF-ADVISORS"
+      ],
+      "key_facts": [
+        "10%",
+        "15%",
+        "2026-09-01"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "_note": "MOCK DATA – fictional, for a student prototype",
+  "stakeholders": [
+    {
+      "stakeholder_id": "STU-CS-2026",
+      "name": "Computer Science students, 2026 intake",
+      "type": "students",
+      "units": [
+        "CS-BSc"
+      ],
+      "attributes": {
+        "cohort": 2026
+      }
+    },
+    {
+      "stakeholder_id": "STU-SE-2026",
+      "name": "Software Engineering students, 2026 intake",
+      "type": "students",
+      "units": [
+        "SE-BSc"
+      ],
+      "attributes": {
+        "cohort": 2026
+      }
+    },
+    {
+      "stakeholder_id": "STU-BUS-2026",
+      "name": "Business students, 2026 intake",
+      "type": "students",
+      "units": [
+        "BUS-BBA"
+      ],
+      "attributes": {
+        "cohort": 2026
+      }
+    },
+    {
+      "stakeholder_id": "STU-NUR-2026",
+      "name": "Nursing students, 2026 intake",
+      "type": "students",
+      "units": [
+        "NUR-BSc"
+      ],
+      "attributes": {
+        "cohort": 2026
+      }
+    },
+    {
+      "stakeholder_id": "STU-INTL",
+      "name": "International students",
+      "type": "students",
+      "units": [
+        "CS-BSc",
+        "SE-BSc",
+        "BUS-BBA",
+        "NUR-BSc",
+        "INTL-OFF"
+      ],
+      "attributes": {
+        "international": true
+      }
+    },
+    {
+      "stakeholder_id": "STAFF-ADVISORS",
+      "name": "Academic advisors",
+      "type": "staff",
+      "units": [
+        "CS-BSc",
+        "SE-BSc",
+        "BUS-BBA",
+        "NUR-BSc",
+        "REG-OFF"
+      ],
+      "attributes": {}
+    }
+  ]
+}
