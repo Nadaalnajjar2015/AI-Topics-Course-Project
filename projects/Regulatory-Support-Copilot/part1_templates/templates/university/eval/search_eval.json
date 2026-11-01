@@ -32,6 +32,22 @@
     {
       "query": "What prerequisite does BUS210 need?",
       "expected_source": "part1_templates/templates/university/documents/study_plan_BUS-BBA.md"
+    },
+    {
+      "query": "Which prerequisite is required for nursing course NUR210?",
+      "expected_source": "part1_templates/templates/university/documents/study_plan_NUR-BSc.md"
+    },
+    {
+      "query": "Does the eight-week computing internship change apply to nursing?",
+      "expected_source": "part1_templates/templates/university/documents/study_plan_NUR-BSc.md"
+    },
+    {
+      "query": "How does a nursing advisor hold differ from a missing prerequisite?",
+      "expected_source": "part1_templates/templates/university/documents/study_plan_NUR-BSc.md"
+    },
+    {
+      "query": "What absence limit applies to nursing before and after September 2026?",
+      "expected_source": "part1_templates/templates/university/documents/study_plan_NUR-BSc.md"
     }
   ]
 }

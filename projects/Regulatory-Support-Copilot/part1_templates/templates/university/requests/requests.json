@@ -110,6 +110,83 @@
       "priority": "medium",
       "status": "open",
       "item": null
+    },
+    {
+      "request_id": "U-REQ-011",
+      "template_id": "university",
+      "person_id": "S-2700",
+      "created_at": "2026-02-12T23:00:00",
+      "subject": "Nursing prerequisite",
+      "body": "Why was NUR210 blocked? Which prerequisite do I need?",
+      "priority": "medium",
+      "status": "open",
+      "item": null
+    },
+    {
+      "request_id": "U-REQ-012",
+      "template_id": "university",
+      "person_id": "S-2701",
+      "created_at": "2026-02-12T23:00:00",
+      "subject": "Practice section capacity",
+      "body": "NUR310 says waitlisted. Does that mean I have a confirmed place?",
+      "priority": "medium",
+      "status": "open",
+      "item": null
+    },
+    {
+      "request_id": "U-REQ-013",
+      "template_id": "university",
+      "person_id": "S-2702",
+      "created_at": "2026-02-12T23:00:00",
+      "subject": "Nursing fees hold",
+      "body": "I cannot register for NUR220. Please explain the hold on my account.",
+      "priority": "medium",
+      "status": "open",
+      "item": null
+    },
+    {
+      "request_id": "U-REQ-014",
+      "template_id": "university",
+      "person_id": "S-2703",
+      "created_at": "2026-02-12T23:00:00",
+      "subject": "Nursing timetable conflict",
+      "body": "NUR230 was refused after I selected a laboratory section. What should I change?",
+      "priority": "medium",
+      "status": "open",
+      "item": null
+    },
+    {
+      "request_id": "U-REQ-015",
+      "template_id": "university",
+      "person_id": "S-2704",
+      "created_at": "2026-02-12T23:00:00",
+      "subject": "Nursing course load",
+      "body": "Adding NUR320 was blocked. Have I exceeded the allowed course load?",
+      "priority": "medium",
+      "status": "open",
+      "item": null
+    },
+    {
+      "request_id": "U-REQ-016",
+      "template_id": "university",
+      "person_id": "S-2705",
+      "created_at": "2026-02-12T23:00:00",
+      "subject": "Late nursing registration",
+      "body": "I tried NUR410 at 18:30 on 12 February 2026. Why was it blocked?",
+      "priority": "medium",
+      "status": "open",
+      "item": null
+    },
+    {
+      "request_id": "U-REQ-017",
+      "template_id": "university",
+      "person_id": "S-2706",
+      "created_at": "2026-02-12T23:00:00",
+      "subject": "Confirm nursing registration",
+      "body": "Please confirm whether my NUR110 registration was successful.",
+      "priority": "medium",
+      "status": "open",
+      "item": null
     }
   ]
 }

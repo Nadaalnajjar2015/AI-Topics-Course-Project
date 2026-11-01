@@ -1,5 +1,7 @@
 # Part 1 review notes
 
+**Current follow-up (2026-11-02):** The [data review](DATA_REVIEW.md) audits all Part 1 deliverables and records the nursing expansion. Current totals are 500 payments / 16 requests and 300 university registrations for 60 students / 17 requests. Nursing has 104 records, 21 students, eight courses and eight request cases. The updated suite passes **100 tests**; both generators reproduce committed output. The university SHA-256 is now `58c40f858201647fdcd372936ec64bcd5faecac87977066ac6d7dba19e1963ea`. The notes and hashes below describe the original 2026-10-30 implementation.
+
 The implementation was prepared on `zainbranch`. Shared-file changes are the six Part 1 models in `contracts/schemas.py`, authorized by the Contract Day prompt, and the user's later editor-warning annotation on the existing Pydantic import. No other part folder, guide, dependency list or contract section was edited. The user separately authorized committing the remaining change and merging into `main`.
 
 ## Delivered files

@@ -3,7 +3,7 @@
 **Owner:** Zain Allateef - zaynallateef
 **Guide:** [Part 1 guide](../docs/source/01-Part1-Templates-Data-and-Connectors.md)
 
-Fictional organization data and deterministic tools for the Regulatory & Support Copilot. Payments has 500 transactions, 15 requests and 5 circulars; university has 250 registrations, 10 requests and 3 circulars. Both include documents, history and evaluation answers. No LLM or external record service is required here.
+Fictional organization data and deterministic tools for the Regulatory & Support Copilot. Payments has 500 transactions, 16 requests and 5 circulars; university has 300 registrations for 60 students, 17 requests and 3 circulars. Both include documents, history and evaluation answers. Nursing includes 104 records for 21 students across eight courses. No LLM or external record service is required here.
 
 | Folder | Contents |
 | --- | --- |
@@ -29,6 +29,14 @@ Regenerate the committed files with seed 42, then run tests again:
 python part1_templates/templates/payments/generators/generate_records.py
 python part1_templates/templates/university/generators/generate_records.py
 ```
+
+Measure complete fixture files, including records beyond the connectors' 200-result limit:
+
+```powershell
+python -m part1_templates.analyze_data
+```
+
+The [data review](DATA_REVIEW.md) records the Part 1 requirements audit, before/after coverage, fixes and remaining limitations. The original demo IDs and first 250 university records are preserved. Added request cases cover all nursing failure reasons plus success, and an unspecified payments rejection that must escalate. Historical questions are distinct from active evaluation questions; this is still a small synthetic demo set rather than an independent accuracy benchmark.
 
 ## Public tools
 

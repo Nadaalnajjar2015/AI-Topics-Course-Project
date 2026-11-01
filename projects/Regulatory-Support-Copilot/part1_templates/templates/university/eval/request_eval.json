@@ -90,6 +90,71 @@
       "root_cause_keywords": [
         "SE220"
       ]
+    },
+    {
+      "request_id": "U-REQ-011",
+      "expected_item": "NUR210",
+      "expected_reason_code": "PREREQ_MISSING",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "NUR101"
+      ]
+    },
+    {
+      "request_id": "U-REQ-012",
+      "expected_item": "NUR310",
+      "expected_reason_code": "SECTION_FULL",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "full"
+      ]
+    },
+    {
+      "request_id": "U-REQ-013",
+      "expected_item": "NUR220",
+      "expected_reason_code": "FEES_UNPAID",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "unpaid",
+        "fees"
+      ]
+    },
+    {
+      "request_id": "U-REQ-014",
+      "expected_item": "NUR230",
+      "expected_reason_code": "TIME_CONFLICT",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "conflict"
+      ]
+    },
+    {
+      "request_id": "U-REQ-015",
+      "expected_item": "NUR320",
+      "expected_reason_code": "CREDIT_LIMIT",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "credit",
+        "limit"
+      ]
+    },
+    {
+      "request_id": "U-REQ-016",
+      "expected_item": "NUR410",
+      "expected_reason_code": "LATE_REGISTRATION",
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "deadline"
+      ]
+    },
+    {
+      "request_id": "U-REQ-017",
+      "expected_item": "NUR110",
+      "expected_reason_code": null,
+      "expected_escalate": false,
+      "root_cause_keywords": [
+        "registered"
+      ]
     }
   ]
 }
