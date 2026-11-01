@@ -37,3 +37,11 @@ Change headers contain `change_id`, `template_id`, `title`, `issuer`, `scope`, `
 5. Include the new ID in the parametrized consistency tests, run `pytest part1_templates/tests`, then ask Part 2 to run `python -m part2_knowledge.knowledge_base.ingest` once its ingestion module exists. `list_templates()` discovers the new YAML automatically; Part 5's eventual switcher can use that list.
 
 The existing transaction connector expects `records/transactions.jsonl`; the registration connector expects `records/registrations.jsonl`. Connectors never write, return at most 200 records newest first, and combine filters. Planted data must not be overwritten by random background records. Keep generator and committed output changes together.
+
+## Data coverage extension (2026-11-02)
+
+The university generator appends 50 nursing records to the original 250, for 300 registrations and 60 students. The NUR-BSc study plan documents eight courses; U-REQ-011 through U-REQ-017 add seven nursing scenarios to the existing advisor-hold request. The nursing cases cover all seven registration failure reasons and success. University evaluation now has 3 change, 17 request and 12 search cases, with 7 historical requests.
+
+Payments keeps 500 transactions and adds P-REQ-016 for the existing BANK-D / RPT / 9200 record. Its MS03 code means the cause is unspecified, so the expected result is escalation with a known record and known reason code. Evaluation consumers must distinguish that from missing-record escalations, where `expected_reason_code` is null. Payments evaluation now has 5 change, 16 request and 12 search cases.
+
+Historical questions no longer copy active request bodies. Similar historical resolutions remain intentional RAG examples. The new study plan's nursing rules are fictional registration fixtures; they do not describe a real curriculum. Record dates and general-question answers remain anchored to the February/March 2026 scenarios.

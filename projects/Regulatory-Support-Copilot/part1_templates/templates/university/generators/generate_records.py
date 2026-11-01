@@ -31,10 +31,22 @@ COURSES = {"CS-BSc": ["CS101", "CS330", "CS340"], "SE-BSc": ["SE201", "SE220", "
 PREREQUISITES = {"CS330": "CS201", "CS340": "CS201", "SE201": "SE101", "SE220": "SE201",
                  "SE301": "SE201", "SE310": "SE220", "BUS210": "BUS101", "NUR210": "NUR101"}
 
+# Append-only nursing supplement: keep the original 250 demo records unchanged.
+NURSING_COURSES = ["NUR101", "NUR110", "NUR210", "NUR220", "NUR230", "NUR310", "NUR320", "NUR410"]
+NURSING_PLANTED = [
+    ("R-48301", "S-2700", "NUR-BSc", "NUR210", "BLOCKED", "PREREQ_MISSING", "Missing prerequisite NUR101"),
+    ("R-48302", "S-2701", "NUR-BSc", "NUR310", "WAITLISTED", "SECTION_FULL", "Clinical section full; join the waiting list"),
+    ("R-48303", "S-2702", "NUR-BSc", "NUR220", "BLOCKED", "FEES_UNPAID", "Unpaid fees have placed a registration hold"),
+    ("R-48304", "S-2703", "NUR-BSc", "NUR230", "BLOCKED", "TIME_CONFLICT", "Timetable conflict with an existing laboratory section"),
+    ("R-48305", "S-2704", "NUR-BSc", "NUR320", "BLOCKED", "CREDIT_LIMIT", "This course would exceed the 18-credit limit"),
+    ("R-48306", "S-2705", "NUR-BSc", "NUR410", "BLOCKED", "LATE_REGISTRATION", "Registration attempted after the 12 February 17:00 deadline"),
+    ("R-48307", "S-2706", "NUR-BSc", "NUR110", "REGISTERED", None, "Registration completed successfully"),
+]
+
 
 def generate(output_path=None) -> Path:
-    """Write exactly 250 registrations for 50 fictional students."""
-    random.seed(42)
+    """Write 300 registrations for 60 students, preserving the original demo."""
+    rng = random.Random(42)
     root = Path(__file__).resolve().parents[1]
     rows = []
     for index, (identifier, person, unit, item, status, reason, detail) in enumerate(PLANTED):
@@ -47,11 +59,11 @@ def generate(output_path=None) -> Path:
     reserved = {(row["person_id"], row["item"]) for row in rows}
     for index in range(250 - len(rows)):
         person, unit = population[index % len(population)]
-        item = random.choice([course for course in COURSES[unit] if (person, course) not in reserved])
-        reason = random.choice(list(REASONS)) if index % 5 == 0 else None
+        item = rng.choice([course for course in COURSES[unit] if (person, course) not in reserved])
+        reason = rng.choice(list(REASONS)) if index % 5 == 0 else None
         if reason == "PREREQ_MISSING" and item not in PREREQUISITES:
             reason = "ADVISOR_HOLD"
-        stamp = datetime(2026, 2, 8) + timedelta(seconds=random.randrange(5 * 86400))
+        stamp = datetime(2026, 2, 8) + timedelta(seconds=rng.randrange(5 * 86400))
         if reason == "LATE_REGISTRATION":
             stamp = datetime(2026, 2, 12, 18, 0) + timedelta(minutes=index)
         detail = REASONS[reason] if reason else "Registration completed successfully"
@@ -61,6 +73,23 @@ def generate(output_path=None) -> Path:
                          person_id=person, unit_id=unit, item=item,
                          status=("WAITLISTED" if reason == "SECTION_FULL" else "BLOCKED") if reason else "REGISTERED",
                          reason_code=reason, detail=detail))
+    for index, (identifier, person, unit, item, status, reason, detail) in enumerate(NURSING_PLANTED):
+        stamp = (datetime(2026, 2, 12, 18, 30) if reason == "LATE_REGISTRATION"
+                 else datetime(2026, 2, 10, 10, 0) + timedelta(minutes=index))
+        rows.append(dict(record_id=identifier, template_id="university", timestamp=stamp.isoformat(),
+                         person_id=person, unit_id=unit, item=item, status=status, reason_code=reason, detail=detail))
+    # Ten additional nursing students, each with five distinct course events.
+    # Successful background events avoid inventing unsupported failure causes.
+    background_index = 0
+    for index in range(10):
+        person = f"S-{2700 + index}"
+        taken = {row["item"] for row in rows if row["person_id"] == person}
+        for item in rng.sample([course for course in NURSING_COURSES if course not in taken], 5 - len(taken)):
+            stamp = datetime(2026, 2, 8) + timedelta(seconds=rng.randrange(4 * 86400))
+            rows.append(dict(record_id=f"R-{60000 + background_index}", template_id="university",
+                             timestamp=stamp.isoformat(), person_id=person, unit_id="NUR-BSc", item=item,
+                             status="REGISTERED", reason_code=None, detail="Registration completed successfully"))
+            background_index += 1
     output = Path(output_path) if output_path is not None else root / "records" / "registrations.jsonl"
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("w", encoding="utf-8", newline="\n") as stream:

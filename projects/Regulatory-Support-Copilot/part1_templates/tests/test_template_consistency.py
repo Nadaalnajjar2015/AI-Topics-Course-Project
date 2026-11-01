@@ -31,7 +31,7 @@ def test_planted_requests_match_records(template_id):
         if case["expected_item"] is None:
             continue
         matches = [row for row in records if row.person_id == request.person_id and row.item == case["expected_item"]]
-        if case["expected_escalate"]:
+        if case["expected_escalate"] and case["expected_reason_code"] is None:
             assert not matches
         else:
             assert matches, case
@@ -104,19 +104,19 @@ def test_markers_counts_history_and_sources(template_id):
             if path.suffix == ".jsonl":
                 assert json.loads(content.splitlines()[0]) == {"_note": NOTE}
     records = _records(template_id)
-    assert len(records) == (500 if template_id == "payments" else 250)
+    assert len(records) == (500 if template_id == "payments" else 300)
     assert len({row.record_id for row in records}) == len(records)
     if template_id == "payments":
         assert sum(row.reason_code is not None for row in records) == 75
         assert {row.timestamp.date().isoformat() for row in records} == {"2026-03-01", "2026-03-02", "2026-03-03"}
     else:
-        assert len({row.person_id for row in records}) == 50
+        assert len({row.person_id for row in records}) == 60
         assert all("2026-02-08" <= row.timestamp.date().isoformat() <= "2026-02-12" for row in records)
     for filename, expected in [("change_eval.json", 5 if template_id == "payments" else 3),
-                               ("request_eval.json", 15 if template_id == "payments" else 10),
-                               ("search_eval.json", 12 if template_id == "payments" else 8)]:
+                               ("request_eval.json", 16 if template_id == "payments" else 17),
+                               ("search_eval.json", 12)]:
         assert len(_json(template_id, "eval/" + filename, "cases")) == expected
-    assert len(_json(template_id, "history/past_requests.json", "requests")) == (8 if template_id == "payments" else 5)
+    assert len(_json(template_id, "history/past_requests.json", "requests")) == (8 if template_id == "payments" else 7)
     assert len(_json(template_id, "history/past_action_items.json", "action_items")) == (4 if template_id == "payments" else 2)
     for case in _json(template_id, "eval/search_eval.json", "cases"):
         assert (TEMPLATES.parents[1] / case["expected_source"]).exists()
@@ -147,3 +147,65 @@ def test_historical_action_examples_follow_contract_shape(template_id, action_mo
         for source in action.sources:
             document = (TEMPLATES.parents[1] / source["source"]).read_text(encoding="utf-8")
             assert source["text"] in document
+
+
+def test_data_coverage_and_history_separation(template_id):
+    from part1_templates.analyze_data import analyze
+
+    report = analyze(TEMPLATES / template_id)
+    assert report["exact_duplicate_records"] == 0
+    assert report["history_question_overlap"] == []
+    assert report["missing_request_evaluations"] == []
+    assert report["orphan_request_evaluations"] == []
+    assert report["unevaluated_failure_reasons"] == []
+    assert report["missing_study_plans"] == []
+    cases = _json(template_id, "eval/request_eval.json", "cases")
+    assert len({case["request_id"] for case in cases}) == len(cases)
+
+
+def test_knowledge_documents_cover_units_and_reason_guidance(template_id):
+    template = load_template(template_id)
+    for unit in _json(template_id, "units.json", "units"):
+        if unit["type"] == "module":
+            filename = f"documents/{unit['unit_id']}.md"
+            required = {"Overview", "Message types and key fields", "Validation rules",
+                        "Rejection handling", "Configuration per client", "Reports"}
+        elif unit["type"] == "program":
+            filename = f"documents/study_plan_{unit['unit_id']}.md"
+            required = {"Overview", "Courses by year", "Internship", "Graduation requirements"}
+        else:
+            continue
+        document = (TEMPLATES / template_id / filename).read_text(encoding="utf-8")
+        assert required <= set(re.findall(r"^## (.+)$", document, re.MULTILINE)), filename
+
+    document = (TEMPLATES / template_id / template.reason_codes_doc).read_text(encoding="utf-8")
+    sections = dict(re.findall(r"^## (\S+)\n(.*?)(?=^## |\Z)", document, re.MULTILINE | re.DOTALL))
+    for reason in {row.reason_code for row in _records(template_id) if row.reason_code}:
+        guidance = sections[reason]
+        for label in ("Meaning:", "Typical cause:", "What the", "Modules that produce it:" if template_id == "payments" else "Who can help:"):
+            assert label in guidance, (reason, label)
+
+
+def test_nursing_has_documented_and_evaluated_outcomes():
+    records = [row for row in _records("university") if row.unit_id == "NUR-BSc"]
+    plan = (TEMPLATES / "university/documents/study_plan_NUR-BSc.md").read_text(encoding="utf-8")
+    assert len(records) >= 100
+    assert len({row.person_id for row in records}) >= 20
+    assert len({row.item for row in records}) >= 8
+    assert all(row.item in plan for row in records)
+    people = {row.person_id for row in records}
+    requests = {row["request_id"] for row in _json("university", "requests/requests.json", "requests")
+                if row["person_id"] in people}
+    cases = [row for row in _json("university", "eval/request_eval.json", "cases") if row["request_id"] in requests]
+    assert {row["expected_reason_code"] for row in cases} == {
+        None, "PREREQ_MISSING", "SECTION_FULL", "FEES_UNPAID", "TIME_CONFLICT",
+        "CREDIT_LIMIT", "ADVISOR_HOLD", "LATE_REGISTRATION",
+    }
+    assert {row.status for row in records} == {"REGISTERED", "BLOCKED", "WAITLISTED"}
+    for row in records:
+        if row.reason_code == "LATE_REGISTRATION":
+            assert row.timestamp > datetime(2026, 2, 12, 17)
+    # The append-only supplement preserves all original demo evidence byte for byte.
+    path = TEMPLATES / "university/records/registrations.jsonl"
+    original = b"\n".join(path.read_bytes().splitlines()[:251]) + b"\n"
+    assert hashlib.sha256(original).hexdigest() == "46c7774bfd78393b0985fec2bb03ec1b6bfd7672415c82b4d6fcbcf241a1464c"

@@ -2,34 +2,46 @@
   "_note": "MOCK DATA – fictional, for a student prototype",
   "requests": [
     {
-      "question": "Why am I waitlisted for CS330?",
+      "question": "An earlier computing class had no remaining seats. How was the student advised?",
       "root_cause": "The section has reached its capacity.",
       "resolution": "Join the waiting list or choose an available section.",
       "reason_code": "SECTION_FULL"
     },
     {
-      "question": "I cannot register for BUS210. Could you check the fees hold?",
+      "question": "A previous business student had a balance-related registration hold. How was it cleared?",
       "root_cause": "An unpaid balance has placed a registration hold.",
       "resolution": "Resolve the balance and ask for the hold to be cleared.",
       "reason_code": "FEES_UNPAID"
     },
     {
-      "question": "SE220 refused. Does it overlap another section?",
+      "question": "An earlier software course overlapped a laboratory class. What timetable adjustment helped?",
       "root_cause": "The chosen section overlaps an existing registration.",
       "resolution": "Choose a section with a different timetable.",
       "reason_code": "TIME_CONFLICT"
     },
     {
-      "question": "My sixth course CS340 was refused. Why?",
+      "question": "How did an advisor resolve a previous attempt to take more than the normal semester credits?",
       "root_cause": "The new course would exceed 18 credits.",
       "resolution": "Review the course load with an advisor.",
       "reason_code": "CREDIT_LIMIT"
     },
     {
-      "question": "NUR210 blocked. What approval am I missing?",
+      "question": "An earlier nursing student had passed the prerequisite but still needed academic approval. What resolved the hold?",
       "root_cause": "Academic approval has not been recorded.",
       "resolution": "Meet the advisor and request approval.",
       "reason_code": "ADVISOR_HOLD"
+    },
+    {
+      "question": "An earlier nursing skills applicant had not passed the foundations course. What was required?",
+      "root_cause": "The prerequisite NUR101 had not been passed.",
+      "resolution": "Complete NUR101 and ask the advisor to review eligibility for NUR210.",
+      "reason_code": "PREREQ_MISSING"
+    },
+    {
+      "question": "A previous nursing placement application arrived after registration closed. Who reviewed it?",
+      "root_cause": "The attempt arrived after the published registration deadline.",
+      "resolution": "Ask the registrar about late-registration approval; a request does not guarantee registration.",
+      "reason_code": "LATE_REGISTRATION"
     }
   ]
 }

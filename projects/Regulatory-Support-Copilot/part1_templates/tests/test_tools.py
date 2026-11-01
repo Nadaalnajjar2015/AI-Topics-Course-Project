@@ -89,7 +89,7 @@ def test_request_status_is_runtime_only(template_id, isolated_runtime):
     path = TEMPLATES / template_id / "requests" / "requests.json"
     before = path.read_bytes()
     rows = requests.list_requests(template_id)
-    assert len(rows) == (15 if template_id == "payments" else 10)
+    assert len(rows) == (16 if template_id == "payments" else 17)
     assert all(isinstance(row, schemas.Request) and row.status == "open" for row in rows)
     identifier = rows[0].request_id
     assert requests.get_request(identifier, template_id) == rows[0]
@@ -210,7 +210,7 @@ def test_third_template_uses_existing_tools_and_connector(tmp_path, monkeypatch)
     assert templates.load_template().organization == "Fictional Hospital"
     assert [template.id for template in templates.list_templates()] == ["hospital"]
     assert len(directory.list_units()) == 6
-    assert len(requests.list_requests()) == 10
+    assert len(requests.list_requests()) == 17
     assert len(changes.list_changes()) == 3
     matches = records.search_records(person_id="S-2291", item="SE301")
     assert len(matches) == 1 and matches[0].template_id == "hospital"

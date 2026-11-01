@@ -138,6 +138,13 @@
         "debtor",
         "identification"
       ]
+    },
+    {
+      "request_id": "P-REQ-016",
+      "expected_item": "9200",
+      "expected_reason_code": "MS03",
+      "expected_escalate": true,
+      "root_cause_keywords": ["not specified", "manual investigation"]
     }
   ]
 }
