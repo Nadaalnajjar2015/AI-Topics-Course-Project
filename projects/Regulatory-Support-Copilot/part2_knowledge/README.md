@@ -2,29 +2,48 @@
 
 **Owner:** (khadija hzayen . khadija hzayen)
 **Guide:** [Part 2 guide](../docs/source/02-Part2-Knowledge-Base-and-AI-Foundation.md)
-**Branch:** `part2/contract-searchresult`
+**Branch:** `part2/config-llm-prompting`
 
 Part 2 provides the shared AI foundation: settings, template-based prompts, one LLM
 wrapper and document search with a separate Chroma collection for each organization.
-The current delivery is the **SearchResult contract and its tests**; the remaining
-services are still planned.
+Delivered so far: the **SearchResult contract, settings, fake LLM, prompt rendering
+and integration stubs**. Real retrieval and real model providers are still planned.
 
 ## Completed work
 
-- Reviewed the project guides, all part READMEs, shared contracts, and Part 1's
-  tools, connectors and both template datasets. Part 1's 100 tests passed, including
-  deterministic record generation and data consistency checks.
-- Added [SearchResult](../contracts/schemas.py) only in Part 2's contract section:
-  `text`, `source`, `doc_type`, `location`, `score` and `metadata`, each described.
-  Its realistic AC04 example quotes the payments source and includes `template_id`.
-- Enforced scores from 0 to 1, rejecting invalid and non-finite values. Kept source
-  categories and metadata extensible and compatible with existing history citations.
-- Added [13 contract tests](tests/test_contracts.py) covering the source excerpt,
-  JSON round-trip, field descriptions, score validation and both templates.
-- Recorded contract decisions, description recommendations and draft teammate issues
-  in [CONTRACT_REVIEW.md](CONTRACT_REVIEW.md); prepared [PR text](PR_DESCRIPTION.md)
-  and updated [AI_LOG.md](AI_LOG.md). The initial implementation was committed as
-  `14d115e` and pushed to the branch above.
+- Audited Part 1 and both fictional datasets. Its 100 tests continue to pass.
+- Added [SearchResult](../contracts/schemas.py), with described fields, bounded
+  scores, the actual AC04 excerpt and compatible metadata for historical citations.
+- Added [config.py](common/config.py): typed shared settings, project-local `.env`
+  loading, absolute paths resolved from the project folder, and runtime creation.
+- Added [llm.py](common/llm.py): `complete_text()` returns fixed offline text;
+  `complete_json()` validates a fresh copy of the requested contract's example.
+  Both use Part 5's masking hook when available, otherwise an identity fallback.
+- Added [prompting.py](common/prompting.py): `render()` fills both templates' labels
+  and extra values, naming unknown placeholders; `load_prompt()` reads UTF-8 files.
+- Added [search.py](knowledge_base/search.py) and [ingest.py](knowledge_base/ingest.py)
+  stubs. Search returns the payments contract example only for its owning template
+  and matching filters; other templates return no hits. Ingestion reports `stub`
+  summaries for one/all templates and builds no index.
+- Added settings, LLM, prompting and stub tests; updated [team usage rules](common/README.md),
+  [PR text](PR_DESCRIPTION.md) and [AI_LOG.md](AI_LOG.md).
+
+## Using the foundation
+
+Parts 3–5 can import `settings` from `part2_knowledge.common.config`,
+`complete_json`/`complete_text` from `common.llm`, and `render`/`load_prompt` from
+`common.prompting` under the same package. Use Part 1's `load_template()` to obtain
+labels. Omitted template IDs use `settings.active_template`; `ingest_all(None)`
+instead describes all templates. See [common/README.md](common/README.md) for examples.
+
+Use `LLM_PROVIDER=fake` in the project `.env`. External environment values win;
+changes to `.env` require a process restart. Other provider names are recognized by
+settings but raise `LLMError` until implemented. The ingestion command currently
+prints an explicit stub message:
+
+```powershell
+python -m part2_knowledge.knowledge_base.ingest --template university
+```
 
 ## Verification
 
@@ -35,17 +54,18 @@ Run from `projects/Regulatory-Support-Copilot/` with the existing environment:
 .\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider
 ```
 
-Last full validation (2026-11-07): **13 Part 2 tests passed; 113 tests passed overall**.
+Last full validation (2026-11-07): **52 Part 2 tests passed; 152 tests passed overall**.
 These checks use no LLM or embedding model; search quality has not been measured yet.
 
 ## Team review and remaining work
 
-All five members must review the shared contract. Review notes flag missing Parts
-3–5 models, Part 5's masking function, evaluation-format agreement, action-storage
-scope validation and remaining CODEOWNERS placeholders. They also propose clipping
-negative cosine similarities to zero to respect the agreed score range.
+The contract branch is not merged into `main` yet; this branch carries its existing
+commits as a dependency. All five members must review that contract. Foundation
+changes edit only Part 2. [CONTRACT_REVIEW.md](CONTRACT_REVIEW.md) retains teammate
+issues and the proposed cosine-score interpretation. The identity masking fallback
+is an offline integration aid, not working personal-data protection.
 
-Next: settings and fake LLM/prompting interfaces; per-template ingestion and search;
-real LLM providers with retries and masking; then hit@5 evaluation (target ≥80% for
-each template), tuning and team usage documentation. Records and open requests stay
-outside the vector index. Other owners' code and contract sections were left unchanged.
+Next: real per-template ingestion/search; Ollama, Anthropic and OpenAI with JSON
+retries and real masking; then hit@5 evaluation (target ≥80% for each template) and
+tuning. New template folders will get collections through the future ingestion
+implementation. Records and open requests stay outside the vector index.

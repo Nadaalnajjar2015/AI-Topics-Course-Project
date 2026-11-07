@@ -63,10 +63,11 @@ examples with those fixtures. Review the score interpretation above on Contract 
 
 ## Remaining Part 2 work
 
-After this contract PR is reviewed and merged, implement settings, fake LLM,
-prompting and stubs; then real ingestion/search, real providers and search-quality
-evaluation in the requested separate branches. Records and open requests are not
-vector-index sources. Policy answers must retain the fixtures' scenario dates.
+The settings, fake LLM, prompting and stubs are now implemented on the dependent
+`part2/config-llm-prompting` branch, with 52 Part 2 tests and 152 total tests passing.
+The contract still needs team review and merging. Real ingestion/search, real
+providers and search-quality evaluation remain separate tasks. Records and open
+requests are not vector-index sources. Policy answers retain the fixtures' scenario dates.
 
 ## Validation
 

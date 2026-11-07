@@ -1,17 +1,23 @@
 ## What this PR does
 
-Adds the missing `SearchResult` contract so Parts 3–5 can use one shared shape for
-retrieved evidence. Its six required fields have descriptions, and its payments
-example quotes the actual AC04 passage with `template_id` in metadata.
+Unblocks Parts 3–5 with shared typed settings, offline `complete_text()` and
+`complete_json()`, template-based `render()` and UTF-8 `load_prompt()`, plus the
+documented search and ingestion interfaces. Settings load the project `.env`,
+respect environment precedence, resolve paths from the project folder and create
+`runtime/`. Fake JSON results validate the schema example without mutating it.
 
-Scores are bounded to 0–1 and invalid/non-finite values are rejected. Source types
-and metadata remain extensible; existing historical citations from both templates
-still validate. `CONTRACT_REVIEW.md` records the proposed handling of negative
-cosine similarity, description recommendations and draft teammate issues.
+Both prompts use Part 5's masking hook when available; until then an identity
+fallback supports offline integration. Other providers fail clearly. Search only
+returns the payments contract example for its owning template and matching filters;
+university returns no hits until real retrieval exists. Ingestion summaries and CLI
+output explicitly say that no index was built. README and team usage rules describe
+these limits. No new dependencies or new shared-schema edits were made.
 
-Changes to shared schemas are limited to Part 2's section, under the authorized
-Contract Day exception. The README summarizes the work and retains the owner's name.
-Settings, LLM access, prompt rendering and ingestion/search follow in later PRs.
+Dependency: `part2/contract-searchresult` has not been merged into `main`. This
+branch was created from updated main and fast-forwarded through its existing
+contract commits. Review foundation changes against that branch, or merge the
+contract PR first and bring updated main into this branch before merging. This
+does not constitute approval of the contract.
 
 ## Which part
 
@@ -30,20 +36,24 @@ From `projects/Regulatory-Support-Copilot/`, using the existing `.venv`:
 .\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider
 ```
 
-**13 Part 2 tests passed; 113 tests passed in the full suite.** Tests cover the
-AC04 excerpt against its actual source, JSON round-trip, every field description,
-score limits and invalid values, university evidence, and compatibility with all
-six historical source citations. Part 1's original 100 tests continue to pass.
-No new dependency, model download or external LLM call is needed.
+**52 Part 2 tests passed; 152 tests passed in the full suite.** New tests cover
+settings defaults, `.env` precedence, path resolution, runtime creation, active
+template integration with Part 1, all seven current contract examples, fresh fake
+responses, missing/invalid examples, masking hook/fallback and dependency errors,
+unavailable providers, all template labels, unknown placeholders, UTF-8 prompts,
+stub filters/template isolation and ingestion CLI output. Part 1's original 100
+tests and the 13 contract tests continue to pass. No model download or LLM call is
+needed; real search quality and real masking are not claimed.
 
 ## Screenshots (for website changes)
 
-Not applicable; this is a shared Python contract change.
+Not applicable; this is shared Python infrastructure.
 
 ## Contract changes?
 
 - [ ] No
-- [x] Yes – all five members must approve
+- [x] Yes – inherited contract dependency; all five members must approve it
 
-Please review the six fields and the proposed cosine-score interpretation in
-`CONTRACT_REVIEW.md`. No issue is linked; teammate issue texts are drafts only.
+No schema changes beyond the existing contract branch. The foundation commit edits
+only `part2_knowledge/`; the contract dependency still requires its own team review.
+No issue is linked; teammate issue texts remain drafts in `CONTRACT_REVIEW.md`.
