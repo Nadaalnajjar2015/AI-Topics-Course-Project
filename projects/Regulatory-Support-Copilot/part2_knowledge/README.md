@@ -2,7 +2,7 @@
 
 **Owner:** (khadija hzayen . khadija hzayen)
 **Guide:** [Part 2 guide](../docs/source/02-Part2-Knowledge-Base-and-AI-Foundation.md)
-**Branch:** `part2/ingestion-and-search`
+**Delivery:** SearchResult, shared AI foundation and per-template ingestion/search
 
 Part 2 provides the shared AI foundation: settings, template-based prompts, one LLM
 wrapper and document search with a separate Chroma collection for each organization.
@@ -80,8 +80,9 @@ evaluation and tuning remain a later task.
 
 ## Team review and remaining work
 
-This Part 2-only task carries the unmerged contract/foundation commits as dependencies.
-The contract needs all five members' review; see [review notes](CONTRACT_REVIEW.md).
+This delivery combines the Part 2 contract, foundation and ingestion/search work.
+Integration into `main` was explicitly requested by the owner. Team-review approval
+is not inferred from that request; see [review notes](CONTRACT_REVIEW.md).
 The current identity masking fallback does not protect personal data.
 
 Next: Ollama, Anthropic and OpenAI with JSON retries and real masking; then hit@5

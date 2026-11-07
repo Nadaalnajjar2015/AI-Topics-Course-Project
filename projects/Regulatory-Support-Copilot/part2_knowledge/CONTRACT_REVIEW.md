@@ -64,10 +64,11 @@ examples with those fixtures. Review the score interpretation above on Contract 
 ## Remaining Part 2 work
 
 Settings, fake LLM and prompting were delivered on `part2/config-llm-prompting`.
-The dependent `part2/ingestion-and-search` branch replaces its stubs with real
-per-template retrieval (80 Part 2 / 180 total tests pass). Search clips negative
-cosine similarity to zero as proposed above. The contract still needs team review
-and merging. Real LLM providers and search-quality evaluation remain separate tasks.
+`part2/ingestion-and-search` replaces its stubs with real per-template retrieval
+(80 Part 2 / 180 total tests pass). The owner explicitly requested integrating this
+combined delivery into main; this does not assert that team-review approvals were
+recorded. Search clips negative cosine similarity to zero as proposed above.
+Real LLM providers and search-quality evaluation remain separate tasks.
 Records and open requests are not vector-index sources; scenario dates remain evidence.
 
 ## Validation
