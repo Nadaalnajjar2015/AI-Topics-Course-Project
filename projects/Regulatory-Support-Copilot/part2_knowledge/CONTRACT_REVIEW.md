@@ -63,11 +63,12 @@ examples with those fixtures. Review the score interpretation above on Contract 
 
 ## Remaining Part 2 work
 
-The settings, fake LLM, prompting and stubs are now implemented on the dependent
-`part2/config-llm-prompting` branch, with 52 Part 2 tests and 152 total tests passing.
-The contract still needs team review and merging. Real ingestion/search, real
-providers and search-quality evaluation remain separate tasks. Records and open
-requests are not vector-index sources. Policy answers retain the fixtures' scenario dates.
+Settings, fake LLM and prompting were delivered on `part2/config-llm-prompting`.
+The dependent `part2/ingestion-and-search` branch replaces its stubs with real
+per-template retrieval (80 Part 2 / 180 total tests pass). Search clips negative
+cosine similarity to zero as proposed above. The contract still needs team review
+and merging. Real LLM providers and search-quality evaluation remain separate tasks.
+Records and open requests are not vector-index sources; scenario dates remain evidence.
 
 ## Validation
 
@@ -78,7 +79,7 @@ Run from `projects/Regulatory-Support-Copilot/` using the existing project envir
 .\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider
 ```
 
-Results on 2026-11-07: **13 Part 2 tests passed; 113 tests passed in the full suite**.
+Initial contract PR results on 2026-11-07: **13 Part 2 tests passed; 113 tests passed in the full suite**.
 The contract tests check the real AC04 excerpt, JSON round-trip, schema descriptions,
 score boundaries and invalid/non-finite scores, university evidence, and all six
 existing historical action citations. No LLM or embedding model is called.

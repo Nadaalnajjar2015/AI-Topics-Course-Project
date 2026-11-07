@@ -2,48 +2,67 @@
 
 **Owner:** (khadija hzayen . khadija hzayen)
 **Guide:** [Part 2 guide](../docs/source/02-Part2-Knowledge-Base-and-AI-Foundation.md)
-**Branch:** `part2/config-llm-prompting`
+**Branch:** `part2/ingestion-and-search`
 
 Part 2 provides the shared AI foundation: settings, template-based prompts, one LLM
 wrapper and document search with a separate Chroma collection for each organization.
 Delivered so far: the **SearchResult contract, settings, fake LLM, prompt rendering
-and integration stubs**. Real retrieval and real model providers are still planned.
+and real per-template ingestion/search**. Real LLM providers are still planned.
 
 ## Completed work
 
 - Audited Part 1 and both fictional datasets. Its 100 tests continue to pass.
 - Added [SearchResult](../contracts/schemas.py), with described fields, bounded
   scores, the actual AC04 excerpt and compatible metadata for historical citations.
-- Added [config.py](common/config.py): typed shared settings, project-local `.env`
-  loading, absolute paths resolved from the project folder, and runtime creation.
-- Added [llm.py](common/llm.py): `complete_text()` returns fixed offline text;
-  `complete_json()` validates a fresh copy of the requested contract's example.
-  Both use Part 5's masking hook when available, otherwise an identity fallback.
-- Added [prompting.py](common/prompting.py): `render()` fills both templates' labels
-  and extra values, naming unknown placeholders; `load_prompt()` reads UTF-8 files.
-- Added [search.py](knowledge_base/search.py) and [ingest.py](knowledge_base/ingest.py)
-  stubs. Search returns the payments contract example only for its owning template
-  and matching filters; other templates return no hits. Ingestion reports `stub`
-  summaries for one/all templates and builds no index.
-- Added settings, LLM, prompting and stub tests; updated [team usage rules](common/README.md),
-  [PR text](PR_DESCRIPTION.md) and [AI_LOG.md](AI_LOG.md).
+- Added shared `.env` settings, validated fake LLM responses, template-label prompt
+  rendering and UTF-8 prompt loading. See [team usage rules](common/README.md).
+- Replaced the stubs in [search.py](knowledge_base/search.py) and
+  [ingest.py](knowledge_base/ingest.py) with persistent cosine Chroma collections.
+  The loader covers documents, reason codes, units, stakeholders, historical
+  requests/actions and change documents. Records, open requests and eval stay out.
+- Added heading/numbered-section chunking, 800-character bodies with 100-character
+  overlap for long sections, context prefixes, stable `source#index` IDs and source
+  metadata including `template_id`. Shared policy sections retain `doc_type=document`.
+- Search uses the selected/active template, combines filters with `$and`, and
+  returns cited `SearchResult` objects. Scores are `1 - cosine_distance`, clipped
+  to 0–1 and rounded to three decimals; empty indexes name the rebuild command.
+- Added tests and updated [PR text](PR_DESCRIPTION.md) and [AI_LOG.md](AI_LOG.md).
 
 ## Using the foundation
 
-Parts 3–5 can import `settings` from `part2_knowledge.common.config`,
-`complete_json`/`complete_text` from `common.llm`, and `render`/`load_prompt` from
-`common.prompting` under the same package. Use Part 1's `load_template()` to obtain
-labels. Omitted template IDs use `settings.active_template`; `ingest_all(None)`
-instead describes all templates. See [common/README.md](common/README.md) for examples.
+Use Part 1's `load_template()` for labels. Omitted search template IDs use
+`settings.active_template`; `ingest_all(None)` rebuilds all templates.
 
 Use `LLM_PROVIDER=fake` in the project `.env`. External environment values win;
 changes to `.env` require a process restart. Other provider names are recognized by
-settings but raise `LLMError` until implemented. The ingestion command currently
-prints an explicit stub message:
+settings but raise `LLMError` until implemented.
+
+## Rebuild and search
+
+Run from the project folder with the existing environment. Each selected collection
+is deleted and recreated in `settings.chroma_dir` (default `runtime/chroma`). Chroma's
+local MiniLM embedding model downloads about 80 MB into its standard cache on first
+use; subsequent ingestion/search uses that cached model. No LLM API key is needed.
 
 ```powershell
-python -m part2_knowledge.knowledge_base.ingest --template university
+.\.venv\Scripts\python.exe -m part2_knowledge.knowledge_base.ingest
+.\.venv\Scripts\python.exe -m part2_knowledge.knowledge_base.ingest --template university
 ```
+
+The CLI and `ingest_all()` report files, chunks by type and elapsed seconds. Sources
+and embeddings are prepared before the previous collection is removed.
+
+```python
+from part2_knowledge.knowledge_base.search import search
+results = search("PREREQ_MISSING", template_id="university",
+                 filters={"doc_type": "reason_codes", "reason_code": "PREREQ_MISSING"})
+```
+
+Verified real indexes: **payments: 15 files / 89 chunks; university: 15 files / 63
+chunks**. AC04 and PREREQ_MISSING retrieval was verified in a fresh process.
+Add a valid folder under `settings.templates_dir` and run ingestion to create
+`kb_<template_id>` without code changes. Follow Part 1's format: bare code headings
+and unit IDs in unit-specific filenames. A third-template test verifies discovery.
 
 ## Verification
 
@@ -54,18 +73,16 @@ Run from `projects/Regulatory-Support-Copilot/` with the existing environment:
 .\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider
 ```
 
-Last full validation (2026-11-07): **52 Part 2 tests passed; 152 tests passed overall**.
-These checks use no LLM or embedding model; search quality has not been measured yet.
+Last full validation (2026-11-07): **80 Part 2 tests passed; 180 tests passed overall**.
+Tests use temporary collections and tiny local embeddings without downloads.
+Real MiniLM ingestion/search was checked separately on Chroma 1.5.9. Full hit@5
+evaluation and tuning remain a later task.
 
 ## Team review and remaining work
 
-The contract branch is not merged into `main` yet; this branch carries its existing
-commits as a dependency. All five members must review that contract. Foundation
-changes edit only Part 2. [CONTRACT_REVIEW.md](CONTRACT_REVIEW.md) retains teammate
-issues and the proposed cosine-score interpretation. The identity masking fallback
-is an offline integration aid, not working personal-data protection.
+This Part 2-only task carries the unmerged contract/foundation commits as dependencies.
+The contract needs all five members' review; see [review notes](CONTRACT_REVIEW.md).
+The current identity masking fallback does not protect personal data.
 
-Next: real per-template ingestion/search; Ollama, Anthropic and OpenAI with JSON
-retries and real masking; then hit@5 evaluation (target ≥80% for each template) and
-tuning. New template folders will get collections through the future ingestion
-implementation. Records and open requests stay outside the vector index.
+Next: Ollama, Anthropic and OpenAI with JSON retries and real masking; then hit@5
+evaluation (target ≥80% for each template) and tuning.

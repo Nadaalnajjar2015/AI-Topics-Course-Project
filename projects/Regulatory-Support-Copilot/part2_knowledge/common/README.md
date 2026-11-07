@@ -38,7 +38,8 @@ Keys use uppercase environment names, including `LLM_TIMEOUT_SECONDS` and
 
 Changing `settings.active_template` changes Part 1 calls and search calls that omit
 the template ID. Pass explicit template IDs for tasks serving different organizations.
-Real provider calls, retry handling and retrieval are not implemented in this delivery.
+Real provider calls and retry handling remain planned. Retrieval is now implemented
+in `part2_knowledge.knowledge_base`; it works independently of the fake LLM provider.
 
 ## Prompt and LLM rules
 
@@ -60,6 +61,27 @@ Real provider calls, retry handling and retrieval are not implemented in this de
   currently uses an identity fallback for offline integration. This does not mask
   personal data; actual protection requires Part 5's implementation and tests.
 
-Search is also a stub: payments can receive its own contract example; other
-templates receive no hits rather than payments evidence. `ingest_all()` reports
-unbuilt collections. Neither stub measures retrieval quality or creates an index.
+## Knowledge-base interfaces
+
+`search(query, k=5, filters=None, template_id=None)` searches only `kb_<template_id>`;
+an omitted ID uses the active template. Filters are metadata equality values, with
+multiple keys combined using `$and`. Every returned chunk carries source, location,
+type and template ownership. A filter with no matches returns `[]`; a missing/empty
+collection raises `RuntimeError` naming the ingestion command. Scores express
+cosine similarity clipped to 0–1 and rounded to three decimals, not answer confidence.
+
+`ingest_all(template_id=None)` rebuilds **all** templates when the ID is omitted,
+or one explicit template otherwise, returning a summary dictionary. The module CLI
+accepts `--template ID`. Indexes stay in ignored `settings.chroma_dir`. Source files
+and embeddings are prepared before replacing a collection; rebuilds delete its old
+chunks so removed sources do not linger. Neither records nor active requests nor
+evaluation cases enter the vector index; use Part 1's exact record tools instead.
+
+The shared reason-code document can also contain general policies. Those sections
+remain `document` chunks; bare code headings become `reason_codes` chunks with
+`reason_code` metadata. Unit-specific filenames include a known template unit ID;
+shared documents do not receive a guessed unit. New valid template folders are
+discovered automatically by ingestion. Full retrieval-quality evaluation is pending.
+
+Chroma references: [cosine collection configuration](https://docs.trychroma.com/docs/collections/configure)
+and [metadata filters](https://docs.trychroma.com/docs/querying-collections/metadata-filtering).
