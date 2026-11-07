@@ -10,7 +10,7 @@ still validate. `CONTRACT_REVIEW.md` records the proposed handling of negative
 cosine similarity, description recommendations and draft teammate issues.
 
 Changes to shared schemas are limited to Part 2's section, under the authorized
-Contract Day exception. The pre-existing README owner-name edit stays uncommitted.
+Contract Day exception. The README summarizes the work and retains the owner's name.
 Settings, LLM access, prompt rendering and ingestion/search follow in later PRs.
 
 ## Which part
