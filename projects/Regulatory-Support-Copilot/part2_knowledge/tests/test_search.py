@@ -4,12 +4,14 @@ import pytest
 
 from contracts.schemas import SearchResult
 from part2_knowledge.common.config import settings
+from part2_knowledge.common.privacy import PRIVACY_METADATA_KEY, PRIVACY_VERSION
 from part2_knowledge.knowledge_base import _store
 from part2_knowledge.knowledge_base.search import search
 
 
 def _collection(client, template_id, metadata_rows=None, embeddings=None):
     collection = client.create_collection(f"kb_{template_id}", embedding_function=_store._embedding_function(),
+                                          metadata={PRIVACY_METADATA_KEY: PRIVACY_VERSION},
                                           configuration={"hnsw": {"space": "cosine"}})
     if metadata_rows:
         rows = [{"source": f"fixtures/{template_id}/guide.md", "doc_type": "document", "location": str(index),

@@ -5,6 +5,9 @@ from chromadb.errors import NotFoundError
 
 from contracts.schemas import SearchResult
 from part1_templates.tools.templates import load_template
+from part2_knowledge.common.privacy import (
+    PRIVACY_METADATA_KEY, PRIVACY_VERSION, PrivacyError, mask_text, sanitize,
+)
 from part2_knowledge.knowledge_base import _store
 
 
@@ -23,11 +26,12 @@ def search(query: str, k: int = 5, filters: dict | None = None,
            template_id: str | None = None) -> list[SearchResult]:
     """Return up to k cited chunks; missing/empty collections name the rebuild command."""
     template = load_template(template_id)
+    query = mask_text(query)
     if not isinstance(k, int) or isinstance(k, bool) or k < 0:
         raise ValueError("k must be a nonnegative integer.")
     if not query.strip():
         raise ValueError("Search query must not be empty.")
-    where = _where(filters, template.id)
+    where = sanitize(_where(filters, template.id))
     if k == 0:
         return []
     message = (f"Knowledge base for '{template.id}' is empty. "
@@ -40,6 +44,9 @@ def search(query: str, k: int = 5, filters: dict | None = None,
     count = collection.count()
     if not count:
         raise RuntimeError(message)
+    if (collection.metadata or {}).get(PRIVACY_METADATA_KEY) != PRIVACY_VERSION:
+        raise PrivacyError("Knowledge base uses an older privacy policy. "
+                           "Rebuild it with python -m part2_knowledge.knowledge_base.ingest")
     found = collection.query(query_texts=[query], n_results=min(k, count), where=where,
                               include=["documents", "metadatas", "distances"])
     results = []
@@ -47,6 +54,7 @@ def search(query: str, k: int = 5, filters: dict | None = None,
         if not math.isfinite(distance):
             raise RuntimeError("Knowledge base returned a non-finite cosine distance.")
         score = round(max(0.0, min(1.0, 1 - distance)), 3)
+        text, metadata = mask_text(text), sanitize(metadata)
         results.append(SearchResult(text=text, source=metadata["source"], doc_type=metadata["doc_type"],
                                     location=metadata["location"], score=score, metadata=dict(metadata)))
     return results
