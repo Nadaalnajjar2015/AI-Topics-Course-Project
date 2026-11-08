@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from pathlib import PurePosixPath
 import re
 
+from part2_knowledge.common.privacy import mask_text
+
 
 @dataclass(frozen=True)
 class Chunk:
@@ -50,6 +52,8 @@ def chunk_markdown(text: str, source: str, template_id: str, doc_type: str = "do
                    metadata: dict | None = None, *, reason_codes: bool = False,
                    numbered: bool = False) -> list[Chunk]:
     """Split headings (or only numbered change clauses), then long overlapping bodies."""
+    # Redact before splitting, so a private value crossing a chunk boundary cannot leak.
+    text = mask_text(text)
     text = re.sub(r"\A---[^\n]*\n.*?\n---[^\n]*(?:\n|$)", "", text, count=1, flags=re.DOTALL)
     text = re.sub(r"(?m)^MOCK DATA[^\n]*(?:\n|$)", "", text)
     title_match = re.search(r"(?m)^# (.+)$", text)

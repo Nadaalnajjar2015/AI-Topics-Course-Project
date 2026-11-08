@@ -1,37 +1,29 @@
 ## What this PR does
 
-Delivers Part 2's shared AI foundation and real per-template Chroma retrieval.
-Adds typed `.env` settings, validated offline `complete_text()`/`complete_json()`,
-template-label prompt rendering and UTF-8 prompt loading. The fake LLM uses fresh
-copies of contract examples; actual model providers remain a later task.
+Title: **fix(part2): protect private data and enforce per-template Hit@5**
 
-Adds the six-field `SearchResult` contract in Part 2's shared-schema section, with
-field descriptions, score bounds and the real AC04 example including template
-metadata. No other owner's model section or part folder is changed.
+Replaces the LLM identity fallback with strict full redaction at Part 2 boundaries.
+Known IBAN, phone, account, card, national-ID and email formats become `[REDACTED]`,
+including partial masks retaining digits. Explicitly named private fields are hidden.
+Part 5's hook is used when present; failures stop processing instead of passing raw
+data onward. The adapter remains effective while that module is absent.
 
-Both templates now load documents, code sections, units, stakeholders, historical
-requests/actions and numbered change sections into isolated `kb_<template_id>`
-collections. Records, open requests and evaluation cases stay outside the index;
-unnumbered change background is excluded from change-clause chunks.
+Protects system/user prompts, schema examples/defaults, provider responses, complete
+source text before chunking, embedding inputs, stored chunk IDs/metadata, search
+queries/filters and returned evidence. Validated ISO dates and operational IDs stay
+usable. Legacy indexes are refused until rebuilt with the privacy-policy marker.
+Source files are not rewritten. Local runtime indexes were rebuilt with strict-v1.
 
-Chunks have heading context, 800-character bodies, 100-character overlap for long
-sections, stable source/index IDs and scalar metadata including template ownership.
-University general-policy sections remain searchable as documents while bare code
-headings receive reason-code metadata. Unit metadata comes from configured unit IDs
-in filenames. Sources and embeddings are prepared before replacing an old collection.
+Adds exact-source Hit@5 evaluation for every supplied query, with no oracle filters
+and only the first five results eligible. Tests build fresh real-MiniLM collections,
+report each hit/miss, and fail each template independently below 80%. Empty/missing
+evaluation data fails; evidence from another template is an error.
 
-Search uses cosine distance, `$and` equality filters, explicit/active template
-selection, clipped/rounded 0–1 scores and actionable empty-index errors. CLI and
-`ingest_all()` return file counts, chunks per type and timings. All new source,
-test and documentation changes are inside `part2_knowledge/`, with the earlier
-authorized SearchResult Contract Day exception in `contracts/schemas.py`. No new
-library is added. Both prompt strings use Part 5's masking hook when available;
-the current identity fallback is an offline integration aid, not real masking.
-
-This integration PR includes the existing `part2/contract-searchresult`,
-`part2/config-llm-prompting` and `part2/ingestion-and-search` work together. The owner
-explicitly requested creating the PR and merging this delivery into main. That
-authorization is not a claim that all five members' review approvals were recorded.
+Scope is only `part2_knowledge/`, with no dependency or shared-contract changes.
+This is a rule-based boundary for tested formats/named fields, not universal PII
+recognition or secure erasure of historical files/backups. Part 5's actual module
+and real LLM providers remain separate work. The owner has explicitly confirmed
+committing the implementation, creating this PR and merging it into main.
 
 ## Which part
 
@@ -47,23 +39,28 @@ From `projects/Regulatory-Support-Copilot/`, using the existing `.venv`:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest part2_knowledge/tests -q -p no:cacheprovider
+.\.venv\Scripts\python.exe -m pytest part2_knowledge/tests/test_search_quality.py -q
 .\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider
-.\.venv\Scripts\python.exe -m part2_knowledge.knowledge_base.ingest
 ```
 
-**80 Part 2 tests passed; 180 tests passed overall, without warnings.** Coverage
-includes heading/long-section splits, overlap, stable IDs, all seven source types,
-mixed policy/code documents, source exclusions, metadata filters, cosine scores,
-template isolation, missing/empty collections, stale-chunk removal, preservation of
-the old index on source/embedding failures, CLI summaries and third-template
-ingestion/search. Tests use temporary collections and tiny local embeddings.
+**144 Part 2 tests / 244 total tests passed.** Boundary tests inspect provider
+arguments/schema examples, embedding inputs, persisted data and returned metadata.
+They cover complete/partial formats, Unicode digits, short named private fields,
+chunk-boundary leaks, masking/import failures, defaults/validators reintroducing
+data, legacy-index rejection, and preservation of nonprivate codes/dates.
 
-Separately ran real MiniLM ingestion on Chroma 1.5.9: payments **15 files / 89
-chunks**, university **15 files / 63 chunks**. A fresh process retrieved the actual
-AC04 and PREREQ_MISSING sections with the correct template metadata; the SE301
-search also returned its study-plan source. The first run downloaded Chroma's
-standard local embedding model. Runtime/model files are not committed. Full hit@5
-evaluation and tuning remain a later task; no LLM-provider call was made.
+Quality-metric tests reject sixth-place hits, same filenames in other directories,
+empty datasets and cross-template evidence, and verify the exact 80% threshold.
+The real-model gate uses fresh temporary collections and all current cases:
+
+| Attempt | Payments | University |
+| --- | --- | --- |
+| Existing ranking baseline | 12/12 (100%) | 12/12 (100%) |
+| Strict privacy, unchanged ranking | 12/12 (100%) | 12/12 (100%) |
+
+No tuning was necessary. The supplied sets are synthetic and small; these scores
+do not establish general real-world accuracy. MiniLM must be cached/downloadable;
+quality tests are not silently mocked or skipped. No external LLM call was made.
 
 ## Screenshots (for website changes)
 
@@ -71,9 +68,8 @@ Not applicable; this is Part 2 Python infrastructure.
 
 ## Contract changes?
 
-- [ ] No
-- [x] Yes – Part 2's SearchResult model; shared contract review applies
+- [x] No
+- [ ] Yes – all five members must approve
 
-The shared-schema change is limited to Part 2's SearchResult section. Integration
-documentation edits are confined to `part2_knowledge/`.
-No issue is linked; teammate issue texts remain drafts in `CONTRACT_REVIEW.md`.
+Runtime copies of schema examples are sanitized; shared schema source files stay
+unchanged. No issue is linked; teammate issue texts remain drafts in `CONTRACT_REVIEW.md`.

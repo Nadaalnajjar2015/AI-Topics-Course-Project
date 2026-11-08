@@ -8,6 +8,7 @@ from part1_templates.tools.changes import parse_change
 from part1_templates.tools.directory import list_stakeholders, list_units
 from part1_templates.tools.templates import load_template
 from part2_knowledge.common.config import PROJECT_ROOT, settings
+from part2_knowledge.common.privacy import mask_text
 from part2_knowledge.knowledge_base.chunking import Chunk, _make_chunks, chunk_markdown
 
 
@@ -34,7 +35,7 @@ def _entry_chunks(rows, path, template_id, doc_type, id_key, metadata_keys):
     for index, row in enumerate(rows):
         location = str(row.get(id_key, f"{doc_type} {index + 1}"))
         metadata = {key: row[key] for key in metadata_keys if row.get(key) is not None}
-        entries = _make_chunks([(location, _readable(row))], _source(path), template_id,
+        entries = _make_chunks([(location, mask_text(_readable(row)))], _source(path), template_id,
                                path.stem.replace("_", " "), doc_type, metadata)
         for chunk in entries:
             chunks.append(Chunk(f"{_source(path)}#{len(chunks)}", chunk.text, chunk.metadata))

@@ -2,88 +2,72 @@
 
 **Owner:** (khadija hzayen . khadija hzayen)
 **Guide:** [Part 2 guide](../docs/source/02-Part2-Knowledge-Base-and-AI-Foundation.md)
-**Delivery:** SearchResult, shared AI foundation and per-template ingestion/search
+**Delivery:** Strict Part 2 privacy and per-template Hit@5 quality gate
 
-Part 2 provides the shared AI foundation: settings, template-based prompts, one LLM
-wrapper and document search with a separate Chroma collection for each organization.
-Delivered so far: the **SearchResult contract, settings, fake LLM, prompt rendering
-and real per-template ingestion/search**. Real LLM providers are still planned.
+Part 2 supplies the SearchResult contract, shared settings, fake LLM wrapper,
+template prompts and isolated Chroma search. It indexes documents, reason codes,
+units, stakeholders, history and numbered changes. Records, open requests and
+evaluation answers stay outside the index. See [team interfaces](common/README.md).
 
-## Completed work
+## Privacy boundary
 
-- Audited Part 1 and both fictional datasets. Its 100 tests continue to pass.
-- Added [SearchResult](../contracts/schemas.py), with described fields, bounded
-  scores, the actual AC04 excerpt and compatible metadata for historical citations.
-- Added shared `.env` settings, validated fake LLM responses, template-label prompt
-  rendering and UTF-8 prompt loading. See [team usage rules](common/README.md).
-- Replaced the stubs in [search.py](knowledge_base/search.py) and
-  [ingest.py](knowledge_base/ingest.py) with persistent cosine Chroma collections.
-  The loader covers documents, reason codes, units, stakeholders, historical
-  requests/actions and change documents. Records, open requests and eval stay out.
-- Added heading/numbered-section chunking, 800-character bodies with 100-character
-  overlap for long sections, context prefixes, stable `source#index` IDs and source
-  metadata including `template_id`. Shared policy sections retain `doc_type=document`.
-- Search uses the selected/active template, combines filters with `$and`, and
-  returns cited `SearchResult` objects. Scores are `1 - cosine_distance`, clipped
-  to 0–1 and rounded to three decimals; empty indexes name the rebuild command.
-- Added tests and updated [PR text](PR_DESCRIPTION.md) and [AI_LOG.md](AI_LOG.md).
+[privacy.py](common/privacy.py) fully replaces detected financial/contact/ID values
+with `[REDACTED]`, including partial masks that retain digits. It uses strict local
+redaction before/after Part 5's hook, with no identity fallback. A broken hook stops
+processing with `PrivacyError`.
 
-## Using the foundation
+Protection covers prompts, schema examples/defaults, responses, full documents
+before chunking, embedding input, stored IDs/metadata, queries and returned results.
+Explicitly named private fields are hidden even when short. Short operational IDs
+and validated ISO dates remain usable. Pattern rules are not a universal detector
+of all personal information; Part 1 source fixtures remain unchanged.
 
-Use Part 1's `load_template()` for labels. Omitted search template IDs use
-`settings.active_template`; `ingest_all(None)` rebuilds all templates.
+## Rebuild and use
 
-Use `LLM_PROVIDER=fake` in the project `.env`. External environment values win;
-changes to `.env` require a process restart. Other provider names are recognized by
-settings but raise `LLMError` until implemented.
-
-## Rebuild and search
-
-Run from the project folder with the existing environment. Each selected collection
-is deleted and recreated in `settings.chroma_dir` (default `runtime/chroma`). Chroma's
-local MiniLM embedding model downloads about 80 MB into its standard cache on first
-use; subsequent ingestion/search uses that cached model. No LLM API key is needed.
+Run from `projects/Regulatory-Support-Copilot/`. Existing indexes without the current
+privacy-policy marker are rejected until rebuilt. Rebuild replaces each selected
+collection in ignored `settings.chroma_dir` (default `runtime/chroma`).
 
 ```powershell
 .\.venv\Scripts\python.exe -m part2_knowledge.knowledge_base.ingest
 .\.venv\Scripts\python.exe -m part2_knowledge.knowledge_base.ingest --template university
 ```
 
-The CLI and `ingest_all()` report files, chunks by type and elapsed seconds. Sources
-and embeddings are prepared before the previous collection is removed.
+Local indexes were rebuilt on 2026-11-08: **payments 89 chunks; university 63**, from
+15 source files each. The local MiniLM model needs an approximately 80 MB download
+on first use; subsequent calls use its cache.
 
-```python
-from part2_knowledge.knowledge_base.search import search
-results = search("PREREQ_MISSING", template_id="university",
-                 filters={"doc_type": "reason_codes", "reason_code": "PREREQ_MISSING"})
-```
+`search(query, k=5, filters=None, template_id=None)` returns cited results with cosine
+scores clipped to 0–1. Omitted IDs use `settings.active_template`; `ingest_all(None)`
+rebuilds all templates. Add a valid folder under `settings.templates_dir` and ingest
+to create `kb_<template_id>` without code changes. Use Part 1's file conventions.
 
-Verified real indexes: **payments: 15 files / 89 chunks; university: 15 files / 63
-chunks**. AC04 and PREREQ_MISSING retrieval was verified in a fresh process.
-Add a valid folder under `settings.templates_dir` and run ingestion to create
-`kb_<template_id>` without code changes. Follow Part 1's format: bare code headings
-and unit IDs in unit-specific filenames. A third-template test verifies discovery.
+Use `LLM_PROVIDER=fake` in `.env`; restart after setting changes. Ollama, Anthropic
+and OpenAI providers remain unimplemented and raise `LLMError`.
 
-## Verification
+## Search quality and tests
 
-Run from `projects/Regulatory-Support-Copilot/` with the existing environment:
+[test_search_quality.py](tests/test_search_quality.py) builds fresh temporary indexes
+with real MiniLM embeddings, runs every evaluation query unfiltered, and checks
+exact expected source paths within the first five results. It prints each hit/miss
+and fails independently below 80% for either template. Missing/empty eval data fails.
+
+| Measured attempt (2026-11-08) | Payments Hit@5 | University Hit@5 |
+| --- | --- | --- |
+| Baseline: 800-char chunks, overlap 100, context prefix | 12/12 (100%) | 12/12 (100%) |
+| Strict privacy at all Part 2 boundaries; same ranking | 12/12 (100%) | 12/12 (100%) |
+
+No ranking/chunk tuning was needed. These are the supplied synthetic cases, not a
+general accuracy guarantee. Quality tests require the cached/downloadable embedding
+model; unit privacy/storage tests use local test embeddings.
 
 ```powershell
+.\.venv\Scripts\python.exe -m pytest part2_knowledge/tests/test_search_quality.py -q
 .\.venv\Scripts\python.exe -m pytest part2_knowledge/tests -q -p no:cacheprovider
 .\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider
 ```
 
-Last full validation (2026-11-07): **80 Part 2 tests passed; 180 tests passed overall**.
-Tests use temporary collections and tiny local embeddings without downloads.
-Real MiniLM ingestion/search was checked separately on Chroma 1.5.9. Full hit@5
-evaluation and tuning remain a later task.
-
-## Team review and remaining work
-
-This delivery combines the Part 2 contract, foundation and ingestion/search work.
-Integration into `main` was explicitly requested by the owner. Team-review approval
-is not inferred from that request; see [review notes](CONTRACT_REVIEW.md).
-The current identity masking fallback does not protect personal data.
-
-Next: Ollama, Anthropic and OpenAI with JSON retries and real masking; then hit@5
-evaluation (target ≥80% for each template) and tuning.
+**144 Part 2 tests / 244 total tests passed.** See [AI log](AI_LOG.md),
+[PR draft](PR_DESCRIPTION.md) and [team follow-ups](CONTRACT_REVIEW.md).
+The owner confirmed commit, PR publication and integration into main. Real providers
+and whole-project integration with Part 5's actual masking module remain pending.

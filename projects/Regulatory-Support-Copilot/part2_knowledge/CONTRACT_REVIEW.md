@@ -51,7 +51,8 @@ preserving valid items for both templates. Part 2 has not edited Part 1.
 
 Provide `part5_web.safety.masking.mask(text)` and confirm that evaluation consumers
 iterate the `cases` array inside the documented JSON envelope. A mocked masking
-hook can verify Part 2 wiring, but cannot prove real masking. Acceptance: real
+hook can verify Part 5 wiring, but cannot prove the missing Part 5 implementation.
+Part 2 now applies strict local redaction even without this module. Acceptance: real
 masking tests cover both templates, and evaluation reads all current cases.
 
 **Team — complete contracts, ownership and guide corrections**
@@ -68,7 +69,10 @@ Settings, fake LLM and prompting were delivered on `part2/config-llm-prompting`.
 (80 Part 2 / 180 total tests pass). The owner explicitly requested integrating this
 combined delivery into main; this does not assert that team-review approvals were
 recorded. Search clips negative cosine similarity to zero as proposed above.
-Real LLM providers and search-quality evaluation remain separate tasks.
+The `part2/privacy-search-quality` review branch adds strict Part 2 privacy and a
+real-model Hit@5 gate: 12/12 per template, with 144 Part 2 / 244 total tests passing.
+The owner has confirmed committing, publishing a PR and integrating that work into main.
+Real LLM providers and integration with the actual Part 5 module remain pending.
 Records and open requests are not vector-index sources; scenario dates remain evidence.
 
 ## Validation

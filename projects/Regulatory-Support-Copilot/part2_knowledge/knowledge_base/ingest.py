@@ -1,13 +1,23 @@
 """Rebuild one cosine Chroma collection per discovered organization template."""
 import argparse
 from collections import Counter
+from hashlib import sha256
 from time import perf_counter
 
 from chromadb.errors import NotFoundError
 
 from part1_templates.tools.templates import list_templates, load_template
+from part2_knowledge.common.privacy import PRIVACY_METADATA_KEY, PRIVACY_VERSION, mask_text, sanitize
 from part2_knowledge.knowledge_base import _store
 from part2_knowledge.knowledge_base._sources import _load_chunks
+from part2_knowledge.knowledge_base.chunking import Chunk
+
+
+def _safe_chunk(chunk: Chunk) -> Chunk:
+    identifier = mask_text(chunk.id)
+    if identifier != chunk.id:
+        identifier = "private-source#" + sha256(chunk.id.encode("utf-8")).hexdigest()
+    return Chunk(identifier, mask_text(chunk.text), sanitize(chunk.metadata))
 
 
 def ingest_all(template_id: str | None = None) -> dict:
@@ -19,6 +29,7 @@ def ingest_all(template_id: str | None = None) -> dict:
     for template in templates:
         started = perf_counter()
         chunks, files_read = _load_chunks(template.id)
+        chunks = [_safe_chunk(chunk) for chunk in chunks]
         # Prepare embeddings before removing the previous index if a source/model fails.
         embeddings = embedding_function(input=[chunk.text for chunk in chunks]) if chunks else []
         name = f"kb_{template.id}"
@@ -27,6 +38,7 @@ def ingest_all(template_id: str | None = None) -> dict:
         except NotFoundError:
             pass
         collection = client.create_collection(name, embedding_function=embedding_function,
+                                              metadata={PRIVACY_METADATA_KEY: PRIVACY_VERSION},
                                               configuration={"hnsw": {"space": "cosine"}})
         for start in range(0, len(chunks), 100):
             batch = chunks[start:start + 100]
