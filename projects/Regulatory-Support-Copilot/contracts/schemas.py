@@ -167,6 +167,114 @@ class SearchResult(BaseModel):
 
 # --- Part 3: Requirement, ChangeSummary, Impact, ImpactReport, Check, ActionItem ---
 
+
+class Requirement(BaseModel):
+    """One source-grounded obligation or recommendation."""
+
+    requirement_id: str = Field(description="Stable change-local requirement identifier.")
+    description: str = Field(description="Concrete requirement in plain language.")
+    category: Literal["message_format", "reporting", "limits", "operational", "academic", "data_privacy", "other"] = Field(description="General requirement category.")
+    mandatory: bool = Field(description="True for a binding obligation; false for a recommendation.")
+    source_quote: str = Field(description="Verbatim source span, verified against the change document.")
+    source_location: str = Field(description="Numbered section and original source line.")
+
+    model_config = {"json_schema_extra": {"example": {
+        "requirement_id": "CHG-P-002-R1", "description": "Reject missing structured creditor addresses with BE04.",
+        "category": "message_format", "mandatory": True,
+        "source_quote": "ACH and IPS payments without the mandatory structured creditor address must be rejected with reason code BE04.",
+        "source_location": "Section 2, line 17",
+    }}}
+
+
+class ChangeSummary(BaseModel):
+    """Requirements and authoritative document identity."""
+
+    change_id: str = Field(description="Original change identifier.")
+    template_id: str = Field(description="Template owning the change.")
+    title: str = Field(description="Original document title.")
+    scope: str = Field(description="Original deterministic stakeholder scope.")
+    effective_date: date | None = Field(description="Header effective date or source-verified date; null if unknown.")
+    summary_text: str = Field(description="Concise source-grounded summary for human review.")
+    requirements: list[Requirement] = Field(description="Distinct verified requirements in document order.")
+
+    model_config = {"json_schema_extra": {"example": {
+        "change_id": "CHG-P-002", "template_id": "payments",
+        "title": "Mandatory structured creditor address in credit transfers", "scope": "country=Country X",
+        "effective_date": "2026-06-01", "summary_text": "ACH and IPS must require structured creditor addresses and reject missing addresses with BE04.",
+        "requirements": [Requirement.model_config["json_schema_extra"]["example"]],
+    }}}
+
+
+class Impact(BaseModel):
+    """One requirement's effect on a verified unit."""
+
+    requirement_id: str = Field(description="Identifier of the requirement causing this impact.")
+    unit_id: str = Field(description="Existing unit in the change's template.")
+    stakeholders: list[str] = Field(description="Sorted stakeholder IDs selected by directory and scope.")
+    severity: Literal["high", "medium", "low"] = Field(description="Evidence-aware urgency for review.")
+    reason: str = Field(description="Unit rationale, severity rule and any evidence gap.")
+    sources: list[SearchResult] = Field(description="Unmodified retrieved passages supporting this unit choice.")
+
+    model_config = {"json_schema_extra": {"example": {
+        "requirement_id": "CHG-P-002-R1", "unit_id": "ACH", "stakeholders": ["BANK-A", "BANK-B"],
+        "severity": "high", "reason": "Mandatory address validation is already effective; ACH processes these transfers.",
+        "sources": [{"text": "ACH-R07: Creditor address is mandatory above 10,000; absence yields BE04.",
+                     "source": "part1_templates/templates/payments/documents/ACH.md", "doc_type": "document",
+                     "location": "Validation rules", "score": 0.9, "metadata": {"template_id": "payments", "unit_id": "ACH"}}],
+    }}}
+
+
+class ImpactReport(BaseModel):
+    """Verified impacts plus requirements needing manual mapping."""
+
+    change_id: str = Field(description="Original change identifier.")
+    impacts: list[Impact] = Field(description="Impacts sorted by requirement then unit.")
+    unmatched_requirements: list[str] = Field(description="Requirement IDs with no accepted unit.")
+
+    model_config = {"json_schema_extra": {"example": {
+        "change_id": "CHG-P-002", "impacts": [Impact.model_config["json_schema_extra"]["example"]],
+        "unmatched_requirements": [],
+    }}}
+
+
+class Check(BaseModel):
+    """Reproducible verification steps and expected outcome."""
+
+    check_id: str = Field(description="Stable action-local check identifier.")
+    steps: list[str] = Field(description="Ordered concrete steps a reviewer can perform.")
+    expected: str = Field(description="Observable expected outcome.")
+
+    model_config = {"json_schema_extra": {"example": {
+        "check_id": "AI-CHG-P-002-ACH-C1", "steps": ["Load the proposed ACH validation profile.", "Submit a transfer missing the structured creditor address."],
+        "expected": "The transfer is rejected with BE04.",
+    }}}
+
+
+class ActionItem(BaseModel):
+    """A draft; saving or approval is a separate human-controlled workflow."""
+
+    action_id: str = Field(description="Stable change-and-unit action identifier.")
+    change_id: str = Field(description="Original change identifier.")
+    title: str = Field(description="Specific work title.")
+    description: str = Field(description="Required work, citing all covered requirement identifiers.")
+    unit_id: str = Field(description="Verified affected unit identifier.")
+    stakeholders: list[str] = Field(description="Exact deterministic affected stakeholder IDs.")
+    owner_role: str = Field(description="Accountable organizational role; never a guessed person.")
+    due_before: date | None = Field(description="Source effective date, or null if unknown.")
+    checks: list[Check] = Field(description="Verifiable completion checks; new drafts contain two to four.")
+    sources: list[SearchResult] = Field(description="Deduplicated original impact citations.")
+    status: Literal["pending_review", "approved", "rejected"] = Field(description="Human review state; agents only create pending_review.")
+
+    model_config = {"json_schema_extra": {"example": {
+        "action_id": "AI-CHG-P-002-ACH", "change_id": "CHG-P-002", "title": "Require structured creditor addresses in ACH",
+        "description": "Implement CHG-P-002-R1: reject missing structured creditor addresses with BE04.",
+        "unit_id": "ACH", "stakeholders": ["BANK-A", "BANK-B"], "owner_role": "ACH owner",
+        "due_before": "2026-06-01", "checks": [Check.model_config["json_schema_extra"]["example"],
+            {"check_id": "AI-CHG-P-002-ACH-C2", "steps": ["Submit an otherwise valid transfer with TwnNm and Ctry."],
+             "expected": "Address validation accepts the complete structured address."}],
+        "sources": Impact.model_config["json_schema_extra"]["example"]["sources"], "status": "pending_review",
+    }}}
+
 # --- Part 4: Investigation, TaskStep, Task ---
 
 # --- Part 5: ReviewDecision, AuditEvent ---

@@ -14,11 +14,12 @@ class Settings(BaseModel):
 
     active_template: str = Field(default="payments", min_length=1)
     templates_dir: Path = Path("part1_templates/templates")
-    llm_provider: Literal["fake", "ollama", "anthropic", "openai"] = "fake"
+    llm_provider: Literal["fake", "ollama", "anthropic", "openai", "groq"] = "fake"
     llm_model: str = "qwen2.5:7b"
     ollama_base_url: str = "http://localhost:11434"
     anthropic_api_key: str = Field(default="", repr=False)
     openai_api_key: str = Field(default="", repr=False)
+    groq_api_key: str = Field(default="", repr=False)
     chroma_dir: Path = Path("runtime/chroma")
     app_db: Path = Path("runtime/app.db")
     llm_timeout_seconds: int = Field(default=120, gt=0)
