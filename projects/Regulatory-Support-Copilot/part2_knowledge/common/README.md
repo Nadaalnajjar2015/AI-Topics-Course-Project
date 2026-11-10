@@ -1,7 +1,7 @@
 # Shared settings, LLM and prompt interfaces
 
 Parts 3–5 use these public interfaces. Only `config.py` reads environment variables;
-only `llm.py` will call model providers. Current LLM support is **fake only**.
+only `llm.py` calls model providers. Current LLM support is **fake and GroqCloud**.
 
 ```python
 from contracts.schemas import SearchResult
@@ -38,7 +38,7 @@ Keys use uppercase environment names, including `LLM_TIMEOUT_SECONDS` and
 
 Changing `settings.active_template` changes Part 1 calls and search calls that omit
 the template ID. Pass explicit template IDs for tasks serving different organizations.
-Real provider calls and retry handling remain planned. Retrieval is now implemented
+GroqCloud uses bounded SDK transport retries; other real providers remain planned. Retrieval is now implemented
 in `part2_knowledge.knowledge_base`; it works independently of the fake LLM provider.
 
 ## Prompt and LLM rules
@@ -59,7 +59,44 @@ in `part2_knowledge.knowledge_base`; it works independently of the fake LLM prov
 - API keys come from `settings`; never commit them or place them in prompts.
 - Both prompt strings, schema literals and outputs use the Part 2 privacy boundary
   below. Private values must not be added after this boundary or sent through a
-  provider directly. Real provider support remains pending.
+  provider directly. GroqCloud uses this same boundary.
+
+## GroqCloud setup (cross-owner addition; Khadija review required)
+
+Install `groq` from `requirements.txt`. In your ignored local `.env`, set
+`LLM_PROVIDER=groq`, `LLM_MODEL=openai/gpt-oss-20b`, and `GROQ_API_KEY` to your own
+key. Never paste a key into chat or source control. Existing fake/model defaults
+are unchanged; provider configuration is read once at import.
+
+The official SDK calls `client.chat.completions.create` with the configured model,
+temperature 0, timeout and maximum transport retries. As documented on 2026-11-09,
+the GPT-OSS, Qwen 3.8 and Muse models listed in `llm.py` support JSON Schema output.
+For models with documented strict support, the adapter selects `strict=true` only
+when every schema object is closed and every property is required. Open objects,
+fields with defaults and models supporting best-effort only retain `strict=false`;
+other models use JSON-object mode with schema instructions. Existing shared
+contracts are not rewritten to force strict compatibility. Unsupported models/schemas fail explicitly; the adapter
+does not retry semantic failures, downgrade response modes or return fake answers.
+Every JSON response is parsed, redacted, validated with the requested Pydantic model,
+and checked again after validation. Text and schema literals also retain strict
+redaction. SDK error bodies/headers are never included in public exceptions.
+
+Official references: [Structured Outputs](https://console.groq.com/docs/structured-outputs),
+[Chat Completions](https://console.groq.com/docs/text-chat), and
+[Python SDK, timeout/retries/errors](https://github.com/groq/groq-python).
+Model access and capabilities may change; verify them before a live run.
+
+Offline tests: `python -m pytest part2_knowledge/tests/test_groq.py -q`.
+Tests mock the SDK; they do not establish live service behavior. The follow-up
+verification found SDK 1.7.0 installed and, with explicit user authorization,
+confirmed real structured Groq responses on openai/gpt-oss-20b and
+openai/gpt-oss-120b. The complete eight-case run used 120B after a daily quota
+stopped the separate 20B run. The initial SDK
+installation/authorization blockers are historical. Detailed live template smoke,
+quality results, failures and limits are recorded in
+[Part 3 verification](../../part3_change_watch/VERIFICATION.md). The local .env and
+credentials were not modified or displayed. Part 3's opt-in verification runner
+can select the model in its process without editing persistent settings.
 
 ## Strict Part 2 privacy
 
