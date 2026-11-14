@@ -1,8 +1,17 @@
 from pathlib import Path
+import time
 
 import pytest
 
-from contracts.schemas import ChangeDocument, Investigation, Request, Task
+from contracts.schemas import (
+    ActionItem,
+    ChangeDocument,
+    ChangeSummary,
+    ImpactReport,
+    Investigation,
+    Request,
+    Task,
+)
 from part4_request_desk import investigator
 from part4_request_desk.orchestrator import (
     get_task,
@@ -15,6 +24,7 @@ from part4_request_desk.orchestrator import (
     start_request_task,
     update_output,
 )
+from part4_request_desk.orchestrator import orchestrator as orchestrator_module
 from part4_request_desk.orchestrator import store
 
 
@@ -42,6 +52,31 @@ def _change() -> ChangeDocument:
     )
 
 
+def _patch_change_agents(monkeypatch: pytest.MonkeyPatch) -> None:
+    summary = ChangeSummary.model_validate(
+        ChangeSummary.model_config["json_schema_extra"]["example"]
+    )
+    impact = ImpactReport.model_validate(
+        ImpactReport.model_config["json_schema_extra"]["example"]
+    )
+    action = ActionItem.model_validate(
+        ActionItem.model_config["json_schema_extra"]["example"]
+    )
+    monkeypatch.setattr(orchestrator_module, "summarize", lambda _: summary)
+    monkeypatch.setattr(orchestrator_module, "analyze", lambda _: impact)
+    monkeypatch.setattr(orchestrator_module, "plan", lambda *_: [action])
+
+
+def _wait_for_completion(task_id: str) -> Task:
+    deadline = time.monotonic() + 2
+    while time.monotonic() < deadline:
+        task = get_task(task_id)
+        if task.status != "running":
+            return task
+        time.sleep(0.01)
+    return get_task(task_id)
+
+
 def test_investigate_returns_investigation_example() -> None:
     request = _request()
 
@@ -55,7 +90,9 @@ def test_investigate_returns_investigation_example() -> None:
 
 def test_sync_functions_return_finished_tasks_and_expected_outputs(
     database_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    _patch_change_agents(monkeypatch)
     change_task = run_change_sync(_change())
     request_task = run_request_sync(_request())
 
@@ -68,15 +105,21 @@ def test_sync_functions_return_finished_tasks_and_expected_outputs(
     assert get_task(request_task.task_id) == request_task
 
 
-def test_start_functions_save_fake_finished_tasks(database_path: Path) -> None:
+def test_start_functions_save_fake_finished_tasks(
+    database_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _patch_change_agents(monkeypatch)
     change_id = start_change_task(_change())
     request = _request("U-REQ-007", "university")
     request_id = start_request_task(request)
 
-    assert get_task(change_id).status == "pending_review"
-    assert get_task(change_id).type == "change"
-    assert get_task(request_id).template_id == "university"
-    assert get_task(request_id).input_ref == "U-REQ-007"
+    change_task = _wait_for_completion(change_id)
+    request_task = _wait_for_completion(request_id)
+    assert change_task.status == "pending_review"
+    assert change_task.type == "change"
+    assert request_task.template_id == "university"
+    assert request_task.input_ref == "U-REQ-007"
 
 
 def test_list_status_and_output_updates_and_retry(database_path: Path) -> None:
@@ -98,9 +141,9 @@ def test_list_status_and_output_updates_and_retry(database_path: Path) -> None:
     assert updated.outputs["review_note"] == {"accepted": True}
 
     retry_id = retry_task(first.task_id)
-    retry = get_task(retry_id)
+    retry = _wait_for_completion(retry_id)
     assert retry.task_id != first.task_id
     assert retry.input_ref == first.input_ref
     assert retry.type == first.type
     assert retry.status == "pending_review"
-    assert retry.outputs == updated.outputs
+    assert set(retry.outputs) == {"investigation"}
