@@ -277,4 +277,98 @@ class ActionItem(BaseModel):
 
 # --- Part 4: Investigation, TaskStep, Task ---
 
+
+class Investigation(BaseModel):
+    """Evidence-backed findings and a draft reply for one request."""
+
+    request_id: str = Field(description="Identifier of the request being investigated.")
+    item: str | None = Field(description="Extracted item reference, or null when none is identified.")
+    reason_code: str | None = Field(description="Reason from the matching record, or null when not applicable.")
+    root_cause: str = Field(description="Concise explanation supported by the evidence and sources.")
+    evidence: list[Record] = Field(description="Records used as evidence for the investigation.")
+    sources: list[SearchResult] = Field(description="Retrieved document passages supporting the explanation.")
+    draft_reply: str = Field(description="Reply for a human to review; it has not been sent.")
+    confidence: Literal["high", "medium", "low"] = Field(description="Confidence based on record and document evidence.")
+    escalate: bool = Field(description="Whether the result needs human investigation before responding.")
+
+    model_config = {"json_schema_extra": {"example": {
+        "request_id": "P-REQ-007",
+        "item": "7731",
+        "reason_code": "AC04",
+        "root_cause": "The record for item 7731 was rejected because the receiving account was closed.",
+        "evidence": [{
+            "record_id": "T-100457",
+            "template_id": "payments",
+            "timestamp": "2026-03-02T09:12:03",
+            "person_id": "BANK-C",
+            "unit_id": "ACH",
+            "item": "7731",
+            "status": "REJECTED",
+            "reason_code": "AC04",
+            "detail": "pacs.002 RJCT: creditor account closed (fictional fixture)",
+        }],
+        "sources": [{
+            "text": "AC04 – Closed account number. The creditor account is closed.",
+            "source": "part1_templates/templates/payments/documents/reason_codes.md",
+            "doc_type": "reason_codes",
+            "location": "AC04",
+            "score": 0.84,
+            "metadata": {"template_id": "payments", "reason_code": "AC04"},
+        }],
+        "draft_reply": (
+            "Dear BANK-C team, item 7731 was rejected because the receiving account is closed. "
+            "Please confirm an active account with the beneficiary before retrying. "
+            "Support Team, Cedar Payment Systems"
+        ),
+        "confidence": "high",
+        "escalate": False,
+    }}}
+
+
+class TaskStep(BaseModel):
+    """Status, timing, and progress details for one workflow step."""
+
+    name: str = Field(description="Human-readable agent or workflow step name.")
+    status: Literal["waiting", "running", "done", "failed"] = Field(description="Current state of this step.")
+    started_at: datetime | None = Field(description="Time the step started, or null before it runs.")
+    finished_at: datetime | None = Field(description="Time the step finished, or null while it is unfinished.")
+    error: str | None = Field(description="Readable failure detail, or null when the step has not failed.")
+    message: str | None = Field(description="Latest progress update, or null when there is no update.")
+
+    model_config = {"json_schema_extra": {"example": {
+        "name": "Request Investigator",
+        "status": "done",
+        "started_at": "2026-03-02T10:00:01",
+        "finished_at": "2026-03-02T10:00:04",
+        "error": None,
+        "message": "Found one matching record and one supporting source.",
+    }}}
+
+
+class Task(BaseModel):
+    """Persisted state and outputs for one template's workflow run."""
+
+    task_id: str = Field(description="Stable identifier for this workflow run.")
+    template_id: str = Field(description="Template that owns the input and task outputs.")
+    type: Literal["change", "request"] = Field(description="Workflow type.")
+    status: Literal["running", "pending_review", "approved", "rejected", "failed"] = Field(description="Overall task state.")
+    input_ref: str = Field(description="Identifier of the input change document or request.")
+    steps: list[TaskStep] = Field(description="Ordered workflow steps and their current states.")
+    outputs: dict[str, object] = Field(description="JSON-compatible results keyed by the workflow output names.")
+    created_at: datetime = Field(description="Time the task was created.")
+
+    model_config = {"json_schema_extra": {"example": {
+        "task_id": "T-20260302-0007",
+        "template_id": "payments",
+        "type": "request",
+        "status": "pending_review",
+        "input_ref": "P-REQ-007",
+        "steps": [TaskStep.model_config["json_schema_extra"]["example"]],
+        "outputs": {
+            "investigation": Investigation.model_config["json_schema_extra"]["example"],
+        },
+        "created_at": "2026-03-02T10:00:00",
+    }}}
+
+
 # --- Part 5: ReviewDecision, AuditEvent ---
