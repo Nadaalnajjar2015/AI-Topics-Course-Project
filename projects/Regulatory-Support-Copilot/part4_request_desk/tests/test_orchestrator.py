@@ -107,9 +107,39 @@ def test_failed_agent_marks_task_and_step_failed(
     assert task.status == "failed"
     assert task.steps[0].status == "failed"
     assert task.steps[0].error == "agent failed clearly"
+    assert task.steps[0].message == "Change Watcher failed: agent failed clearly"
     assert [step.status for step in task.steps[1:]] == ["waiting", "waiting"]
     assert events == ["task_created", "step_failed"]
     assert orchestrator.get_task(task.task_id) == task
+
+
+def test_retry_task_starts_a_new_request_task(
+    database_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    example = Investigation.model_config["json_schema_extra"]["example"]
+    monkeypatch.setattr(
+        orchestrator,
+        "investigate",
+        lambda request: Investigation.model_validate(
+            {**example, "request_id": request.request_id}
+        ),
+    )
+    original = orchestrator.run_request_sync(_request())
+
+    retry_id = orchestrator.retry_task(original.task_id)
+
+    assert retry_id != original.task_id
+    deadline = time.monotonic() + 2
+    while time.monotonic() < deadline:
+        retry = orchestrator.get_task(retry_id)
+        if retry.status != "running":
+            break
+        time.sleep(0.01)
+    assert retry.status == "pending_review"
+    assert retry.input_ref == original.input_ref
+    assert retry.template_id == original.template_id
+    assert set(retry.outputs) == {"investigation"}
 
 
 def test_background_request_returns_before_agent_finishes(

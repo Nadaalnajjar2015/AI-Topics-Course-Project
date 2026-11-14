@@ -10,9 +10,12 @@ from contracts.schemas import (
     ImpactReport,
     Investigation,
     Request,
+    SearchResult,
     Task,
 )
 from part4_request_desk import investigator
+from part1_templates.tools.templates import load_template
+from part2_knowledge.common.config import settings
 from part4_request_desk.orchestrator import (
     get_task,
     list_tasks,
@@ -37,6 +40,40 @@ def database_path(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
         store.settings.model_copy(update={"app_db": database}),
     )
     return database
+
+
+@pytest.fixture(autouse=True)
+def fake_provider_and_knowledge(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(settings, "llm_provider", "fake")
+
+    def fake_search(
+        query: str,
+        filters: dict[str, str],
+        template_id: str,
+        *,
+        k: int = 2,
+    ) -> list[SearchResult]:
+        template = load_template(template_id)
+        document_type = filters["doc_type"]
+        reason_code = filters.get("reason_code")
+        if document_type == "reason_codes":
+            source = f"part1_templates/templates/{template_id}/{template.reason_codes_doc}"
+            location = reason_code or "test-code"
+            metadata = {"template_id": template_id, "reason_code": location}
+        else:
+            source = f"part1_templates/templates/{template_id}/history/past_requests.json"
+            location = "similar-request"
+            metadata = {"template_id": template_id}
+        return [SearchResult(
+            text="Fictional evidence for testing.",
+            source=source,
+            doc_type=document_type,
+            location=location,
+            score=0.9,
+            metadata=metadata,
+        )]
+
+    monkeypatch.setattr(investigator, "_search_knowledge", fake_search)
 
 
 def _request(request_id: str = "P-REQ-007", template_id: str = "payments") -> Request:

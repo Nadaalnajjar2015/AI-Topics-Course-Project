@@ -140,13 +140,14 @@ def _run_steps(task: Task, operations: list[_StepOperation]) -> Task:
             output = _json_value(operation(task.outputs))
         except Exception as error:
             finished_at = _now()
+            error_message = str(error).strip() or error.__class__.__name__
             steps = list(task.steps)
             steps[index] = steps[index].model_copy(
                 update={
                     "status": "failed",
                     "finished_at": finished_at,
-                    "error": str(error) or error.__class__.__name__,
-                    "message": f"{name} failed.",
+                    "error": error_message,
+                    "message": f"{name} failed: {error_message}",
                 }
             )
             task = task.model_copy(
