@@ -68,22 +68,3 @@
   <div class="tag-list">{% for d in documents %}<span class="tag">{{ d }}</span>{% endfor %}</div>
 </section>
 {% endblock %}
-{% block scripts %}
-<script>
-document.getElementById("rebuild").addEventListener("click", function () {
-  const button = this, status = document.getElementById("rebuild-status");
-  button.disabled = true;
-  status.textContent = "Rebuilding… (the first run downloads the embedding model)";
-  fetch("/api/index/rebuild", {method: "POST", headers: {"Content-Type": "application/json"},
-                               body: JSON.stringify({template_id: button.dataset.template})})
-    .then(function (r) { return r.json().then(function (d) { if (!r.ok) throw new Error(d.detail); return d; }); })
-    .then(function (d) {
-      const s = d[button.dataset.template];
-      document.getElementById("chunks").textContent = s.chunks;
-      status.textContent = "Done: " + s.files_read + " files, " + s.chunks + " chunks in " + s.seconds + " s";
-    })
-    .catch(function (e) { status.textContent = "Failed: " + e.message; })
-    .finally(function () { button.disabled = false; });
-});
-</script>
-{% endblock %}

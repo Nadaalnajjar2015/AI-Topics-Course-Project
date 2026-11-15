@@ -7,12 +7,13 @@
   <title>{% block title %}{{ template.organization }}{% endblock %} · Copilot</title>
   <link rel="icon" type="image/svg+xml" href="/static/favicon.svg?v={{ asset_version }}">
   <meta name="theme-color" content="#0f2140">
+  <meta name="description" content="Regulatory and support copilot: AI drafts, human review, full audit log.">
   <link rel="stylesheet" href="/static/style.css?v={{ asset_version }}">
 </head>
 <body>
 <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true" tabindex="-1">
 <div class="app">
-  <aside class="sidebar" aria-label="Main navigation">
+  <aside class="sidebar" id="sidebar" aria-label="Main navigation">
     <a class="sidebar-brand" href="/">
       <span class="brand-mark" aria-hidden="true">{{ icon("shield", 20) }}</span>
       <span class="brand-text"><strong>Copilot</strong><small>Regulatory &amp; Support</small></span>
@@ -47,7 +48,7 @@
 
   <div class="main">
     <header class="topbar">
-      <label for="nav-toggle" class="icon-btn menu-btn" title="Menu">{{ icon("menu") }}<span class="sr-only">Menu</span></label>
+      <button type="button" class="icon-btn menu-btn" title="Menu" aria-controls="sidebar" aria-expanded="false">{{ icon("menu") }}<span class="sr-only">Menu</span></button>
       <form class="topsearch" method="get" action="/search" role="search">
         {{ icon("search", 18) }}
         <input type="search" name="q" placeholder="Search the knowledge base…" maxlength="500" aria-label="Search the knowledge base">
@@ -57,7 +58,7 @@
           <input type="hidden" name="next" value="{{ path }}">
           <span class="control-icon">{{ icon("building", 18) }}</span>
           <label class="control-body"><span class="control-label">Organization</span>
-            <select name="template_id" onchange="this.form.submit()" data-testid="template-switcher">
+            <select name="template_id" data-autosubmit data-testid="template-switcher">
               {% for t in templates %}
               <option value="{{ t.id }}" {% if t.id == template.id %}selected{% endif %}>{{ t.organization }}</option>
               {% endfor %}
@@ -69,7 +70,7 @@
           <input type="hidden" name="next" value="{{ path }}">
           {{ initials(reviewer) }}
           <label class="control-body" title="Prototype: no real login"><span class="control-label">Reviewer</span>
-            <select name="name" onchange="this.form.submit()">
+            <select name="name" data-autosubmit>
               {% for r in template.reviewers %}
               <option value="{{ r }}" {% if r == reviewer %}selected{% endif %}>{{ r }}</option>
               {% endfor %}

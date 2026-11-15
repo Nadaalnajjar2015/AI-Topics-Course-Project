@@ -22,7 +22,10 @@ DOC_TYPES = ["document", "reason_codes", "unit", "stakeholder", "past_request", 
 
 
 def _safe_next(target: str | None) -> str:
-    return target if target and target.startswith("/") and not target.startswith("//") else "/"
+    """Only same-site paths; '//host' and '/\\host' would let browsers leave the site."""
+    if target and target.startswith("/") and not target.startswith(("//", "/\\")) and "\\" not in target:
+        return target
+    return "/"
 
 
 def _redirect_to_task(task_id: str) -> RedirectResponse:

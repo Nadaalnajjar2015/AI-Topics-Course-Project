@@ -70,3 +70,19 @@ def test_ingest_cli_reports_actual_counts(tiny_store, monkeypatch, capsys):
 def test_unknown_template_is_rejected_before_rebuilding(tiny_store):
     with pytest.raises(KeyError, match="not found"):
         ingest.ingest_all("unknown")
+
+
+def test_embeddings_are_computed_in_small_batches(tiny_store, monkeypatch):
+    """A rebuild must stay inside a 512 MB host: never embed every chunk in one call."""
+    sizes = []
+    embedding = _store._embedding_function()
+    original = type(embedding).__call__
+
+    def recording(self, input):
+        sizes.append(len(input))
+        return original(self, input)
+
+    monkeypatch.setattr(type(embedding), "__call__", recording)
+    summary = ingest.ingest_all("payments")["payments"]
+    assert sum(sizes) == summary["chunks"] > ingest.EMBED_BATCH
+    assert max(sizes) <= ingest.EMBED_BATCH

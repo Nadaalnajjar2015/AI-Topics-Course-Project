@@ -42,3 +42,30 @@ def test_ensure_index_builds_only_missing_templates(monkeypatch):
     serve.ensure_index()
     assert len(calls) == 1 and calls[0][-2:] == ["--template", "university"]
     assert calls[0][1:3] == ["-m", "part2_knowledge.knowledge_base.ingest"]
+
+
+def test_too_many_wrong_passwords_pause_logins(client, monkeypatch):
+    monkeypatch.setattr(app_module, "SITE_PASSWORD", "s3cret")
+    monkeypatch.setattr(app_module, "_failures", __import__("collections").deque())
+    monkeypatch.setattr(app_module, "MAX_FAILURES", 3)
+    for _ in range(3):
+        assert client.get("/requests", headers=_basic("guess")).status_code == 401
+    locked = client.get("/requests", headers=_basic("s3cret"))
+    assert locked.status_code == 429 and locked.headers["retry-after"] == "60"
+    assert client.get("/healthz").status_code == 200
+    monkeypatch.setattr(app_module.time, "monotonic", lambda: 10**9)  # the window has passed
+    assert client.get("/requests", headers=_basic("s3cret")).status_code == 200
+
+
+def test_requests_without_a_password_do_not_count_as_failures(client, monkeypatch):
+    monkeypatch.setattr(app_module, "SITE_PASSWORD", "s3cret")
+    monkeypatch.setattr(app_module, "_failures", __import__("collections").deque())
+    for _ in range(40):  # every browser first asks without a password
+        assert client.get("/").status_code == 401
+    assert client.get("/requests", headers=_basic("s3cret")).status_code == 200
+
+
+def test_robots_txt_is_public_and_blocks_indexing(client, monkeypatch):
+    monkeypatch.setattr(app_module, "SITE_PASSWORD", "s3cret")
+    response = client.get("/robots.txt")
+    assert response.status_code == 200 and "Disallow: /" in response.text

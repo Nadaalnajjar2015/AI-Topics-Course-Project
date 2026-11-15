@@ -1,4 +1,5 @@
 """JSON API used by the page JavaScript and the tests. Every call works on one template."""
+from threading import Lock
 from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Query, Request
@@ -13,6 +14,7 @@ from part5_web.context import active_reviewer, active_template, find_change, fin
 from part5_web.safety import audit
 
 router = APIRouter(prefix="/api")
+_REBUILD = Lock()  # one index rebuild at a time: two would double the memory and race
 
 
 class ChangeTaskBody(BaseModel):
@@ -136,7 +138,12 @@ def api_search(request: Request, q: str = Query(min_length=1, max_length=500), d
 @router.post("/index/rebuild")
 def api_rebuild(request: Request, body: RebuildBody | None = None) -> dict:
     template = active_template(request, body.template_id if body else None)
-    stats = ingest.ingest_all(template.id)
+    if not _REBUILD.acquire(blocking=False):
+        raise HTTPException(409, "An index rebuild is already running; try again in a minute")
+    try:
+        stats = ingest.ingest_all(template.id)
+    finally:
+        _REBUILD.release()
     audit.log_event(active_reviewer(request, template), "index_rebuilt", None, stats[template.id],
                     template_id=template.id)
     return stats
