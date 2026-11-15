@@ -1,7 +1,7 @@
 # QA report: Regulatory & Support Copilot website
 
 - **Date:** 2026-11-16
-- **Build tested:** branch `part5/web`, commit `b5991e1` (fixes) on top of `dfe5788`
+- **Build tested:** branch `part5/web`: fixes `b5991e1`, then live-site fixes `8710c8c`, `7f36981` and the Groq message change
 - **Live site:** https://regulatory-support-copilot.onrender.com (Render free plan)
 
 ## 1. Scope and method
@@ -12,7 +12,7 @@
 | Pages | Overview, Central bank circulars (changes), Bank support tickets (requests), Task page, Action Items, Audit Log, Knowledge Search, Setup, Evaluation, error pages; both organizations (payments, university) |
 | API | 10 endpoints: templates, tasks (list/get/start change/start request/review/retry), search, index rebuild, audit |
 | Environment | **Isolated QA server**: the production entry point (`python -m part5_web.serve`) with its own empty database, index and Part 1 state, site password on, fake model. Production data was never touched |
-| Production | Read-only checks only (no password was shared, and the brief forbids changing production data or load-testing it) |
+| Production | 22 checks without the password, then 333 logged-in browser checks and API checks with the password (shared later). Writes kept to the minimum: 1 investigation, 1 approval, 1 circular analysis (+2 retries), 1 index rebuild. No load or brute-force test on production |
 
 Tools: pytest, httpx (HTTP suite), Playwright 1.49 with Microsoft Edge (Chromium), Firefox and WebKit, axe-core 4.10 (WCAG 2.2 AA), Lighthouse 12.3, pip-audit 2.7, git secret scan, Windows process memory counters.
 
@@ -26,7 +26,8 @@ Tools: pytest, httpx (HTTP suite), Playwright 1.49 with Microsoft Edge (Chromium
 | Lighthouse (8 page/device runs + 1 rerun) | 9 | 9 | 0 | Performance 96–100, Accessibility 100, Best Practices 100 |
 | Dependency scan (pip-audit, 120 packages) | 1 | 1 | 0 | 4 advisories in chromadb, not reachable (see 5) |
 | Secret scan (Git history + tracked files) | 1 | 1 | 0 | no keys; `.env` and `runtime/` ignored |
-| Production read-only checks | see 7 | | | |
+| Production, logged in (3 engines × 3 widths × 2 organizations × 8 pages, axe, real Groq flows) | 333 | 331 | 2 | both explained in section 7 (test false positive; Groq daily limit) |
+| Production, without password | 22 | 22 | 0 | |
 | **Total executed (final run)** | **1,402** | **1,402** | **0** | plus production checks in section 7 |
 
 Blocked or not executed: see section 8.
@@ -46,6 +47,8 @@ Blocked or not executed: see section 8.
 | 9 | Low | Text under 11 px (sidebar label 10.5 px, code in small print 10.75 px) | Font sizes | 11 px minimum | e2e font-size check |
 | 10 | Low | `next=/\evil.com` accepted by the redirect filter (not exploitable: the server encodes `\`) | Filter only checked `//` | Reject any backslash | `test_switch_next_only_allows_same_site_paths` |
 | 11 | Low | No `robots.txt` / description | Not present | `robots.txt` disallows indexing (private tool), meta description | Lighthouse, unit test |
+| 12 | **High** (live only) | Every knowledge search took **4.5–5.8 s on Render** (0.1 s locally); investigations and change analyses search several times | (a) a new Chroma client (settings + `.env` re-read) was built per search; (b) ONNX Runtime starts one thread per physical core of the host, and in a 0.1-CPU container those threads fight for one small slice | Cache one client per index folder; run the MiniLM model on 1 ONNX thread (same model and name, existing indexes valid) | Live: 0.76–1.15 s per search (one 11.8 s outlier right after deploy); pages 1.3–1.9 s |
+| 13 | Medium | When Groq's **daily** token allowance runs out, the task said only "rate limit exhausted", so reviewers kept pressing Retry | Every 429 got the same text | Daily limits now say so and that retrying now will not help; Groq's raw message (with the account ID) is still never shown | `test_daily_rate_limit_is_named_without_leaking_the_body` |
 
 Test-script defects found along the way (Firefox's first 401 before sending the password, Playwright helpers blocked by the new CSP, timing waits) were fixed in the scripts, not the app.
 
@@ -86,7 +89,7 @@ Test-script defects found along the way (Firefox's first 401 before sending the 
 | Low | An attacker who knows the URL can trigger the 1-minute login pause | Deliberate trade-off: per-IP limits can be bypassed behind the proxy. Use a long password |
 | Low | Once a ticket/circular has a result, the list offers **View result** only; re-running is possible only for failed tasks (Retry) | Current design; a "Run again" button is a product decision |
 | Low | Organization/reviewer switch use GET links, so a link on another site could change the viewer's selected organization | Harmless (view preference only, cookie `SameSite=Lax`) |
-| Info | Groq free-tier limits: AI tasks can fail with "rate limit" during heavy use | Tasks show **Failed** with a **Retry** button; evaluation numbers need a re-run on a fresh daily quota |
+| Medium | Groq free plan: **200,000 tokens per day per Groq account** (all keys of the account share it). Yesterday's evaluation used it up, so on the test day circular analyses failed on the live site | Do not run the evaluation on demo day, or use a separate Groq account for the evaluation; the allowance frees up over a rolling 24 hours |
 
 ## 7. Production checks (read-only)
 
@@ -102,11 +105,25 @@ Run after Render deployed `b5991e1`, without the password and without changing a
 | CORS | no `Access-Control-Allow-Origin` on a foreign preflight |
 | `robots.txt` | public, `Disallow: /` |
 
+**Logged in (password provided by the owner):**
+
+| Check | Result |
+| --- | --- |
+| All 8 pages × 2 organizations × Edge, Firefox, WebKit × 375/768/1366 px | 200, heading and favicon present, no sideways scroll, no console/JS/CSP/HTTP errors |
+| Accessibility (axe WCAG 2.2 AA, 8 pages) | 0 violations |
+| Page load (desktop, full render) | 1.3–1.9 s |
+| API | templates, tasks, search (5 hits), 400 on empty query/bad status, 404 unknown task |
+| Investigation with the real model (Groq `gpt-oss-20b`) | finished, correct root cause (AC01) and draft reply; no account numbers or IBANs on the page |
+| Review | reject without comment blocked; approve closes the task; audit log records both |
+| Index rebuild on the 512 MB instance | completed, site stayed up, search works afterwards (confirms fix #1) |
+| Circular analysis with the real model | **Failed: Groq daily token limit** (199,336 of 200,000 used by the earlier evaluation). The page showed Failed with Retry, as designed; Retry worked but hit the same limit |
+| Privacy check on the task page | first flagged by the test, then confirmed a **false positive** (adjacent numbers joined without spaces); server HTML has no account numbers or IBANs |
+
 ## 8. Blocked or not executed
 
 | Item | Reason |
 | --- | --- |
-| Logged-in testing on the **live** site | No password was shared; the same build was tested fully on the isolated QA server |
+| Circular analysis with the real model on the live site | Blocked by Groq's daily token limit on the test day; works with the fake model and passed in the evaluation run |
 | Load/stress test on production | Forbidden by the brief (free instance, 0.1 CPU); light load done locally: 100 requests, 20 concurrent, all 200, p95 < 3 s |
 | Real Safari (macOS/iOS) and Google Chrome | Not available on this Windows machine; tested WebKit (Safari's engine) and Edge (Chromium, same engine as Chrome) |
 | Real screen reader (NVDA/VoiceOver) | Not available; covered by axe-core, semantic HTML, labels, keyboard and focus tests |
@@ -119,6 +136,7 @@ Run after Render deployed `b5991e1`, without the password and without changing a
 - Lighthouse mobile: FCP/LCP 1.1–1.2 s, TBT 0 ms, CLS 0; desktop 0.3 s. Page weight 46–67 KB (no images, 2 small JS files, 1 CSS file).
 - Local server: pages under 1.5 s, `/api/tasks` average < 300 ms, 100 requests at 20 concurrency all succeed.
 - Memory: about 265 MB while serving, 318 MB peak during an index rebuild (was 697 MB).
+- Live (Render free, 0.1 CPU): pages 1.3–1.9 s fully rendered, search 0.76–1.15 s (was 4.5–5.8 s), first visit after 15 min idle about 1 minute.
 
 ## 10. Overall assessment
 

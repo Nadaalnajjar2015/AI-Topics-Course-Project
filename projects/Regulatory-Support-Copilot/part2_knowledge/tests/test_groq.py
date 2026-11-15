@@ -207,3 +207,15 @@ def test_model_without_strict_support_remains_best_effort(sdk,monkeypatch):
     monkeypatch.setattr(settings,"llm_model","openai/gpt-oss-safeguard-20b")
     llm.complete_json("","",Closed)
     assert sdk["request"]["response_format"]["json_schema"]["strict"] is False
+
+
+def test_daily_rate_limit_is_named_without_leaking_the_body(sdk):
+    error = RuntimeError("Rate limit reached for model in organization org_secret123 on tokens per day (TPD): "
+                         "Limit 200000, Used 199336 ops@example.test")
+    error.status_code = 429
+    sdk["error"] = error
+    with pytest.raises(llm.LLMError, match="daily rate limit exhausted") as caught:
+        llm.complete_text("", "")
+    message = str(caught.value)
+    assert "rate limit" in message and "retry later" in message
+    assert "org_secret123" not in message and "199336" not in message and "@" not in message
