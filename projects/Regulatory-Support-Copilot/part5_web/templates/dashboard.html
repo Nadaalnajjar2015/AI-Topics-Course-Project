@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status_badge, icon %}
+{% block title %}Overview{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Overview</h1>
+    <p class="page-sub">{{ template.organization }} · signed in as {{ reviewer }}</p>
+  </div>
+  <div class="page-actions">
+    <a class="btn btn-secondary" href="/requests">{{ icon("chat", 18) }} Investigate a {{ labels.request | lower }}</a>
+    <a class="btn btn-primary" href="/changes/new">{{ icon("doc", 18) }} Analyze a {{ labels.change | lower }}</a>
+  </div>
+</div>
+
+<div class="kpis">
+  <div class="kpi kpi-warn"><span class="kpi-label">Needs review</span><span class="kpi-value">{{ counts.get("pending_review", 0) }}</span><span class="kpi-hint">Waiting for a reviewer decision</span></div>
+  <div class="kpi kpi-info"><span class="kpi-label">Running</span><span class="kpi-value">{{ counts.get("running", 0) }}</span><span class="kpi-hint">AI agents at work</span></div>
+  <div class="kpi kpi-ok"><span class="kpi-label">Approved</span><span class="kpi-value">{{ counts.get("approved", 0) }}</span><span class="kpi-hint">Reviewed and closed</span></div>
+  <div class="kpi kpi-bad"><span class="kpi-label">Failed</span><span class="kpi-value">{{ counts.get("failed", 0) }}</span><span class="kpi-hint">Can be retried</span></div>
+</div>
+
+<div class="split">
+  <section class="panel">
+    <div class="panel-head"><h2 class="panel-title">Recent activity</h2><span class="muted">{{ tasks | length }} task{{ "" if tasks | length == 1 else "s" }}</span></div>
+    {% if tasks %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Type</th><th class="col-wide">Item</th><th>Started</th><th>Status</th><th class="col-action"><span class="sr-only">Open</span></th></tr></thead>
+        <tbody>
+        {% for t in tasks %}
+        <tr>
+          <td data-label="Type"><span class="type-tag">{{ icon("doc" if t.type == "change" else "chat", 16) }}{{ labels.change if t.type == "change" else labels.request }}</span></td>
+          <td data-label="Item" class="col-wide"><span class="cell-title">{{ titles.get(t.input_ref, t.input_ref) | mask }}</span><span class="cell-desc">{{ t.input_ref }}</span></td>
+          <td data-label="Started" class="nowrap">{{ t.created_at.strftime("%d %b, %H:%M") }}</td>
+          <td data-label="Status">{{ status_badge(t.status) }}</td>
+          <td class="col-action"><a class="btn btn-sm btn-ghost" href="/tasks/{{ t.task_id }}">Open {{ icon("arrow", 16) }}</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      {{ icon("dashboard", 32) }}
+      <p class="empty-title">No activity yet</p>
+      <p>Analyze a {{ labels.change | lower }} or investigate a {{ labels.request | lower }}. The AI prepares a draft; you approve, edit or reject it.</p>
+    </div>
+    {% endif %}
+  </section>
+
+  <aside class="side-stack">
+    <section class="panel panel-pad">
+      <h2 class="panel-title">How it works</h2>
+      <ol class="steps-list">
+        <li><b>Start</b><span>Pick a {{ labels.change | lower }} or a {{ labels.request | lower }}.</span></li>
+        <li><b>AI prepares</b><span>Agents read, search the knowledge base and draft results with sources.</span></li>
+        <li><b>You decide</b><span>Approve, edit or reject. Every decision is written to the audit log.</span></li>
+      </ol>
+    </section>
+    <section class="panel panel-pad">
+      <h2 class="panel-title">Safety</h2>
+      <ul class="check-list">
+        <li>{{ icon("check", 16) }} Account and personal data are masked</li>
+        <li>{{ icon("check", 16) }} Nothing is saved or sent without a reviewer</li>
+        <li>{{ icon("check", 16) }} Append-only <a href="/audit">audit log</a></li>
+      </ul>
+    </section>
+  </aside>
+</div>
+{% endblock %}

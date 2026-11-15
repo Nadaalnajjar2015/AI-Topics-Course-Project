@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Setup{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Setup</h1>
+    <p class="page-sub">{{ template.organization }} is configured by the folder <code>part1_templates/templates/{{ template.id }}/</code>. A new organization is a new folder, not new code.</p>
+  </div>
+</div>
+
+<div class="kpis">
+  <div class="kpi"><span class="kpi-label">{{ labels.units }}</span><span class="kpi-value">{{ units | length }}</span></div>
+  <div class="kpi"><span class="kpi-label">{{ labels.stakeholders }}</span><span class="kpi-value">{{ stakeholders | length }}</span></div>
+  <div class="kpi"><span class="kpi-label">Documents</span><span class="kpi-value">{{ documents | length }}</span></div>
+  <div class="kpi kpi-info"><span class="kpi-label">Indexed chunks</span><span class="kpi-value" id="chunks">{{ chunks if chunks is not none else "–" }}</span>
+    <span class="kpi-hint">{{ "Search index ready" if chunks else "Index not built yet" }}</span></div>
+</div>
+
+<div class="grid-2">
+  <section class="panel panel-pad">
+    <h2 class="panel-title">Organization</h2>
+    <dl class="meta-list">
+      <div><dt>Template ID</dt><dd>{{ template.id }}</dd></div>
+      <div><dt>Languages</dt><dd>{{ template.languages | join(", ") }}</dd></div>
+      <div><dt>Connector</dt><dd><span class="id">{{ template.connector }}</span></dd></div>
+      <div><dt>Item pattern</dt><dd><span class="id">{{ template.item_pattern }}</span></dd></div>
+      <div><dt>Reviewers</dt><dd><span class="tag-list">{% for r in template.reviewers %}<span class="tag">{{ r }}</span>{% endfor %}</span></dd></div>
+      <div><dt>Action item fields</dt><dd>{{ template.action_item_fields | join(", ") }}</dd></div>
+    </dl>
+  </section>
+  <section class="panel panel-pad">
+    <h2 class="panel-title">Labels</h2>
+    <dl class="meta-list">{% for k, v in labels.items() %}<div><dt>{{ k }}</dt><dd>{{ v }}</dd></div>{% endfor %}</dl>
+  </section>
+</div>
+
+<section class="panel">
+  <div class="panel-head panel-pad-x"><h2 class="panel-title">{{ labels.units }}</h2><span class="count-pill">{{ units | length }}</span></div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>ID</th><th>Name</th><th>Type</th><th class="col-wide">Description</th></tr></thead>
+      <tbody>
+      {% for u in units %}<tr><td data-label="ID"><span class="id">{{ u.unit_id }}</span></td><td data-label="Name">{{ u.name }}</td>
+        <td data-label="Type">{{ u.type }}</td><td data-label="Description" class="col-wide">{{ u.description }}</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-head panel-pad-x"><h2 class="panel-title">{{ labels.stakeholders }}</h2><span class="count-pill">{{ stakeholders | length }}</span></div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>ID</th><th>Name</th><th>Type</th><th class="col-wide">{{ labels.units }}</th></tr></thead>
+      <tbody>
+      {% for s in stakeholders %}<tr><td data-label="ID"><span class="id">{{ s.stakeholder_id }}</span></td><td data-label="Name">{{ s.name }}</td>
+        <td data-label="Type">{{ s.type }}</td><td data-label="{{ labels.units }}" class="col-wide"><span class="tag-list">{% for u in s.units %}<span class="tag">{{ u }}</span>{% endfor %}</span></td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="panel panel-pad">
+  <div class="panel-head"><h2 class="panel-title">Knowledge base</h2>
+    <button id="rebuild" class="btn btn-secondary btn-sm" data-template="{{ template.id }}">{{ icon("refresh", 16) }} Rebuild index</button></div>
+  <p class="muted" id="rebuild-status">{{ documents | length }} source documents. Rebuilding re-reads them into the search index.</p>
+  <div class="tag-list">{% for d in documents %}<span class="tag">{{ d }}</span>{% endfor %}</div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+document.getElementById("rebuild").addEventListener("click", function () {
+  const button = this, status = document.getElementById("rebuild-status");
+  button.disabled = true;
+  status.textContent = "Rebuilding… (the first run downloads the embedding model)";
+  fetch("/api/index/rebuild", {method: "POST", headers: {"Content-Type": "application/json"},
+                               body: JSON.stringify({template_id: button.dataset.template})})
+    .then(function (r) { return r.json().then(function (d) { if (!r.ok) throw new Error(d.detail); return d; }); })
+    .then(function (d) {
+      const s = d[button.dataset.template];
+      document.getElementById("chunks").textContent = s.chunks;
+      status.textContent = "Done: " + s.files_read + " files, " + s.chunks + " chunks in " + s.seconds + " s";
+    })
+    .catch(function (e) { status.textContent = "Failed: " + e.message; })
+    .finally(function () { button.disabled = false; });
+});
+</script>
+{% endblock %}

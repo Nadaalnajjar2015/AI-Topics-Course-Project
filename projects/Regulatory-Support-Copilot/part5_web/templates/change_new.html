@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status_badge, icon %}
+{% block title %}{{ labels.change }}s{% endblock %}
+{% block content %}
+{% set ns = namespace(new=0, review=0, done=0) %}
+{% for c in changes %}
+  {% set t = latest.get(c.change_id) %}
+  {% if not t %}{% set ns.new = ns.new + 1 %}
+  {% elif t.status == "pending_review" %}{% set ns.review = ns.review + 1 %}
+  {% elif t.status in ("approved", "rejected") %}{% set ns.done = ns.done + 1 %}{% endif %}
+{% endfor %}
+
+<div class="page-header">
+  <div>
+    <h1>{{ labels.change }}s</h1>
+    <p class="page-sub">The AI summarizes each document, finds what it affects at {{ template.organization }} and proposes action items for review.</p>
+  </div>
+  <div class="page-actions">
+    <a class="btn btn-secondary" href="#paste">{{ icon("edit", 18) }} Paste a document</a>
+  </div>
+</div>
+
+{% if error %}<div class="alert" role="alert">{{ icon("warning", 18) }} {{ error }}</div>{% endif %}
+
+<div class="kpis">
+  <div class="kpi"><span class="kpi-label">Documents</span><span class="kpi-value">{{ changes | length }}</span></div>
+  <div class="kpi"><span class="kpi-label">Not analyzed</span><span class="kpi-value">{{ ns.new }}</span></div>
+  <div class="kpi kpi-warn"><span class="kpi-label">Needs review</span><span class="kpi-value">{{ ns.review }}</span></div>
+  <div class="kpi kpi-ok"><span class="kpi-label">Reviewed</span><span class="kpi-value">{{ ns.done }}</span></div>
+</div>
+
+<section class="panel">
+  <div class="toolbar" data-table-filter="change-table">
+    <div class="segmented" role="group" aria-label="Filter by status">
+      <button type="button" class="active" data-status="all" aria-pressed="true">All</button>
+      <button type="button" data-status="new" aria-pressed="false">Not analyzed</button>
+      <button type="button" data-status="pending_review" aria-pressed="false">Needs review</button>
+      <button type="button" data-status="approved" aria-pressed="false">Approved</button>
+    </div>
+    <label class="search-field">{{ icon("search", 18) }}
+      <input type="search" placeholder="Filter by title, issuer or ID" aria-label="Filter documents">
+    </label>
+  </div>
+  <div class="table-wrap">
+    <table class="data-table" id="change-table">
+      <thead>
+        <tr><th>Document</th><th class="col-wide">Title</th><th>Issuer</th><th>Effective</th><th>Status</th>
+            <th class="col-action"><span class="sr-only">Action</span></th></tr>
+      </thead>
+      <tbody>
+      {% for c in changes %}
+        {% set t = latest.get(c.change_id) %}
+        {% set state = t.status if t else "new" %}
+        <tr data-status="{{ state }}">
+          <td data-label="Document" class="nowrap"><span class="id">{{ c.change_id }}</span><span class="cell-desc">Published {{ c.published.strftime("%d %b %Y") }}</span></td>
+          <td data-label="Title" class="col-wide"><span class="cell-title">{{ c.title }}</span><span class="cell-desc">Scope: {{ c.scope }}</span></td>
+          <td data-label="Issuer">{{ c.issuer }}</td>
+          <td data-label="Effective" class="nowrap">{{ c.effective.strftime("%d %b %Y") if c.effective else "Not given" }}</td>
+          <td data-label="Status">{{ status_badge(state) }}</td>
+          <td class="col-action">
+            {% if t %}
+            <a class="btn btn-sm btn-primary" href="/tasks/{{ t.task_id }}">View result {{ icon("arrow", 16) }}</a>
+            {% else %}
+            <form method="post" action="/changes/analyze">
+              <input type="hidden" name="change_id" value="{{ c.change_id }}">
+              <button type="submit" class="btn btn-sm btn-secondary">{{ icon("play", 16) }} Analyze</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <p class="table-empty" id="change-table-empty" {% if changes %}hidden{% endif %}>No documents match this filter.</p>
+  </div>
+</section>
+
+<section class="panel panel-pad" id="paste">
+  <h2 class="panel-title">Analyze a document that is not in the list</h2>
+  <p class="muted">Paste the full text. Start with a header between two <code>---</code> lines, as in the example. A pasted document is used instead of the list.</p>
+  <form method="post" action="/changes/analyze">
+    <textarea name="text" rows="10" aria-label="Document text" placeholder="---&#10;change_id: CHG-NEW-001&#10;template_id: {{ template.id }}&#10;title: ...&#10;issuer: ...&#10;scope: all&#10;published: 2026-03-01&#10;effective: 2026-09-01&#10;---&#10;1. ...">{{ pasted or "" }}</textarea>
+    <div class="form-actions"><button type="submit" class="btn btn-primary">{{ icon("play", 18) }} Analyze pasted document</button></div>
+  </form>
+</section>
+{% endblock %}

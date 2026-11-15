@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% from "_macros.html" import sources, review_controls, status_badge, icon %}
+{% block title %}Task {{ task.input_ref }}{% endblock %}
+{% block content %}
+{% set back = "/changes/new" if task.type == "change" else "/requests" %}
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="{{ back }}">{{ icon("back", 16) }} {{ labels.change if task.type == "change" else labels.request }}s</a>
+  <span aria-hidden="true">/</span><span>{{ task.input_ref }}</span>
+</nav>
+<div class="page-header">
+  <div>
+    <h1>{% if source %}{{ (source.title if task.type == "change" else source.subject) | mask }}{% else %}{{ labels.change if task.type == "change" else labels.request }} {{ task.input_ref }}{% endif %}
+      <span id="task-status">{{ status_badge(task.status) }}</span></h1>
+    <p class="page-sub">{{ labels.change if task.type == "change" else labels.request }} {{ task.input_ref }} · started {{ task.created_at.strftime("%d %b %Y, %H:%M") }}</p>
+  </div>
+  {% if task.status == "failed" %}
+  <div class="page-actions">
+    <form method="post" action="/tasks/{{ task.task_id }}/retry"><button type="submit" class="btn btn-primary">{{ icon("refresh", 18) }} Retry</button></form>
+  </div>
+  {% endif %}
+</div>
+
+{% if task.status == "running" %}
+<div class="notice notice-info">{{ icon("clock", 20) }}<div><b>The AI is working.</b> This page updates automatically when it finishes.</div></div>
+{% elif task.status == "pending_review" %}
+<div class="notice notice-warn">{{ icon("person", 20) }}<div><b>Review required.</b> Choose Approve, Edit or Reject for each item. Nothing is saved or sent until you decide.</div></div>
+{% elif task.status == "approved" %}
+<div class="notice notice-ok">{{ icon("check", 20) }}<div><b>Review complete.</b>
+  {% if task.type == "change" %}Approved items are in <a href="/action-items">Action Items</a>.{% else %}The reply is marked as sent.{% endif %}</div></div>
+{% elif task.status == "rejected" %}
+<div class="notice notice-bad">{{ icon("close", 20) }}<div><b>Rejected.</b> Nothing was saved or sent.</div></div>
+{% elif task.status == "failed" %}
+<div class="notice notice-bad">{{ icon("warning", 20) }}<div><b>This task failed.</b> The AI service may be busy – use Retry to run it again.
+  {% for s in task.steps if s.status == "failed" %}<span class="notice-detail">{{ s.name }} failed: {{ s.error | mask }}</span>{% endfor %}</div></div>
+{% endif %}
+
+<div class="task-layout">
+  <div class="task-main">
+  {% set out = task.outputs %}
+  {% if task.type == "change" %}
+    {% if out.summary %}
+    {% set sm = out.summary %}
+    <section class="panel panel-pad">
+      <div class="panel-head"><h2 class="panel-title">Summary</h2>
+        <span class="muted">Effective {{ sm.effective_date or "date not given" }} · scope {{ sm.scope }}</span></div>
+      <p class="lead-text"><strong>{{ sm.title }}</strong></p>
+      <p>{{ sm.summary_text | mask }}</p>
+      <details class="disclosure">
+        <summary>Requirements found <span class="count-pill">{{ sm.requirements | length }}</span></summary>
+        {% for r in sm.requirements %}
+        <div class="requirement">
+          <div class="req-head"><span class="id">{{ r.requirement_id }}</span>
+            {% if r.mandatory %}<span class="badge sev-high">Mandatory</span>{% else %}<span class="badge">Optional</span>{% endif %}
+            <span class="badge badge-neutral">{{ r.category }}</span></div>
+          <p>{{ r.description | mask }}</p>
+          <blockquote class="quote">“{{ r.source_quote | mask }}”<cite>Exact words · {{ r.source_location }}</cite></blockquote>
+        </div>
+        {% else %}
+        <p class="muted">No requirements were found{% if provider == "fake" %} (the fake model finds none – use the real AI for the demo){% endif %}.</p>
+        {% endfor %}
+      </details>
+    </section>
+    {% endif %}
+
+    {% if out.impact_report %}
+    <section class="panel">
+      <div class="panel-head panel-pad-x"><h2 class="panel-title">Impact</h2>
+        <span class="muted">{{ out.impact_report.impacts | length }} affected {{ labels.units | lower }}</span></div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>{{ labels.unit }}</th><th>{{ labels.stakeholders }}</th><th>Severity</th><th class="col-wide">Reason</th></tr></thead>
+          <tbody>
+          {% for i in out.impact_report.impacts %}
+          <tr>
+            <td data-label="{{ labels.unit }}"><span class="id">{{ i.unit_id }}</span><span class="cell-desc">Rule {{ i.requirement_id }}</span></td>
+            <td data-label="{{ labels.stakeholders }}"><span class="tag-list">{% for s in i.stakeholders %}<span class="tag">{{ s }}</span>{% endfor %}</span></td>
+            <td data-label="Severity"><span class="badge sev-{{ i.severity }}">{{ i.severity | capitalize }}</span></td>
+            <td data-label="Reason" class="col-wide">{{ i.reason | mask }}{{ sources(i.sources, "Evidence") }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" class="muted">Nothing in {{ template.organization }} is affected.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if out.impact_report.unmatched_requirements %}
+      <p class="warn-text panel-pad-x">Needs manual mapping: {% for r in out.impact_report.unmatched_requirements %}<span class="tag">{{ r }}</span>{% endfor %}</p>
+      {% endif %}
+    </section>
+    {% endif %}
+
+    {% if "action_items" in out %}
+    <div class="section-head"><h2 class="panel-title">Proposed action items</h2><span class="count-pill">{{ out.action_items | length }}</span></div>
+    {% for a in out.action_items %}
+    <article class="panel panel-pad action" id="{{ a.action_id }}">
+      <div class="action-head"><h3>{{ a.title }}</h3>{{ status_badge(a.status) }}</div>
+      <dl class="meta-grid">
+        <div><dt>Owner</dt><dd>{{ a.owner_role }}</dd></div>
+        <div><dt>Due before</dt><dd>{{ a.due_before or "Not set" }}</dd></div>
+        <div><dt>{{ labels.unit }}</dt><dd>{{ a.unit_id }}</dd></div>
+        <div><dt>{{ labels.stakeholders }}</dt><dd><span class="tag-list">{% for s in a.stakeholders %}<span class="tag">{{ s }}</span>{% endfor %}</span></dd></div>
+      </dl>
+      <p>{{ a.description | mask }}</p>
+      {% if a.checks %}
+      <p class="label-sm">Test checks</p>
+      <ol class="checks">
+        {% for c in a.checks %}<li>{{ c.steps | join(" → ") }} <span class="muted">Expected:</span> {{ c.expected }}</li>{% endfor %}
+      </ol>
+      {% endif %}
+      {{ sources(a.sources) }}
+      {% call review_controls(task, a.action_id, decisions, "action") %}
+        <label class="field">Description<textarea name="description" rows="4">{{ a.description }}</textarea></label>
+        {% for c in a.checks %}
+        <fieldset class="check-edit" data-check-id="{{ c.check_id }}">
+          <legend>Check {{ loop.index }}</legend>
+          <label class="field">Steps (one per line)<textarea name="steps" rows="3">{{ c.steps | join("\n") }}</textarea></label>
+          <label class="field">Expected<input type="text" name="expected" value="{{ c.expected }}"></label>
+        </fieldset>
+        {% endfor %}
+      {% endcall %}
+    </article>
+    {% else %}
+    {% if task.status != "running" %}
+    <section class="panel panel-pad">
+      <p class="muted">The AI proposed no action items. A reviewer can still close this {{ labels.change | lower }}.</p>
+      {% call review_controls(task, task.input_ref, decisions, "change") %}<p class="muted">Nothing to edit.</p>{% endcall %}
+    </section>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+  {% elif out.investigation %}
+    {% set inv = out.investigation %}
+    <section class="panel panel-pad">
+      <div class="panel-head"><h2 class="panel-title">Investigation</h2>
+        <span class="badge conf-{{ inv.confidence }}">{{ inv.confidence | capitalize }} confidence</span></div>
+      {% if inv.escalate %}<div class="notice notice-bad notice-inline">{{ icon("warning", 18) }}<div><b>Escalate:</b> this needs a human investigation before replying.</div></div>{% endif %}
+      <p class="lead-text">{{ inv.root_cause | mask }}</p>
+      <dl class="meta-grid">
+        <div><dt>{{ labels.item }}</dt><dd>{{ inv.item or "Not found" }}</dd></div>
+        <div><dt>Reason code</dt><dd>{{ inv.reason_code or "None" }}</dd></div>
+        <div><dt>Escalate</dt><dd>{{ "Yes" if inv.escalate else "No" }}</dd></div>
+      </dl>
+      <details class="disclosure">
+        <summary>{{ labels.record }}s checked <span class="count-pill">{{ inv.evidence | length }}</span></summary>
+        {% if inv.evidence %}
+        <div class="table-wrap">
+          <table class="data-table compact">
+            <thead><tr><th>Record</th><th>Time</th><th>{{ labels.person }}</th><th>{{ labels.unit }}</th><th>{{ labels.item }}</th><th>Status</th><th>Code</th></tr></thead>
+            <tbody>
+            {% for r in inv.evidence %}
+            <tr>
+              <td data-label="Record">{{ r.record_id }}</td><td data-label="Time" class="nowrap">{{ r.timestamp }}</td>
+              <td data-label="{{ labels.person }}">{{ r.person_id }}</td><td data-label="{{ labels.unit }}">{{ r.unit_id }}</td>
+              <td data-label="{{ labels.item }}">{{ r.item }}</td><td data-label="Status">{{ r.status }}</td>
+              <td data-label="Code"><span class="id">{{ r.reason_code or "–" }}</span></td>
+            </tr>
+            {% if r.detail %}<tr class="detail-row"><td colspan="7">{{ r.detail | mask }}</td></tr>{% endif %}
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}<p class="warn-text">No matching {{ labels.record | lower }} was found.</p>{% endif %}
+      </details>
+      {{ sources(inv.sources) }}
+    </section>
+    <section class="panel panel-pad">
+      <div class="panel-head"><h2 class="panel-title">Draft reply</h2><span class="badge">Not sent</span></div>
+      <blockquote class="reply">{{ inv.draft_reply | mask }}</blockquote>
+      {% call review_controls(task, task.input_ref, decisions, "reply") %}
+        <label class="field">Reply<textarea name="reply" rows="6">{{ inv.draft_reply | mask }}</textarea></label>
+      {% endcall %}
+    </section>
+  {% endif %}
+  </div>
+
+  <aside class="task-side">
+    {% if source %}
+    <section class="panel panel-pad">
+      <h2 class="panel-title">{{ "Original " ~ labels.request | lower if task.type == "request" else "Source document" }}</h2>
+      {% if task.type == "request" %}
+      <dl class="meta-list">
+        <div><dt>From</dt><dd>{{ source.person_id }}</dd></div>
+        <div><dt>Received</dt><dd>{{ source.created_at.strftime("%d %b %Y, %H:%M") }}</dd></div>
+        <div><dt>Priority</dt><dd>{{ source.priority | capitalize }}</dd></div>
+      </dl>
+      <p class="orig-body">{{ source.body | mask }}</p>
+      {% else %}
+      <dl class="meta-list">
+        <div><dt>Issuer</dt><dd>{{ source.issuer }}</dd></div>
+        <div><dt>Published</dt><dd>{{ source.published.strftime("%d %b %Y") }}</dd></div>
+        <div><dt>Effective</dt><dd>{{ source.effective.strftime("%d %b %Y") if source.effective else "Not given" }}</dd></div>
+      </dl>
+      <details class="disclosure"><summary>Show full text</summary><blockquote class="doc-text">{{ source.text | mask }}</blockquote></details>
+      {% endif %}
+    </section>
+    {% endif %}
+    <section class="panel panel-pad">
+      <h2 class="panel-title">Progress</h2>
+      <ol class="timeline" id="timeline" data-task="{{ task.task_id }}" data-status="{{ task.status }}">
+        {% for s in task.steps %}
+        <li class="step step-{{ s.status }}">
+          <span class="icon" aria-hidden="true"></span>
+          <strong>{{ s.name }}</strong>
+          <span class="step-status">{{ s.status }}</span>
+          {% if s.started_at and s.finished_at %}<span class="duration">{{ "%.1f" | format((s.finished_at - s.started_at).total_seconds()) }} s</span>{% endif %}
+          {% if s.message %}<div class="step-message">{{ s.message | mask }}</div>{% endif %}
+        </li>
+        {% endfor %}
+      </ol>
+      <p class="task-id">Task {{ task.task_id }}</p>
+    </section>
+  </aside>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/task.js?v={{ asset_version }}"></script>{% endblock %}

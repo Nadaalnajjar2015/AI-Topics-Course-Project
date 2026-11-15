@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% from "_macros.html" import sources, status_badge, icon %}
+{% block title %}Action Items{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Action Items</h1>
+    <p class="page-sub">Work approved by a reviewer for {{ template.organization }}. Items appear here only after human approval.</p>
+  </div>
+  <div class="page-actions"><a class="btn btn-secondary" href="/changes/new">{{ icon("doc", 18) }} {{ labels.change }}s</a></div>
+</div>
+
+{% for a in items %}
+<article class="panel panel-pad action">
+  <div class="action-head">
+    <div><h3>{{ a.title }}</h3><span class="muted">{{ a.action_id }} · from {{ labels.change | lower }} {{ a.change_id }}</span></div>
+    {{ status_badge(a.status) }}
+  </div>
+  <dl class="meta-grid">
+    <div><dt>Owner</dt><dd>{{ a.owner_role }}</dd></div>
+    <div><dt>Due before</dt><dd>{{ a.due_before or "Not set" }}</dd></div>
+    <div><dt>{{ labels.unit }}</dt><dd>{{ a.unit_id }}</dd></div>
+    <div><dt>{{ labels.stakeholders }}</dt><dd><span class="tag-list">{% for s in a.stakeholders %}<span class="tag">{{ s }}</span>{% endfor %}</span></dd></div>
+  </dl>
+  <p>{{ a.description | mask }}</p>
+  {% if a.checks %}
+  <p class="label-sm">Test checks</p>
+  <ol class="checks">{% for c in a.checks %}<li>{{ c.steps | join(" → ") }} <span class="muted">Expected:</span> {{ c.expected }}</li>{% endfor %}</ol>
+  {% endif %}
+  {{ sources(a.sources) }}
+</article>
+{% else %}
+<section class="panel">
+  <div class="empty-state">
+    {{ icon("task", 32) }}
+    <p class="empty-title">No approved action items yet</p>
+    <p>Analyze a {{ labels.change | lower }} and approve its proposed action items to add them here.</p>
+    <a class="btn btn-primary" href="/changes/new">Go to {{ labels.change | lower }}s</a>
+  </div>
+</section>
+{% endfor %}
+{% endblock %}

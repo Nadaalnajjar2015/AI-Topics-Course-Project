@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Evaluation{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Evaluation</h1>
+    <p class="page-sub">Accuracy of the AI agents on test cases with known answers, for each organization.</p>
+  </div>
+</div>
+{% if not report %}
+<section class="panel"><div class="empty-state">
+  {{ icon("chart", 32) }}
+  <p class="empty-title">No evaluation has been run yet</p>
+  <p>Run <code>python -m part5_web.evaluation.run_eval --template all</code>.</p>
+</div></section>
+{% else %}
+<div class="notice {{ 'notice-bad' if report.provider == 'fake' else 'notice-info' }}">{{ icon("chart", 20) }}
+  <div><b>Run {{ report.generated_at }}</b> · {{ report.provider }} · {{ report.model }}
+    {% if report.provider == "fake" %}<span class="notice-detail">Fake provider – this checks the interface only and is not an accuracy result.</span>{% endif %}</div></div>
+{% set ids = report.templates.keys() | list %}
+<div class="grid-2">
+{% for area, metrics in report.metric_rows.items() %}
+<section class="panel">
+  <div class="panel-head panel-pad-x"><h2 class="panel-title">{{ area }}</h2></div>
+  <div class="table-wrap">
+    <table class="data-table metrics">
+      <thead><tr><th>Metric</th>{% for t in ids %}<th class="num {% if t == template.id %}current{% endif %}">{{ report.templates[t].organization }}</th>{% endfor %}</tr></thead>
+      <tbody>
+      {% for metric in metrics %}
+      <tr><td data-label="Metric">{{ metric | capitalize }}</td>
+        {% for t in ids %}<td class="num" data-label="{{ report.templates[t].organization }}">{{ report.templates[t].display.get(area, {}).get(metric, "–") }}</td>{% endfor %}
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endfor %}
+</div>
+{% if report.worst_failures %}
+<section class="panel">
+  <div class="panel-head panel-pad-x"><h2 class="panel-title">Worst failures</h2><span class="count-pill">{{ report.worst_failures | length }}</span></div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Organization</th><th>Area</th><th>Case</th><th class="col-wide">Problem</th></tr></thead>
+      <tbody>
+      {% for f in report.worst_failures %}
+      <tr><td data-label="Organization">{{ f.template_id }}</td><td data-label="Area">{{ f.area }}</td>
+        <td data-label="Case"><span class="id">{{ f.id }}</span></td><td data-label="Problem" class="col-wide">{{ f.problem }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+<p class="muted small-print">Full report: <code>docs/evaluation-report.md</code> and <code>runtime/eval/report.json</code>.</p>
+{% endif %}
+{% endblock %}
