@@ -6,7 +6,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
@@ -29,6 +29,12 @@ SITE_PASSWORD = os.environ.get("SITE_PASSWORD", "")
 def healthz():
     """Liveness check for the hosting platform (never needs the password)."""
     return {"status": "ok"}
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    """Browsers ask for /favicon.ico by default; send them the SVG icon."""
+    return RedirectResponse("/static/favicon.svg", status_code=301)
 
 
 @app.middleware("http")

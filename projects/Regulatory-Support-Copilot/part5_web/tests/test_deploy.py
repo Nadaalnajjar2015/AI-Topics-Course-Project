@@ -13,6 +13,14 @@ def test_healthz_is_open(client):
     assert client.get("/healthz").json() == {"status": "ok"}
 
 
+def test_favicon_is_linked_and_served(client):
+    assert '/static/favicon.svg' in client.get("/").text
+    icon = client.get("/static/favicon.svg")
+    assert icon.status_code == 200 and icon.headers["content-type"].startswith("image/svg+xml")
+    legacy = client.get("/favicon.ico", follow_redirects=False)
+    assert legacy.status_code == 301 and legacy.headers["location"] == "/static/favicon.svg"
+
+
 def test_site_is_open_without_password(client):
     assert client.get("/").status_code == 200
 
