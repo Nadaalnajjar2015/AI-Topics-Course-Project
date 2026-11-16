@@ -1,0 +1,7 @@
+{
+  "name": "copilot-browser-qa",
+  "private": true,
+  "description": "Browser QA for the website (dev tool only, not needed to run the app)",
+  "scripts": { "e2e": "node e2e.js http://127.0.0.1:8100 qa-pass-123 ../../runtime/qa/e2e" },
+  "devDependencies": { "axe-core": "4.10.2", "playwright": "1.49.1" }
+}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Knowledge Search{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Knowledge Search</h1>
+    <p class="page-sub">Search the documents the AI agents use for {{ template.organization }}.</p>
+  </div>
+</div>
+
+<section class="panel panel-pad">
+  <form method="get" action="/search" class="search-form">
+    <label class="search-field search-field-lg">{{ icon("search", 20) }}
+      <input type="search" name="q" value="{{ q }}" placeholder="Reason code, rule or {{ labels.unit | lower }}" maxlength="500" required aria-label="Search query">
+    </label>
+    <select name="doc_type" aria-label="Document type">
+      <option value="">All document types</option>
+      {% for d in doc_types %}<option value="{{ d }}" {% if d == doc_type %}selected{% endif %}>{{ d | replace("_", " ") | capitalize }}</option>{% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">Search</button>
+  </form>
+</section>
+
+{% if error %}<div class="alert" role="alert">{{ icon("warning", 18) }} {{ error }}</div>{% endif %}
+{% if q and not error %}
+<div class="section-head"><h2 class="panel-title">Results</h2><span class="count-pill">{{ results | length }}</span>
+  <span class="muted">from {{ template.organization }}'s knowledge base only</span></div>
+{% for s in results %}
+<article class="panel panel-pad result">
+  <div class="src-head"><span class="src-name">{{ s.source }}</span><span class="src-meta">{{ s.location }} · {{ s.doc_type | replace("_", " ") }}</span>
+    <span class="score" title="Retrieval relevance, not confidence">match {{ "%.2f" | format(s.score) }}</span></div>
+  <blockquote>{{ s.text | mask }}</blockquote>
+</article>
+{% else %}
+<section class="panel"><div class="empty-state small">Nothing found. Try a shorter or different term.</div></section>
+{% endfor %}
+{% elif not error %}
+<section class="panel"><div class="empty-state">
+  {{ icon("search", 32) }}
+  <p class="empty-title">Search the knowledge base</p>
+  <p>Try a reason code such as <a href="/search?q=AC04">AC04</a> or a word from a rule.</p>
+</div></section>
+{% endif %}
+{% endblock %}

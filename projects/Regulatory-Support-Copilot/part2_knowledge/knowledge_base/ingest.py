@@ -12,6 +12,8 @@ from part2_knowledge.knowledge_base import _store
 from part2_knowledge.knowledge_base._sources import _load_chunks
 from part2_knowledge.knowledge_base.chunking import Chunk
 
+EMBED_BATCH = 4  # texts per embedding call; keeps a rebuild inside a 512 MB free host
+
 
 def _safe_chunk(chunk: Chunk) -> Chunk:
     identifier = mask_text(chunk.id)
@@ -31,7 +33,10 @@ def ingest_all(template_id: str | None = None) -> dict:
         chunks, files_read = _load_chunks(template.id)
         chunks = [_safe_chunk(chunk) for chunk in chunks]
         # Prepare embeddings before removing the previous index if a source/model fails.
-        embeddings = embedding_function(input=[chunk.text for chunk in chunks]) if chunks else []
+        # Small batches keep peak memory low (all at once: ~730 MB; 4 at a time: ~255 MB).
+        texts = [chunk.text for chunk in chunks]
+        embeddings = [vector for start in range(0, len(texts), EMBED_BATCH)
+                      for vector in embedding_function(input=texts[start:start + EMBED_BATCH])]
         name = f"kb_{template.id}"
         try:
             client.delete_collection(name)

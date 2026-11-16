@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Error {{ status }}{% endblock %}
+{% block content %}
+<section class="panel error-panel">
+  <div class="empty-state">
+    {{ icon("warning", 36) }}
+    <p class="empty-title">{{ "Page or item not found" if status == 404 else "Something went wrong" }}</p>
+    <p class="alert">{{ message }}</p>
+    <a class="btn btn-primary" href="/">Back to Overview</a>
+  </div>
+</section>
+{% endblock %}

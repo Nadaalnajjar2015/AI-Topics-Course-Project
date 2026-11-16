@@ -19,3 +19,4 @@ Thumbs.db
 
 # temporary files of docs/source/build_pdfs.py
 docs/source/_*.html
+node_modules/

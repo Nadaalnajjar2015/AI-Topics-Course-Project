@@ -1,0 +1,90 @@
+{% from "_macros.html" import icon, initials %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ template.organization }}{% endblock %} · Copilot</title>
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg?v={{ asset_version }}">
+  <meta name="theme-color" content="#0f2140">
+  <meta name="description" content="Regulatory and support copilot: AI drafts, human review, full audit log.">
+  <link rel="stylesheet" href="/static/style.css?v={{ asset_version }}">
+</head>
+<body>
+<input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true" tabindex="-1">
+<div class="app">
+  <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+    <a class="sidebar-brand" href="/">
+      <span class="brand-mark" aria-hidden="true">{{ icon("shield", 20) }}</span>
+      <span class="brand-text"><strong>Copilot</strong><small>Regulatory &amp; Support</small></span>
+    </a>
+    <nav class="nav">
+      {% set groups = [
+        ("Workspace", [("/", "dashboard", "Overview"), ("/changes/new", "doc", labels.change ~ "s"),
+                       ("/requests", "chat", labels.request ~ "s"), ("/action-items", "task", "Action Items")]),
+        ("Governance", [("/audit", "history", "Audit Log"), ("/search", "search", "Knowledge Search")]),
+        ("Administration", [("/setup", "settings", "Setup"), ("/evaluation", "chart", "Evaluation")]),
+      ] %}
+      {% for group, links in groups %}
+      <p class="nav-section">{{ group }}</p>
+      {% for href, name, text in links %}
+      {% set here = (("/changes/new" if task.type == "change" else "/requests") if task is defined and task else path) %}
+      {% set active = here == href or (href != '/' and here.startswith(href)) %}
+      <a href="{{ href }}" class="nav-link{% if active %} active{% endif %}"{% if active %} aria-current="page"{% endif %}>
+        {{ icon(name) }}<span>{{ text }}</span>
+        {% if href == "/" and review_count %}<b class="nav-count" title="Tasks waiting for review">{{ review_count }}</b>{% endif %}
+      </a>
+      {% endfor %}
+      {% endfor %}
+    </nav>
+    <div class="sidebar-foot">
+      <span class="foot-label">AI model</span>
+      <span class="foot-value">{{ provider }} · {{ model }}</span>
+      {% if provider == "fake" %}<span class="badge status-failed">Fake model</span>{% endif %}
+      <span class="foot-note">Prototype – mock data</span>
+    </div>
+  </aside>
+  <label for="nav-toggle" class="scrim" aria-hidden="true"></label>
+
+  <div class="main">
+    <header class="topbar">
+      <button type="button" class="icon-btn menu-btn" title="Menu" aria-controls="sidebar" aria-expanded="false">{{ icon("menu") }}<span class="sr-only">Menu</span></button>
+      <form class="topsearch" method="get" action="/search" role="search">
+        {{ icon("search", 18) }}
+        <input type="search" name="q" placeholder="Search the knowledge base…" maxlength="500" aria-label="Search the knowledge base">
+      </form>
+      <div class="top-controls">
+        <form class="control" method="get" action="/switch">
+          <input type="hidden" name="next" value="{{ path }}">
+          <span class="control-icon">{{ icon("building", 18) }}</span>
+          <label class="control-body"><span class="control-label">Organization</span>
+            <select name="template_id" data-autosubmit data-testid="template-switcher">
+              {% for t in templates %}
+              <option value="{{ t.id }}" {% if t.id == template.id %}selected{% endif %}>{{ t.organization }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <noscript><button class="btn btn-sm btn-secondary">Switch</button></noscript>
+        </form>
+        <form class="control" method="get" action="/reviewer">
+          <input type="hidden" name="next" value="{{ path }}">
+          {{ initials(reviewer) }}
+          <label class="control-body" title="Prototype: no real login"><span class="control-label">Reviewer</span>
+            <select name="name" data-autosubmit>
+              {% for r in template.reviewers %}
+              <option value="{{ r }}" {% if r == reviewer %}selected{% endif %}>{{ r }}</option>
+              {% endfor %}
+            </select>
+          </label>
+        </form>
+      </div>
+    </header>
+    <main class="content">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+<script src="/static/ui.js?v={{ asset_version }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

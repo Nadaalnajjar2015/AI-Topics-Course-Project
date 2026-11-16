@@ -372,3 +372,41 @@ class Task(BaseModel):
 
 
 # --- Part 5: ReviewDecision, AuditEvent ---
+
+
+class ReviewDecision(BaseModel):
+    """A human reviewer's decision on one task output item."""
+
+    decision_id: str = Field(description="Stable identifier of this decision.")
+    task_id: str = Field(description="Task whose output was reviewed.")
+    template_id: str = Field(description="Template that owns the task.")
+    item_id: str = Field(description="Reviewed item: an action_id, or the request_id for a reply.")
+    decision: Literal["approve", "edit", "reject"] = Field(description="Human decision; edit means approved with changes.")
+    reviewer: str = Field(description="Reviewer role chosen from the template's reviewers (not real login).")
+    edited_content: dict[str, object] | str | None = Field(description="Edited reply text or action-item fields; null unless decision is edit.")
+    comment: str | None = Field(description="Reviewer comment; required when rejecting.")
+    created_at: datetime = Field(description="Time the decision was recorded.")
+
+    model_config = {"json_schema_extra": {"example": {
+        "decision_id": "RD-3f2a9c", "task_id": "T-20260302-0007", "template_id": "payments",
+        "item_id": "P-REQ-007", "decision": "approve", "reviewer": "Support engineer",
+        "edited_content": None, "comment": None, "created_at": "2026-03-02T10:05:00",
+    }}}
+
+
+class AuditEvent(BaseModel):
+    """One append-only audit log entry; events are never edited or deleted."""
+
+    event_id: int = Field(description="Increasing database identifier of the event.")
+    timestamp: datetime = Field(description="Time the event was recorded (UTC).")
+    template_id: str | None = Field(description="Template the event belongs to, or null if unknown.")
+    actor: str = Field(description="Agent, orchestrator, or human reviewer role that acted.")
+    action: str = Field(description="Event name, such as task_created, step_done or action_item_approved.")
+    task_id: str | None = Field(description="Related task identifier, or null for system events.")
+    details: dict[str, object] = Field(description="Masked JSON details describing the event.")
+
+    model_config = {"json_schema_extra": {"example": {
+        "event_id": 42, "timestamp": "2026-03-02T10:05:00", "template_id": "payments",
+        "actor": "Support engineer", "action": "reply_sent", "task_id": "T-20260302-0007",
+        "details": {"request_id": "P-REQ-007", "mock": True},
+    }}}

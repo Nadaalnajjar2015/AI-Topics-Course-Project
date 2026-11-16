@@ -66,6 +66,12 @@ def _closed_required_schema(node: dict) -> bool:
     return all(_closed_required_schema(child) for child in children)
 
 
+def _is_daily_limit(exc: Exception) -> bool:
+    """Groq names the exhausted limit; only this yes/no leaves the function, never the body."""
+    text = str(exc).lower()
+    return "per day" in text or "(tpd)" in text or "(rpd)" in text
+
+
 def _groq_text(system: str, user: str, schema: dict | None = None) -> str:
     if not settings.groq_api_key.strip():
         raise LLMError("Groq credentials missing; configure GROQ_API_KEY locally.")
@@ -102,6 +108,9 @@ def _groq_text(system: str, user: str, schema: dict | None = None) -> str:
             401: "authentication failed", 403: "permission denied", 404: "model unavailable",
             422: "unsupported schema/request", 429: "rate limit exhausted",
         }.get(code, "transport, timeout or provider failure")
+        if code == 429 and _is_daily_limit(exc):
+            detail = ("daily rate limit exhausted (free plan: tokens or requests per day); "
+                      "retry later, the allowance frees up over 24 hours")
         raise LLMError(f"Groq request failed: {detail}.") from None
     choices = getattr(response, "choices", None)
     if not choices:
